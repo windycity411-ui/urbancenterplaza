@@ -105,6 +105,55 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .modal-form-textarea{resize:vertical;min-height:90px;}
 .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem;}
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px;}.empty-state-icon{font-size:36px;margin-bottom:.75rem;}
+.log-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;margin-bottom:.625rem;display:flex;align-items:flex-start;gap:1rem;}
+.log-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px;}
+.log-icon.complaint{background:var(--info-light);}
+.log-icon.task{background:var(--gold-light);}
+.log-icon.resolve{background:var(--green-light);}
+.log-icon.unresolve{background:var(--danger-light);}
+.log-body{flex:1;min-width:0;}
+.log-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.log-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+.log-meta{font-size:11px;color:var(--text3);margin-top:4px;display:flex;gap:.75rem;flex-wrap:wrap;}
+.log-badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px;flex-shrink:0;margin-top:2px;}
+.log-badge.complaint{background:var(--info-light);color:var(--info);}
+.log-badge.task{background:var(--gold-light);color:var(--gold);}
+.log-badge.resolve{background:var(--green-light);color:var(--green);}
+.log-badge.unresolve{background:var(--danger-light);color:var(--danger);}
+
+/* ── 캘린더 ── */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;}
+.cal-title{font-size:16px;font-weight:500;color:var(--accent);}
+.cal-nav{background:none;border:1px solid var(--border);border-radius:var(--radius);width:32px;height:32px;cursor:pointer;font-size:18px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cal-nav:hover{background:var(--accent-light);color:var(--accent);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
+.cal-dow{text-align:center;font-size:11px;font-weight:500;color:var(--text3);padding:6px 0;letter-spacing:.04em;}
+.cal-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px;min-height:72px;cursor:pointer;transition:all .15s;position:relative;}
+.cal-day:hover{border-color:var(--accent2);background:var(--accent-light);}
+.cal-day.today{border-color:var(--accent2);background:var(--accent-light);}
+.cal-day.selected{border-color:var(--accent);background:var(--accent);color:#fff;}
+.cal-day.other-month{background:var(--surface2);opacity:.5;}
+.cal-day.other-month .cal-day-num{color:var(--text3);}
+.cal-day-num{font-size:12px;font-weight:500;margin-bottom:4px;}
+.cal-day.selected .cal-day-num{color:#fff;}
+.cal-day.today .cal-day-num{color:var(--accent);font-weight:700;}
+.cal-day.selected .cal-day-num{color:#fff;}
+.cal-dot-row{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
+.cal-dot{font-size:9px;padding:1px 4px;border-radius:2px;line-height:1.4;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cal-dot.task{background:var(--gold-light);color:var(--gold);}
+.cal-dot.complaint{background:var(--info-light);color:var(--info);}
+.cal-dot.memo{background:var(--accent-light);color:var(--accent2);}
+.cal-dot.done{background:var(--green-light);color:var(--green);}
+.cal-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1rem;}
+.cal-detail-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+.cal-detail-header span{font-size:15px;font-weight:500;color:var(--accent);}
+.cal-event-item{padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.5rem;font-size:13px;}
+.cal-event-item.task-event{border-left:3px solid var(--gold);}
+.cal-event-item.complaint-event{border-left:3px solid var(--info);}
+.cal-event-item.memo-event{border-left:3px solid var(--accent2);}
+.cal-event-title{font-weight:500;color:var(--text);margin-bottom:3px;}
+.cal-event-meta{font-size:11px;color:var(--text3);}
+.cal-empty{font-size:13px;color:var(--text3);text-align:center;padding:1.5rem 0;}
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#fff;padding:12px 20px;border-radius:var(--radius-lg);font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;}
 .toast.show{transform:translateY(0);opacity:1;}
 @media(max-width:768px){.stat-grid{grid-template-columns:1fr 1fr;}.adm-sidebar{display:none;}}
@@ -186,20 +235,76 @@ table.adm-table tr:hover td{background:var(--surface2);}
         </div>
       </div>
 
-      <!-- 업무 지시 -->
+      <!-- 업무 지시 + 캘린더 -->
       <div class="adm-section" id="sec-tasks">
-        <div class="adm-page-title">업무 지시<button class="btn btn-primary btn-sm" onclick="openNewTask()">+ 업무 지시</button></div>
-        <div style="display:flex;gap:.75rem;margin-bottom:1rem;">
-          <select class="filter-select" id="taskFilter" onchange="renderTaskList()"><option value="all">전체</option><option value="진행중">진행중</option><option value="완료">완료</option></select>
-          <select class="filter-select" id="taskUserFilter" onchange="renderTaskList()"><option value="all">전체 담당자</option></select>
+        <div class="adm-page-title">
+          업무 지시
+          <div style="display:flex;gap:.5rem;">
+            <button class="btn btn-outline btn-sm" id="viewToggleBtn" onclick="toggleTaskView()">📅 캘린더 보기</button>
+            <button class="btn btn-primary btn-sm" onclick="openNewTask()">+ 업무 지시</button>
+          </div>
         </div>
-        <div id="taskList"></div>
+
+        <!-- 캘린더 뷰 -->
+        <div id="calendarView" style="display:none;">
+          <div class="cal-header">
+            <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+            <span class="cal-title" id="calTitle"></span>
+            <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-dow">일</div><div class="cal-dow">월</div><div class="cal-dow">화</div>
+            <div class="cal-dow">수</div><div class="cal-dow">목</div><div class="cal-dow">금</div><div class="cal-dow">토</div>
+          </div>
+          <div class="cal-grid" id="calBody"></div>
+          <!-- 날짜 상세 패널 -->
+          <div class="cal-detail" id="calDetail" style="display:none;">
+            <div class="cal-detail-header">
+              <span id="calDetailTitle"></span>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('calDetail').style.display='none'">닫기</button>
+            </div>
+            <div id="calDetailContent"></div>
+            <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
+              <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;">메모 추가</div>
+              <textarea id="calMemoInput" class="modal-form-textarea" style="min-height:70px;" placeholder="이 날짜에 대한 메모를 입력하세요..."></textarea>
+              <button class="btn btn-primary btn-sm" style="margin-top:6px;" onclick="saveCalMemo()">저장</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 목록 뷰 -->
+        <div id="listView">
+          <div style="display:flex;gap:.75rem;margin-bottom:1rem;">
+            <select class="filter-select" id="taskFilter" onchange="renderTaskList()"><option value="all">전체</option><option value="진행중">진행중</option><option value="완료">완료</option></select>
+            <select class="filter-select" id="taskUserFilter" onchange="renderTaskList()"><option value="all">전체 담당자</option></select>
+          </div>
+          <div id="taskList"></div>
+        </div>
       </div>
 
       <!-- 공지 관리 -->
       <div class="adm-section" id="sec-notices">
         <div class="adm-page-title">공지 관리<button class="btn btn-primary btn-sm" onclick="openNewNotice()">+ 공지 등록</button></div>
         <div id="noticeAdminList"></div>
+      </div>
+
+      <!-- 업무 로그 (관리소장) -->
+      <div class="adm-section" id="sec-logs">
+        <div class="adm-page-title">
+          업무 로그
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <select class="filter-select" id="logUserFilter" onchange="renderLogs()">
+              <option value="all">전체 직원</option>
+            </select>
+            <select class="filter-select" id="logTypeFilter" onchange="renderLogs()">
+              <option value="all">전체 유형</option>
+              <option value="민원">민원</option>
+              <option value="업무">업무</option>
+            </select>
+            <input type="date" class="filter-select" id="logDateFilter" onchange="renderLogs()">
+          </div>
+        </div>
+        <div id="logList"></div>
       </div>
 
       <!-- 계정 목록 -->
@@ -325,6 +430,60 @@ const MANAGER='UB001';
 window.USERS = USERS; window.ROLES = ROLES; window.STAFF_VISIBLE = STAFF_VISIBLE; window.MANAGER = MANAGER;
 window.isManager = () => window.currentUser === MANAGER;
 
+// ── 캘린더 메모 Firebase 저장/로드 ──
+onSnapshot(collection(db,'calendar_memos'), snap => {
+  snap.docs.forEach(d => {
+    window.calMemos = window.calMemos || {};
+    window.calMemos[d.id] = d.data().memo || '';
+  });
+  if(window.calView) window.renderCalendar && window.renderCalendar();
+});
+
+window.addDocFn = async function(dateStr, memo){
+  try {
+    await updateDoc(doc(db,'calendar_memos', dateStr), { memo });
+  } catch(e) {
+    await addDoc(collection(db,'calendar_memos'), { memo });
+    // setDoc 방식으로 재시도
+    try {
+      const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      await setDoc(doc(db,'calendar_memos', dateStr), { memo });
+    } catch(e2){}
+  }
+};
+
+// setDoc import for memo
+import { setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+window.saveCalMemoToDb = async function(dateStr, memo){
+  await setDoc(doc(db,'calendar_memos', dateStr), { memo });
+};
+
+// ── 실시간 리스너: 로그 ──
+let logs = [];
+onSnapshot(query(collection(db,'logs'), orderBy('createdAt','desc')), snap => {
+  logs = snap.docs.map(d => ({...d.data(), _id: d.id}));
+  window.logs = logs;
+  if(document.getElementById('sec-logs').classList.contains('active')) renderLogs();
+});
+
+// ── 로그 기록 함수 ──
+async function writeLog(type, action, subject, detail, targetUser){
+  try {
+    await addDoc(collection(db,'logs'), {
+      type,        // '민원' | '업무'
+      action,      // '상태변경' | '담당자배정' | '해결' | '미해결' | '완료' | '재개' | '등록' | '삭제'
+      subject,     // 민원 제목 or 업무 제목
+      detail,      // 상세 설명
+      targetUser,  // 처리 담당자 ID
+      actorUser: window.currentUser || '',
+      createdAt: new Date(),
+      date: new Date().toISOString().slice(0,10),
+      ts: new Date().toLocaleString('ko-KR')
+    });
+  } catch(e){ console.warn('로그 저장 실패:', e); }
+}
+window.writeLog = writeLog;
+
 // ── 실시간 리스너 ──
 onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), snap => {
   complaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
@@ -339,7 +498,10 @@ onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), snap
 onSnapshot(query(collection(db,'tasks'), orderBy('createdAt','desc')), snap => {
   tasks = snap.docs.map(d => ({...d.data(), _id: d.id}));
   window.tasks = tasks;
-  if(document.getElementById('sec-tasks').classList.contains('active')) renderTaskList();
+  if(document.getElementById('sec-tasks').classList.contains('active')){
+    renderTaskList();
+    if(window.calView) renderCalendar();
+  }
   if(document.getElementById('sec-dashboard').classList.contains('active')) renderDashboard();
   if(document.getElementById('sec-mytasks').classList.contains('active')) renderMyTasks();
   if(document.getElementById('sec-staffstatus').classList.contains('active')) renderStaffStatus();
@@ -354,11 +516,19 @@ onSnapshot(query(collection(db,'notices'), orderBy('createdAt','desc')), snap =>
 // ── CRUD: 민원 ──
 window.saveComplaint = async function() {
   const c = complaints.find(x => x._id === editingComplaintId); if(!c) return;
+  const newStatus = document.getElementById('cd-status').value;
+  const newAssignee = document.getElementById('cd-assignee').value;
+  const newMemo = document.getElementById('cd-memo').value;
   await updateDoc(doc(db,'complaints',c._id), {
-    status: document.getElementById('cd-status').value,
-    assignee: document.getElementById('cd-assignee').value,
-    memo: document.getElementById('cd-memo').value
+    status: newStatus, assignee: newAssignee, memo: newMemo
   });
+  // 로그 기록
+  if(newStatus !== c.status){
+    await writeLog('민원','상태변경', c.subject, `${c.status} → ${newStatus} (호실: ${c.room})`, newAssignee||c.assignee);
+  }
+  if(newAssignee && newAssignee !== c.assignee){
+    await writeLog('민원','담당자배정', c.subject, `담당자: ${newAssignee}(${USERS[newAssignee]?.role||''}) 배정 (호실: ${c.room})`, newAssignee);
+  }
   closeModal('complaintModal'); showToast('민원이 업데이트되었습니다.');
 };
 
@@ -379,9 +549,10 @@ window.toggleResolved = async function(id) {
   const c = complaints.find(x => x._id === id); if(!c) return;
   const newResolved = !c.resolved;
   await updateDoc(doc(db,'complaints',id), {
-    resolved: newResolved,
-    status: newResolved ? '완료' : '처리중'
+    resolved: newResolved, status: newResolved ? '완료' : '처리중'
   });
+  await writeLog('민원', newResolved?'해결':'미해결', c.subject,
+    `${c.room} 민원 ${newResolved?'해결 처리':'미해결로 변경'}`, window.currentUser);
   showToast(newResolved ? '해결로 변경되었습니다.' : '미해결로 변경되었습니다.');
 };
 
@@ -391,17 +562,22 @@ window.saveTask = async function() {
   const title = document.getElementById('tm-title').value.trim();
   const body = document.getElementById('tm-body').value.trim();
   if(!assignee||!title||!body){alert('담당자, 제목, 내용은 필수입니다.');return;}
+  const priority = document.getElementById('tm-priority').value;
   await addDoc(collection(db,'tasks'), {
     assignee, title, body, date: today(),
-    status:'진행중', priority: document.getElementById('tm-priority').value,
-    createdAt: new Date()
+    status:'진행중', priority, createdAt: new Date()
   });
+  await writeLog('업무','등록', title,
+    `${assignee}(${USERS[assignee]?.role||''})에게 업무 지시 [${priority}]`, assignee);
   closeModal('taskModal'); showToast(assignee+'에게 업무가 지시되었습니다.');
 };
 
 window.toggleTaskStatus = async function(id) {
   const t = tasks.find(x => x._id === id); if(!t) return;
-  await updateDoc(doc(db,'tasks',id), { status: t.status==='진행중'?'완료':'진행중' });
+  const ns = t.status==='진행중'?'완료':'진행중';
+  await updateDoc(doc(db,'tasks',id), { status: ns });
+  await writeLog('업무', ns==='완료'?'완료':'재개', t.title,
+    `${t.assignee}(${USERS[t.assignee]?.role||''}) 업무 ${ns==='완료'?'완료 처리':'재개'}`, t.assignee);
   showToast('업무 상태가 변경되었습니다.');
 };
 
@@ -409,12 +585,17 @@ window.toggleMyTaskStatus = async function(id) {
   const t = tasks.find(x => x._id === id); if(!t) return;
   const ns = t.status==='진행중'?'완료':'진행중';
   await updateDoc(doc(db,'tasks',id), { status: ns });
+  await writeLog('업무', ns==='완료'?'완료':'재개', t.title,
+    `${t.assignee}(${USERS[t.assignee]?.role||''}) 업무 ${ns==='완료'?'완료 처리':'재개'}`, t.assignee);
   showToast(ns==='완료'?'업무가 완료 처리되었습니다.':'업무가 재개되었습니다.');
 };
 
 window.deleteTask = async function(id) {
   if(!confirm('이 업무를 삭제하시겠습니까?')) return;
+  const t = tasks.find(x => x._id === id);
   await deleteDoc(doc(db,'tasks',id));
+  if(t) await writeLog('업무','삭제', t.title,
+    `${t.assignee}(${USERS[t.assignee]?.role||''}) 업무 삭제`, t.assignee);
   showToast('업무가 삭제되었습니다.');
 };
 
@@ -482,7 +663,7 @@ function enterAdmin(){
   if(isManager()){badge.textContent='관리소장';badge.className='adm-role-badge adm-role-manager';}
   else{badge.textContent=USERS[currentUser].role;badge.className='adm-role-badge adm-role-staff';}
   document.getElementById('currentUserDisplay').textContent = currentUser+' ('+USERS[currentUser].role+')';
-  buildSidebar(); initSelects();
+  buildSidebar(); initSelects(); initLogFilters();
   isManager() ? gotoSection('dashboard') : gotoSection('mycomplaints');
 }
 
@@ -506,6 +687,7 @@ function buildSidebar(){
       <div class="sidebar-item" id="sb-complaints" onclick="gotoSection('complaints')">📋 민원 관리 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
       <div class="sidebar-item" id="sb-tasks" onclick="gotoSection('tasks')">📌 업무 지시</div>
       <div class="sidebar-section">설정</div>
+      <div class="sidebar-item" id="sb-logs" onclick="gotoSection('logs')">📝 업무 로그</div>
       <div class="sidebar-item" id="sb-notices" onclick="gotoSection('notices')">📢 공지 관리</div>
       <div class="sidebar-item" id="sb-users" onclick="gotoSection('users')">👤 계정 목록</div>
       <div class="sidebar-section">바로가기</div>
@@ -544,6 +726,7 @@ function gotoSection(id){
   if(id==='tasks') renderTaskList();
   if(id==='notices') renderNoticeAdmin();
   if(id==='users') renderUsers();
+  if(id==='logs') renderLogs();
   if(id==='mycomplaints') renderMyComplaints();
   if(id==='mytasks') renderMyTasks();
 }
@@ -758,6 +941,198 @@ function renderNoticeAdmin(){
 }
 
 function openNewNotice(){ ['nm-title','nm-body'].forEach(id=>document.getElementById(id).value=''); openModal('noticeModal'); }
+
+// ── 업무 로그 ──
+function renderLogs(){
+  const uFilter = document.getElementById('logUserFilter')?.value || 'all';
+  const tFilter = document.getElementById('logTypeFilter')?.value || 'all';
+  const dFilter = document.getElementById('logDateFilter')?.value || '';
+  const l = window.logs || [];
+  const list = l.filter(x => {
+    if(uFilter !== 'all' && x.targetUser !== uFilter) return false;
+    if(tFilter !== 'all' && x.type !== tFilter) return false;
+    if(dFilter && x.date !== dFilter) return false;
+    return true;
+  });
+  const iconMap = {
+    '해결':'✅', '완료':'✅', '미해결':'❌', '재개':'🔄',
+    '상태변경':'🔀', '담당자배정':'👤', '등록':'📌', '삭제':'🗑️'
+  };
+  const typeClass = { '민원':'complaint', '업무':'task', '해결':'resolve', '미해결':'unresolve', '완료':'resolve', '재개':'task' };
+  const container = document.getElementById('logList');
+  if(!list.length){
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div>해당하는 로그가 없습니다.</div>';
+    return;
+  }
+  container.innerHTML = list.map(x => {
+    const ic = iconMap[x.action] || '📋';
+    const tc = typeClass[x.action] || typeClass[x.type] || 'complaint';
+    const actor = x.actorUser ? `처리자: ${x.actorUser}(${USERS[x.actorUser]?.role||''})` : '';
+    const target = x.targetUser ? `담당: ${x.targetUser}(${USERS[x.targetUser]?.role||''})` : '';
+    return `<div class="log-item">
+      <div class="log-icon ${tc}">${ic}</div>
+      <div class="log-body">
+        <div class="log-title">${x.subject||''}</div>
+        <div class="log-desc">${x.detail||''}</div>
+        <div class="log-meta">
+          <span>${x.ts||x.date||''}</span>
+          ${actor?`<span>${actor}</span>`:''}
+          ${target&&target!==actor?`<span>${target}</span>`:''}
+        </div>
+      </div>
+      <span class="log-badge ${tc}">${x.type} · ${x.action}</span>
+    </div>`;
+  }).join('');
+}
+
+function initLogFilters(){
+  const el = document.getElementById('logUserFilter'); if(!el) return;
+  // 이미 옵션이 있으면 스킵
+  if(el.options.length > 1) return;
+  Object.keys(USERS).filter(u => u !== MANAGER).forEach(uid => {
+    const o = document.createElement('option');
+    o.value = uid; o.textContent = uid + ' (' + USERS[uid].role + ')';
+    el.appendChild(o);
+  });
+}
+
+// ── 캘린더 ──
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let calSelectedDate = null;
+let calMemos = {};
+let calView = false;
+
+function toggleTaskView(){
+  calView = !calView;
+  document.getElementById('calendarView').style.display = calView ? 'block' : 'none';
+  document.getElementById('listView').style.display = calView ? 'none' : 'block';
+  document.getElementById('viewToggleBtn').textContent = calView ? '☰ 목록 보기' : '📅 캘린더 보기';
+  if(calView) renderCalendar();
+}
+
+function changeMonth(dir){
+  calMonth += dir;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function renderCalendar(){
+  window.renderCalendar = renderCalendar;
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('calTitle').textContent = `${calYear}년 ${monthNames[calMonth]}`;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
+  const prevLastDate = new Date(calYear, calMonth, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  // 날짜별 이벤트 집계
+  const eventsByDate = {};
+  const addEvent = (date, type, text, status) => {
+    if(!date) return;
+    const d = date.slice(0,10);
+    if(!eventsByDate[d]) eventsByDate[d] = [];
+    eventsByDate[d].push({type, text, status});
+  };
+
+  (window.tasks||[]).forEach(t => addEvent(t.date, 'task', t.title, t.status));
+  (window.complaints||[]).forEach(c => {
+    if(c.status !== '신규') addEvent(c.date, 'complaint', `[민원] ${c.room} ${c.subject}`, c.status);
+  });
+  Object.entries(calMemos).forEach(([d,m]) => { if(m) addEvent(d, 'memo', m, ''); });
+
+  let html = '';
+  let dayCount = 0;
+  // 이전달 날짜
+  for(let i = firstDay - 1; i >= 0; i--){
+    const d = prevLastDate - i;
+    const dateStr = `${calYear}-${String(calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="cal-day other-month" onclick="selectCalDate('${dateStr}')"><div class="cal-day-num">${d}</div></div>`;
+    dayCount++;
+  }
+  // 이번달 날짜
+  for(let d = 1; d <= lastDate; d++){
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const events = eventsByDate[dateStr] || [];
+    const isToday = dateStr === todayStr;
+    const isSelected = dateStr === calSelectedDate;
+    let cls = 'cal-day';
+    if(isToday) cls += ' today';
+    if(isSelected) cls += ' selected';
+    const dots = events.slice(0,3).map(e => {
+      const dotCls = e.type==='task' ? (e.status==='완료'?'done':'task') : e.type==='memo' ? 'memo' : 'complaint';
+      const shortText = e.text.length > 8 ? e.text.slice(0,8)+'…' : e.text;
+      return `<span class="cal-dot ${dotCls}">${shortText}</span>`;
+    }).join('');
+    const more = events.length > 3 ? `<span class="cal-dot memo">+${events.length-3}</span>` : '';
+    html += `<div class="${cls}" onclick="selectCalDate('${dateStr}')">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-dot-row">${dots}${more}</div>
+    </div>`;
+    dayCount++;
+  }
+  // 다음달 날짜
+  const remaining = 42 - dayCount;
+  for(let d = 1; d <= remaining; d++){
+    const dateStr = `${calYear}-${String(calMonth+2).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="cal-day other-month" onclick="selectCalDate('${dateStr}')"><div class="cal-day-num">${d}</div></div>`;
+  }
+  document.getElementById('calBody').innerHTML = html;
+}
+
+function selectCalDate(dateStr){
+  calSelectedDate = dateStr;
+  renderCalendar();
+
+  const detail = document.getElementById('calDetail');
+  detail.style.display = 'block';
+  const [y,m,d] = dateStr.split('-');
+  document.getElementById('calDetailTitle').textContent = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+  document.getElementById('calMemoInput').value = calMemos[dateStr] || '';
+
+  // 해당 날짜 이벤트 목록
+  const dayTasks = (window.tasks||[]).filter(t => t.date === dateStr);
+  const dayComplaints = (window.complaints||[]).filter(c => c.date === dateStr && c.status !== '신규');
+  const memo = calMemos[dateStr];
+
+  let html = '';
+  if(memo){
+    html += `<div class="cal-event-item memo-event">
+      <div class="cal-event-title">📝 ${memo}</div>
+      <div class="cal-event-meta">메모</div>
+    </div>`;
+  }
+  dayTasks.forEach(t => {
+    html += `<div class="cal-event-item task-event">
+      <div class="cal-event-title">${t.title}</div>
+      <div class="cal-event-meta">업무 · ${t.assignee}(${USERS[t.assignee]?.role||''}) · ${taskBadge(t.status,t.priority)}</div>
+    </div>`;
+  });
+  dayComplaints.forEach(c => {
+    html += `<div class="cal-event-item complaint-event">
+      <div class="cal-event-title">[민원] ${c.subject}</div>
+      <div class="cal-event-meta">${c.room} · ${c.category} · ${statusBadge(c.status)}</div>
+    </div>`;
+  });
+  if(!html) html = '<div class="cal-empty">이 날짜에 등록된 내용이 없습니다.</div>';
+  document.getElementById('calDetailContent').innerHTML = html;
+}
+
+function saveCalMemo(){
+  if(!calSelectedDate) return;
+  const memo = document.getElementById('calMemoInput').value.trim();
+  calMemos[calSelectedDate] = memo;
+  window.calMemos = calMemos;
+  // Firebase 저장
+  if(window.saveCalMemoToDb){
+    window.saveCalMemoToDb(calSelectedDate, memo);
+  }
+  renderCalendar();
+  selectCalDate(calSelectedDate);
+  showToast('메모가 저장되었습니다.');
+}
 
 // ── 계정 목록 ──
 function renderUsers(){
