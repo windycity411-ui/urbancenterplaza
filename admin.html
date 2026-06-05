@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>어반센터프라자 관리자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f5f0; --surface:#fff; --surface2:#f0ede6; --text:#1a1a18; --text2:#5c5a54; --text3:#9c9a94;
+  --accent:#1a3a2a; --accent2:#2d5c3e; --accent-light:#e8f0eb;
+  --gold:#8a6c2a; --gold-light:#f5f0e0;
+  --border:#e0ddd6; --danger:#8a2a2a; --danger-light:#f5e8e8;
+  --info:#1a3a6a; --info-light:#e8eef8;
+  --green:#1a5c1a; --green-light:#e8f4e8;
+  --radius:4px; --radius-lg:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+
+/* LOGIN */
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0f2419 0%,#1a3a2a 60%,#2d5c3e 100%);}
+.login-box{background:var(--surface);border-radius:12px;padding:2.5rem 2rem;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+.login-logo{text-align:center;margin-bottom:2rem;}
+.login-logo-main{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:600;color:var(--accent);}
+.login-logo-sub{font-size:11px;color:var(--text3);letter-spacing:0.1em;margin-top:3px;}
+.login-tag{background:var(--accent);color:#fff;font-size:11px;letter-spacing:0.1em;padding:4px 12px;border-radius:2px;display:inline-block;margin-bottom:1.5rem;}
+.login-group{margin-bottom:1rem;}
+.login-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;}
+.login-input{width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;}
+.login-input:focus{border-color:var(--accent2);background:var(--surface);}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:12px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-top:.5rem;transition:background .15s;letter-spacing:.04em;}
+.login-btn:hover{background:var(--accent2);}
+.login-error{display:none;background:var(--danger-light);border:1px solid rgba(138,42,42,.2);border-radius:var(--radius);padding:8px 12px;font-size:13px;color:var(--danger);margin-top:.75rem;text-align:center;}
+.login-error.show{display:block;}
+.login-keep{display:flex;align-items:center;gap:8px;margin-top:.75rem;}
+.login-keep input{accent-color:var(--accent2);}
+.login-keep label{font-size:13px;color:var(--text2);cursor:pointer;}
+
+/* ADMIN SHELL */
+#adminPage{display:none;min-height:100vh;flex-direction:column;}
+#adminPage.show{display:flex;}
+.adm-header{background:var(--accent);color:#fff;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.adm-header-left{display:flex;align-items:center;gap:1rem;}
+.adm-logo{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:600;}
+.adm-role-badge{font-size:11px;padding:3px 10px;border-radius:2px;font-weight:500;letter-spacing:.06em;}
+.adm-role-manager{background:rgba(255,220,100,.25);color:#ffe07a;border:1px solid rgba(255,220,100,.3);}
+.adm-role-staff{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);}
+.adm-user{font-size:13px;color:rgba(255,255,255,.7);}
+.adm-user strong{color:#fff;}
+.adm-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:12px;padding:5px 12px;border-radius:var(--radius);cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:background .15s;}
+.adm-logout:hover{background:rgba(255,255,255,.2);}
+.adm-body{display:flex;flex:1;}
+
+/* SIDEBAR */
+.adm-sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);padding:1rem 0;flex-shrink:0;}
+.sidebar-section{padding:.5rem 1rem;font-size:10px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-top:.5rem;}
+.sidebar-item{display:block;padding:9px 1.25rem;font-size:13px;color:var(--text2);cursor:pointer;border-left:3px solid transparent;transition:all .12s;text-decoration:none;}
+.sidebar-item:hover{background:var(--surface2);color:var(--text);}
+.sidebar-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent2);font-weight:500;}
+.sidebar-badge{display:inline-block;background:var(--danger);color:#fff;font-size:10px;min-width:18px;height:18px;border-radius:9px;text-align:center;line-height:18px;padding:0 4px;margin-left:6px;}
+
+/* CONTENT */
+.adm-content{flex:1;padding:1.5rem;overflow-y:auto;}
+.adm-section{display:none;}
+.adm-section.active{display:block;}
+.adm-page-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;}
+.stat-label{font-size:11px;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.stat-value{font-size:26px;font-weight:500;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.stat-card.danger .stat-value{color:var(--danger);}
+.stat-card.gold .stat-value{color:var(--gold);}
+.stat-card.green .stat-value{color:var(--green);}
+
+/* TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.5rem;}
+.table-toolbar{padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.table-toolbar-title{font-size:14px;font-weight:500;color:var(--text);}
+.toolbar-right{display:flex;gap:.5rem;align-items:center;}
+.filter-select{border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;font-size:12px;font-family:'Noto Sans KR',sans-serif;color:var(--text2);background:var(--bg);outline:none;}
+.search-input{border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;font-size:12px;font-family:'Noto Sans KR',sans-serif;color:var(--text);background:var(--bg);outline:none;width:180px;}
+.search-input:focus{border-color:var(--accent2);}
+table.adm-table{width:100%;border-collapse:collapse;}
+table.adm-table th{background:var(--surface2);font-size:11px;font-weight:500;color:var(--text2);padding:9px 1rem;text-align:left;border-bottom:1px solid var(--border);letter-spacing:.04em;}
+table.adm-table td{padding:10px 1rem;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle;}
+table.adm-table tr:last-child td{border-bottom:none;}
+table.adm-table tr:hover td{background:var(--surface2);}
+
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.04em;padding:3px 8px;border-radius:2px;}
+.badge-urgent{background:var(--danger-light);color:var(--danger);}
+.badge-inprog{background:var(--gold-light);color:var(--gold);}
+.badge-done{background:var(--surface2);color:var(--text3);}
+.badge-new{background:var(--info-light);color:var(--info);}
+.badge-resolved{background:var(--green-light);color:var(--green);}
+.badge-unresolved{background:var(--danger-light);color:var(--danger);}
+
+/* RESOLVE TOGGLE */
+.resolve-btn{border:none;border-radius:var(--radius);padding:5px 14px;font-size:12px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;transition:all .15s;}
+.resolve-btn.resolved{background:var(--green-light);color:var(--green);border:1px solid rgba(26,92,26,.2);}
+.resolve-btn.resolved:hover{background:#d0ecd0;}
+.resolve-btn.unresolved{background:var(--danger-light);color:var(--danger);border:1px solid rgba(138,42,42,.2);}
+.resolve-btn.unresolved:hover{background:#efd8d8;}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;transition:all .12s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent2);color:var(--accent);background:var(--accent-light);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#6a1a1a;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{background:#6a4e1a;}
+.btn-sm{padding:4px 9px;font-size:11px;}
+
+/* STAFF STATUS PANEL */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.staff-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.staff-card-header{padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.staff-card-id{font-size:13px;font-weight:500;color:var(--accent);font-family:monospace;}
+.staff-card-role{font-size:11px;color:var(--text3);}
+.staff-card-body{padding:.75rem 1rem;border-top:1px solid var(--border);}
+.staff-stat-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;}
+.staff-stat-label{color:var(--text3);}
+.staff-stat-val{font-weight:500;}
+.staff-stat-val.bad{color:var(--danger);}
+.staff-stat-val.good{color:var(--green);}
+.staff-card-footer{padding:.6rem 1rem;border-top:1px solid var(--border);background:var(--surface2);}
+
+/* MY COMPLAINTS (staff view) */
+.my-complaint-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:flex-start;gap:1rem;}
+.mci-left{flex:1;}
+.mci-title{font-size:14px;font-weight:500;margin-bottom:3px;}
+.mci-meta{font-size:12px;color:var(--text3);}
+.mci-body{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.7;}
+.mci-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+
+/* TASK ITEMS */
+.task-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.task-item-left{flex:1;}
+.task-item-title{font-size:14px;font-weight:500;margin-bottom:4px;}
+.task-item-meta{font-size:12px;color:var(--text3);}
+.task-item-body{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.7;}
+.task-item-right{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0;}
+
+/* NOTICE ADMIN */
+.notice-admin-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem;}
+.notice-admin-content{flex:1;}
+.notice-admin-title{font-size:14px;font-weight:500;}
+.notice-admin-meta{font-size:12px;color:var(--text3);}
+
+/* USER GRID */
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;display:flex;flex-direction:column;gap:6px;}
+.user-card-id{font-size:13px;font-weight:500;color:var(--accent);font-family:monospace;}
+.user-card-role{font-size:11px;color:var(--text3);}
+.user-card-tasks{font-size:12px;color:var(--text2);}
+
+/* MODAL */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-backdrop.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-header-title{font-size:15px;font-weight:500;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);line-height:1;}
+.modal-body{padding:1.5rem;}
+.modal-field{margin-bottom:1rem;}
+.modal-field-label{font-size:12px;color:var(--text3);margin-bottom:3px;}
+.modal-field-value{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap;}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
+.modal-form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;}
+.modal-form-input,.modal-form-select,.modal-form-textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;margin-bottom:10px;}
+.modal-form-input:focus,.modal-form-select:focus,.modal-form-textarea:focus{border-color:var(--accent2);background:var(--surface);}
+.modal-form-textarea{resize:vertical;min-height:90px;}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px;}
+.empty-state-icon{font-size:36px;margin-bottom:.75rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#fff;padding:12px 20px;border-radius:var(--radius-lg);font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+@media(max-width:768px){
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .adm-sidebar{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-main">어반센터프라자</div>
+      <div class="login-logo-sub">URBAN CENTER PLAZA</div>
+    </div>
+    <div style="text-align:center;"><span class="login-tag">관리자 전용 시스템</span></div>
+    <div class="login-group" style="margin-top:1rem;">
+      <label class="login-label">아이디</label>
+      <input type="text" class="login-input" id="loginId" placeholder="UB001" autocomplete="username"
+        onkeydown="if(event.key==='Enter')document.getElementById('loginPw').focus()">
+    </div>
+    <div class="login-group">
+      <label class="login-label">비밀번호</label>
+      <input type="password" class="login-input" id="loginPw" placeholder="••••"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-keep">
+      <input type="checkbox" id="keepLogin">
+      <label for="keepLogin">로그인 유지</label>
+    </div>
+    <button class="login-btn" onclick="doLogin()">로그인</button>
+    <div class="login-error" id="loginError">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+  </div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="adminPage">
+  <div class="adm-header">
+    <div class="adm-header-left">
+      <span class="adm-logo">어반센터프라자</span>
+      <span class="adm-role-badge" id="roleHeaderBadge"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span class="adm-user">접속: <strong id="currentUserDisplay"></strong></span>
+      <button class="adm-logout" onclick="doLogout()">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="adm-body">
+    <!-- SIDEBAR -->
+    <div class="adm-sidebar" id="sidebar">
+      <!-- 관리소장 메뉴 (동적 생성) -->
+    </div>
+
+    <!-- CONTENT -->
+    <div class="adm-content">
+
+      <!-- ── 대시보드 (관리소장) ── -->
+      <div class="adm-section" id="sec-dashboard">
+        <div class="adm-page-title">대시보드</div>
+        <div class="stat-grid">
+          <div class="stat-card danger"><div class="stat-label">미처리 민원</div><div class="stat-value" id="statOpen">0</div><div class="stat-sub">신규 접수</div></div>
+          <div class="stat-card gold"><div class="stat-label">처리 중</div><div class="stat-value" id="statInprog">0</div><div class="stat-sub">담당자 배정됨</div></div>
+          <div class="stat-card green"><div class="stat-label">해결 완료</div><div class="stat-value" id="statResolved">0</div><div class="stat-sub">직원 처리 완료</div></div>
+          <div class="stat-card"><div class="stat-label">진행 중 업무</div><div class="stat-value" id="statTasks">0</div><div class="stat-sub">지시된 업무</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <span class="table-toolbar-title">최근 접수 민원</span>
+            <button class="btn btn-outline btn-sm" onclick="gotoSection('complaints')">전체 보기</button>
+          </div>
+          <table class="adm-table"><thead><tr><th>호실</th><th>유형</th><th>제목</th><th>접수일</th><th>상태</th><th>담당자</th><th>처리여부</th><th></th></tr></thead>
+          <tbody id="dashComplaintBody"></tbody></table>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <span class="table-toolbar-title">최근 업무 지시</span>
+            <button class="btn btn-outline btn-sm" onclick="gotoSection('tasks')">전체 보기</button>
+          </div>
+          <table class="adm-table"><thead><tr><th>담당자</th><th>업무 내용</th><th>지시일</th><th>상태</th></tr></thead>
+          <tbody id="dashTaskBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ── 직원 현황 (관리소장) ── -->
+      <div class="adm-section" id="sec-staffstatus">
+        <div class="adm-page-title">직원 업무 현황</div>
+        <div class="staff-grid" id="staffGrid"></div>
+      </div>
+
+      <!-- ── 민원 관리 (관리소장) ── -->
+      <div class="adm-section" id="sec-complaints">
+        <div class="adm-page-title">
+          민원 관리
+          <button class="btn btn-primary btn-sm" onclick="openAddComplaint()">+ 직접 등록</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <span class="table-toolbar-title">전체 민원</span>
+            <div class="toolbar-right">
+              <select class="filter-select" id="complaintFilter" onchange="renderComplaintTable()">
+                <option value="all">전체 상태</option>
+                <option value="신규">신규</option>
+                <option value="처리중">처리중</option>
+                <option value="완료">완료</option>
+              </select>
+              <select class="filter-select" id="resolvedFilter" onchange="renderComplaintTable()">
+                <option value="all">처리여부 전체</option>
+                <option value="resolved">해결</option>
+                <option value="unresolved">미해결</option>
+              </select>
+              <input type="text" class="search-input" id="complaintSearch" placeholder="호실 또는 제목 검색" oninput="renderComplaintTable()">
+            </div>
+          </div>
+          <table class="adm-table">
+            <thead><tr><th>번호</th><th>호실</th><th>연락처</th><th>유형</th><th>제목</th><th>접수일</th><th>상태</th><th>담당자</th><th>처리여부</th><th>처리</th></tr></thead>
+            <tbody id="complaintTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── 업무 지시 (관리소장) ── -->
+      <div class="adm-section" id="sec-tasks">
+        <div class="adm-page-title">
+          업무 지시
+          <button class="btn btn-primary btn-sm" onclick="openNewTask()">+ 업무 지시</button>
+        </div>
+        <div style="display:flex;gap:.75rem;margin-bottom:1rem;">
+          <select class="filter-select" id="taskFilter" onchange="renderTaskList()">
+            <option value="all">전체</option><option value="진행중">진행중</option><option value="완료">완료</option>
+          </select>
+          <select class="filter-select" id="taskUserFilter" onchange="renderTaskList()">
+            <option value="all">전체 담당자</option>
+          </select>
+        </div>
+        <div id="taskList"></div>
+      </div>
+
+      <!-- ── 공지 관리 ── -->
+      <div class="adm-section" id="sec-notices">
+        <div class="adm-page-title">
+          공지 관리
+          <button class="btn btn-primary btn-sm" onclick="openNewNotice()">+ 공지 등록</button>
+        </div>
+        <div id="noticeAdminList"></div>
+      </div>
+
+      <!-- ── 계정 목록 ── -->
+      <div class="adm-section" id="sec-users">
+        <div class="adm-page-title">계정 목록</div>
+        <div class="user-grid" id="userGrid"></div>
+      </div>
+
+      <!-- ── 내 민원 (직원) ── -->
+      <div class="adm-section" id="sec-mycomplaints">
+        <div class="adm-page-title">배정된 민원</div>
+        <div id="myComplaintList"></div>
+      </div>
+
+      <!-- ── 내 업무 (직원) ── -->
+      <div class="adm-section" id="sec-mytasks">
+        <div class="adm-page-title">내 업무</div>
+        <div id="myTaskList"></div>
+      </div>
+
+    </div><!-- /adm-content -->
+  </div><!-- /adm-body -->
+</div><!-- /adminPage -->
+
+<!-- 민원 상세 모달 (관리소장) -->
+<div class="modal-backdrop" id="complaintModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-header-title">민원 상세</span><button class="modal-close" onclick="closeModal('complaintModal')">×</button></div>
+    <div class="modal-body">
+      <div class="modal-field"><div class="modal-field-label">호실</div><div class="modal-field-value" id="cd-room"></div></div>
+      <div class="modal-field"><div class="modal-field-label">연락처</div><div class="modal-field-value" id="cd-phone"></div></div>
+      <div class="modal-field"><div class="modal-field-label">유형</div><div class="modal-field-value" id="cd-category"></div></div>
+      <div class="modal-field"><div class="modal-field-label">제목</div><div class="modal-field-value" id="cd-subject"></div></div>
+      <div class="modal-field"><div class="modal-field-label">내용</div><div class="modal-field-value" id="cd-body"></div></div>
+      <div class="modal-field"><div class="modal-field-label">접수일</div><div class="modal-field-value" id="cd-date"></div></div>
+      <hr class="modal-divider">
+      <div style="margin-bottom:8px;"><label class="modal-form-label">상태 변경</label>
+        <select class="modal-form-select" id="cd-status"><option>신규</option><option>처리중</option><option>완료</option></select>
+      </div>
+      <div style="margin-bottom:8px;"><label class="modal-form-label">담당자 배정</label>
+        <select class="modal-form-select" id="cd-assignee"></select>
+      </div>
+      <div><label class="modal-form-label">처리 메모</label>
+        <textarea class="modal-form-textarea" id="cd-memo" placeholder="처리 내용 또는 메모"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('complaintModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveComplaint()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 업무 지시 모달 -->
+<div class="modal-backdrop" id="taskModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-header-title" id="taskModalTitle">업무 지시</span><button class="modal-close" onclick="closeModal('taskModal')">×</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:10px;"><label class="modal-form-label">담당자 선택 <span style="color:var(--danger)">*</span></label>
+        <select class="modal-form-select" id="tm-assignee"></select>
+      </div>
+      <div style="margin-bottom:10px;"><label class="modal-form-label">업무 제목 <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="modal-form-input" id="tm-title" placeholder="업무 제목">
+      </div>
+      <div style="margin-bottom:10px;"><label class="modal-form-label">업무 내용 <span style="color:var(--danger)">*</span></label>
+        <textarea class="modal-form-textarea" id="tm-body" style="min-height:120px;" placeholder="구체적인 업무 지시 내용"></textarea>
+      </div>
+      <div><label class="modal-form-label">우선순위</label>
+        <select class="modal-form-select" id="tm-priority"><option>일반</option><option>긴급</option><option>낮음</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('taskModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveTask()">지시</button>
+    </div>
+  </div>
+</div>
+
+<!-- 공지 등록 모달 -->
+<div class="modal-backdrop" id="noticeModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-header-title">공지 등록</span><button class="modal-close" onclick="closeModal('noticeModal')">×</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:10px;"><label class="modal-form-label">분류</label>
+        <select class="modal-form-select" id="nm-type"><option>일반</option><option>긴급</option><option>시설</option></select>
+      </div>
+      <div style="margin-bottom:10px;"><label class="modal-form-label">제목</label>
+        <input type="text" class="modal-form-input" id="nm-title" placeholder="공지 제목">
+      </div>
+      <div><label class="modal-form-label">내용</label>
+        <textarea class="modal-form-textarea" id="nm-body" style="min-height:150px;" placeholder="공지 내용"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('noticeModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveNotice()">등록</button>
+    </div>
+  </div>
+</div>
+
+<!-- 민원 직접 등록 모달 -->
+<div class="modal-backdrop" id="addComplaintModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-header-title">민원 직접 등록</span><button class="modal-close" onclick="closeModal('addComplaintModal')">×</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div><label class="modal-form-label">호실 *</label><input type="text" class="modal-form-input" id="ac-room" placeholder="예) 301호" style="margin-bottom:0;"></div>
+        <div><label class="modal-form-label">연락처</label><input type="text" class="modal-form-input" id="ac-phone" placeholder="010-XXXX-XXXX" style="margin-bottom:0;"></div>
+      </div>
+      <div style="margin-bottom:10px;"><label class="modal-form-label">유형</label>
+        <select class="modal-form-select" id="ac-category">
+          <option>시설 고장 / 수리 요청</option><option>소음 / 진동</option><option>청소 / 위생</option>
+          <option>주차 문제</option><option>관리비 문의</option><option>기타 건의사항</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px;"><label class="modal-form-label">제목 *</label><input type="text" class="modal-form-input" id="ac-subject" style="margin-bottom:0;"></div>
+      <div><label class="modal-form-label">내용</label><textarea class="modal-form-textarea" id="ac-body"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addComplaintModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveAddComplaint()">등록</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════
+// USERS
+// ═══════════════════════════════
+const ROLES={UB001:'관리소장',UB002:'전기과장',UB003:'경비',UB004:'경비',UB005:'미화',UB006:'미화',UB007:'청소2',UB008:'전기담당',UB009:'소방담당',UB010:'주차담당',UB011:'행정1',UB012:'행정2',UB013:'시설1',UB014:'시설2',UB015:'시설3',UB016:'경비4',UB017:'경비5',UB018:'청소3',UB019:'주차2',UB020:'총괄'};
+const STAFF_VISIBLE=['UB002','UB003','UB004','UB005','UB006'];
+const USERS={};
+for(let i=1;i<=20;i++){const id='UB'+String(i).padStart(3,'0');USERS[id]={pw:String(i).padStart(4,'0'),role:ROLES[id]||'직원'};}
+USERS['UB001'].pw='1111';
+const MANAGER='UB001';
+function isManager(){return currentUser===MANAGER;}
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+function load(k,d){try{const v=localStorage.getItem('ucp_'+k);return v?JSON.parse(v):d;}catch{return d;}}
+function save(k,v){try{localStorage.setItem('ucp_'+k,JSON.stringify(v));}catch{}}
+
+let complaints=load('complaints',[
+  {id:1,room:'301호',phone:'010-1234-5678',category:'시설 고장 / 수리 요청',subject:'화장실 수도꼭지 누수',body:'화장실 냉수 수도꼭지에서 물이 계속 새고 있습니다. 빠른 조치 부탁드립니다.',date:'2025-06-03',status:'처리중',assignee:'UB013',memo:'',resolved:false},
+  {id:2,room:'502호',phone:'010-9876-5432',category:'소음 / 진동',subject:'윗층 소음 심함',body:'평일 오전 8시부터 저녁 10시까지 쿵쿵거리는 소음이 심합니다.',date:'2025-06-04',status:'처리중',assignee:'UB003',memo:'확인 중',resolved:false},
+  {id:3,room:'108호',phone:'010-5555-0000',category:'주차 문제',subject:'지정 주차 구역 무단 점유',body:'제 지정 주차 구역 B-12에 타 차량이 반복적으로 주차하고 있습니다.',date:'2025-06-04',status:'신규',assignee:'',memo:'',resolved:false},
+  {id:4,room:'705호',phone:'010-3333-7777',category:'관리비 문의',subject:'5월 관리비 내역 확인 요청',body:'5월 관리비가 평소보다 많이 나와서 상세 내역이 궁금합니다.',date:'2025-05-30',status:'완료',assignee:'UB011',memo:'5월 공용 전기료 상승으로 인한 증가 안내 완료',resolved:true},
+]);
+let tasks=load('tasks',[
+  {id:1,assignee:'UB003',title:'1층 로비 청소 상태 점검',body:'매일 오전 9시 1층 로비 및 엘리베이터 홀 청소 상태를 확인하고 결과를 보고할 것.',date:'2025-06-04',status:'진행중',priority:'일반'},
+  {id:2,assignee:'UB008',title:'B1 전기실 누전 여부 점검',body:'B1 전기실 배전반 누전 여부를 점검하고 이상 없을 시 서면 확인서 제출.',date:'2025-06-03',status:'진행중',priority:'긴급'},
+]);
+let notices=load('notices',[
+  {id:1,type:'긴급',title:'[긴급] 지하 1층 배수관 공사 안내',body:'6월 10일 오전 9시~오후 6시 지하 1층 배수관 보수공사 예정.',date:'2025-06-04'},
+  {id:2,type:'시설',title:'2025년 6월 정기 소방점검 실시 안내',body:'6월 20일 전 층 소방점검 예정.',date:'2025-05-28'},
+]);
+let nCId=load('nextCId',5),nTId=load('nextTId',3),nNId=load('nextNId',3);
+function persist(){save('complaints',complaints);save('tasks',tasks);save('notices',notices);save('nextCId',nCId);save('nextTId',nTId);save('nextNId',nNId);}
+
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+let currentUser=null;
+
+function doLogin(){
+  const id=document.getElementById('loginId').value.trim().toUpperCase();
+  const pw=document.getElementById('loginPw').value;
+  const keep=document.getElementById('keepLogin').checked;
+  if(USERS[id]&&USERS[id].pw===pw){
+    currentUser=id;
+    keep?localStorage.setItem('ucp_session',id):sessionStorage.setItem('ucp_session',id);
+    enterAdmin();
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('loginPw').value='';
+  }
+}
+function doLogout(){
+  localStorage.removeItem('ucp_session');sessionStorage.removeItem('ucp_session');currentUser=null;
+  document.getElementById('adminPage').classList.remove('show');
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginId').value='';document.getElementById('loginPw').value='';
+  document.getElementById('loginError').classList.remove('show');
+}
+function enterAdmin(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('adminPage').classList.add('show');
+  const badge=document.getElementById('roleHeaderBadge');
+  if(isManager()){badge.textContent='관리소장';badge.className='adm-role-badge adm-role-manager';}
+  else{badge.textContent=USERS[currentUser].role;badge.className='adm-role-badge adm-role-staff';}
+  document.getElementById('currentUserDisplay').textContent=currentUser+' ('+USERS[currentUser].role+')';
+  buildSidebar();
+  initSelects();
+  if(isManager()) gotoSection('dashboard');
+  else gotoSection('mycomplaints');
+}
+(function(){const s=localStorage.getItem('ucp_session')||sessionStorage.getItem('ucp_session');if(s&&USERS[s]){currentUser=s;enterAdmin();}})();
+
+// ═══════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  if(isManager()){
+    sb.innerHTML=`
+      <div class="sidebar-section">메인</div>
+      <div class="sidebar-item" id="sb-dashboard" onclick="gotoSection('dashboard')">📊 대시보드</div>
+      <div class="sidebar-item" id="sb-staffstatus" onclick="gotoSection('staffstatus')">👥 직원 현황</div>
+      <div class="sidebar-section">업무</div>
+      <div class="sidebar-item" id="sb-complaints" onclick="gotoSection('complaints')">📋 민원 관리 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
+      <div class="sidebar-item" id="sb-tasks" onclick="gotoSection('tasks')">📌 업무 지시</div>
+      <div class="sidebar-section">설정</div>
+      <div class="sidebar-item" id="sb-notices" onclick="gotoSection('notices')">📢 공지 관리</div>
+      <div class="sidebar-item" id="sb-users" onclick="gotoSection('users')">👤 계정 목록</div>
+      <div class="sidebar-section">바로가기</div>
+      <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
+  } else {
+    sb.innerHTML=`
+      <div class="sidebar-section">내 업무</div>
+      <div class="sidebar-item" id="sb-mycomplaints" onclick="gotoSection('mycomplaints')">📋 배정된 민원 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
+      <div class="sidebar-item" id="sb-mytasks" onclick="gotoSection('mytasks')">📌 내 업무</div>
+      <div class="sidebar-section">바로가기</div>
+      <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
+  }
+}
+
+function gotoSection(id){
+  document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  const sb=document.getElementById('sb-'+id);
+  if(sb) sb.classList.add('active');
+  if(id==='dashboard') renderDashboard();
+  if(id==='staffstatus') renderStaffStatus();
+  if(id==='complaints') renderComplaintTable();
+  if(id==='tasks') renderTaskList();
+  if(id==='notices') renderNoticeAdmin();
+  if(id==='users') renderUsers();
+  if(id==='mycomplaints') renderMyComplaints();
+  if(id==='mytasks') renderMyTasks();
+  updateBadge();
+}
+
+function initSelects(){
+  ['cd-assignee','tm-assignee','taskUserFilter'].forEach(sid=>{
+    const el=document.getElementById(sid); if(!el) return;
+    el.innerHTML=sid==='taskUserFilter'?'<option value="all">전체 담당자</option>':'<option value="">미배정</option>';
+    Object.keys(USERS).forEach(uid=>{
+      const o=document.createElement('option');
+      o.value=uid;o.textContent=uid+' ('+USERS[uid].role+')';
+      el.appendChild(o);
+    });
+  });
+}
+
+function updateBadge(){
+  const count=isManager()
+    ? complaints.filter(c=>c.status==='신규').length
+    : complaints.filter(c=>c.assignee===currentUser&&!c.resolved).length;
+  const el=document.getElementById('sidebarBadge');
+  if(el) el.textContent=count;
+}
+
+// ═══════════════════════════════
+// BADGES / HELPERS
+// ═══════════════════════════════
+function statusBadge(s){
+  if(s==='신규') return '<span class="badge badge-new">신규</span>';
+  if(s==='처리중') return '<span class="badge badge-inprog">처리중</span>';
+  return '<span class="badge badge-done">완료</span>';
+}
+function resolvedBadge(r){
+  return r?'<span class="badge badge-resolved">해결</span>':'<span class="badge badge-unresolved">미해결</span>';
+}
+function taskBadge(s,p){
+  let b=s==='진행중'?'<span class="badge badge-inprog">진행중</span>':'<span class="badge badge-done">완료</span>';
+  if(p==='긴급') b+=' <span class="badge badge-urgent">긴급</span>';
+  return b;
+}
+function today(){return new Date().toISOString().slice(0,10);}
+
+// ═══════════════════════════════
+// DASHBOARD (관리소장)
+// ═══════════════════════════════
+function renderDashboard(){
+  document.getElementById('statOpen').textContent=complaints.filter(c=>c.status==='신규').length;
+  document.getElementById('statInprog').textContent=complaints.filter(c=>c.status==='처리중').length;
+  document.getElementById('statResolved').textContent=complaints.filter(c=>c.resolved).length;
+  document.getElementById('statTasks').textContent=tasks.filter(t=>t.status==='진행중').length;
+  const recent=[...complaints].reverse().slice(0,5);
+  document.getElementById('dashComplaintBody').innerHTML=recent.map(c=>`
+    <tr>
+      <td>${c.room}</td><td>${c.category}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.subject}</td>
+      <td>${c.date}</td><td>${statusBadge(c.status)}</td>
+      <td style="font-size:12px;">${c.assignee?(c.assignee+'<br><span style="color:var(--text3)">'+USERS[c.assignee]?.role+'</span>'):'<span style="color:var(--text3)">미배정</span>'}</td>
+      <td>${resolvedBadge(c.resolved)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="openComplaint(${c.id})">상세</button></td>
+    </tr>`).join('');
+  const rt=[...tasks].reverse().slice(0,5);
+  document.getElementById('dashTaskBody').innerHTML=rt.map(t=>`
+    <tr>
+      <td>${t.assignee} <span style="color:var(--text3);font-size:11px;">(${USERS[t.assignee]?.role||''})</span></td>
+      <td>${t.title}</td><td>${t.date}</td><td>${taskBadge(t.status,t.priority)}</td>
+    </tr>`).join('');
+  updateBadge();
+}
+
+// ═══════════════════════════════
+// STAFF STATUS (관리소장)
+// ═══════════════════════════════
+function renderStaffStatus(){
+  const staffIds=STAFF_VISIBLE;
+  document.getElementById('staffGrid').innerHTML=staffIds.map(uid=>{
+    const myC=complaints.filter(c=>c.assignee===uid);
+    const resolved=myC.filter(c=>c.resolved).length;
+    const unresolved=myC.filter(c=>!c.resolved&&c.status!=='신규').length;
+    const myT=tasks.filter(t=>t.assignee===uid);
+    const activeTasks=myT.filter(t=>t.status==='진행중').length;
+    const doneTasks=myT.filter(t=>t.status==='완료').length;
+    const allDone=unresolved===0&&activeTasks===0;
+    return `<div class="staff-card">
+      <div class="staff-card-header">
+        <div><div class="staff-card-id">${uid}</div><div class="staff-card-role">${USERS[uid].role}</div></div>
+        <span class="badge ${allDone?'badge-resolved':'badge-unresolved'}">${allDone?'이상없음':'확인필요'}</span>
+      </div>
+      <div class="staff-card-body">
+        <div class="staff-stat-row"><span class="staff-stat-label">배정 민원</span><span class="staff-stat-val">${myC.length}건</span></div>
+        <div class="staff-stat-row"><span class="staff-stat-label">미해결 민원</span><span class="staff-stat-val ${unresolved>0?'bad':'good'}">${unresolved}건</span></div>
+        <div class="staff-stat-row"><span class="staff-stat-label">진행 중 업무</span><span class="staff-stat-val ${activeTasks>0?'bad':''}">${activeTasks}건</span></div>
+        <div class="staff-stat-row"><span class="staff-stat-label">완료 업무</span><span class="staff-stat-val good">${doneTasks}건</span></div>
+      </div>
+      <div class="staff-card-footer" style="display:flex;gap:6px;">
+        <button class="btn btn-outline btn-sm" style="flex:1;" onclick="openNewTask('${uid}')">업무 지시</button>
+        <button class="btn btn-outline btn-sm" style="flex:1;" onclick="filterTasksByUser('${uid}')">업무 보기</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterTasksByUser(uid){
+  gotoSection('tasks');
+  document.getElementById('taskUserFilter').value=uid;
+  renderTaskList();
+}
+
+// ═══════════════════════════════
+// COMPLAINTS (관리소장)
+// ═══════════════════════════════
+let editingComplaintId=null;
+
+function renderComplaintTable(){
+  const f=document.getElementById('complaintFilter').value;
+  const rf=document.getElementById('resolvedFilter').value;
+  const q=document.getElementById('complaintSearch').value.trim().toLowerCase();
+  let list=complaints.filter(c=>{
+    if(f!=='all'&&c.status!==f) return false;
+    if(rf==='resolved'&&!c.resolved) return false;
+    if(rf==='unresolved'&&c.resolved) return false;
+    if(q&&!c.room.toLowerCase().includes(q)&&!c.subject.toLowerCase().includes(q)) return false;
+    return true;
+  }).reverse();
+  document.getElementById('complaintTableBody').innerHTML=list.length?list.map(c=>`
+    <tr>
+      <td style="color:var(--text3);font-size:12px;">#${c.id}</td>
+      <td>${c.room}</td><td>${c.phone}</td><td>${c.category}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.subject}</td>
+      <td>${c.date}</td><td>${statusBadge(c.status)}</td>
+      <td style="font-size:12px;">${c.assignee?(c.assignee+'<br><span style="color:var(--text3)">'+USERS[c.assignee]?.role+'</span>'):'<span style="color:var(--text3)">미배정</span>'}</td>
+      <td>${resolvedBadge(c.resolved)}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="openComplaint(${c.id})" style="margin-right:4px;">상세</button>
+        <button class="btn btn-gold btn-sm" onclick="openTaskFromComplaint(${c.id})">업무지시</button>
+      </td>
+    </tr>`).join('')
+    :'<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text3);">해당하는 민원이 없습니다.</td></tr>';
+}
+
+function openComplaint(id){
+  const c=complaints.find(x=>x.id===id); if(!c) return;
+  editingComplaintId=id;
+  document.getElementById('cd-room').textContent=c.room;
+  document.getElementById('cd-phone').textContent=c.phone;
+  document.getElementById('cd-category').textContent=c.category;
+  document.getElementById('cd-subject').textContent=c.subject;
+  document.getElementById('cd-body').textContent=c.body;
+  document.getElementById('cd-date').textContent=c.date;
+  document.getElementById('cd-status').value=c.status;
+  document.getElementById('cd-assignee').value=c.assignee||'';
+  document.getElementById('cd-memo').value=c.memo||'';
+  openModal('complaintModal');
+}
+function saveComplaint(){
+  const c=complaints.find(x=>x.id===editingComplaintId); if(!c) return;
+  c.status=document.getElementById('cd-status').value;
+  c.assignee=document.getElementById('cd-assignee').value;
+  c.memo=document.getElementById('cd-memo').value;
+  persist(); closeModal('complaintModal'); renderComplaintTable(); renderDashboard();
+  showToast('민원이 업데이트되었습니다.');
+}
+function openAddComplaint(){
+  ['ac-room','ac-phone','ac-subject','ac-body'].forEach(id=>document.getElementById(id).value='');
+  openModal('addComplaintModal');
+}
+function saveAddComplaint(){
+  const room=document.getElementById('ac-room').value.trim();
+  const subj=document.getElementById('ac-subject').value.trim();
+  if(!room||!subj){alert('호실과 제목은 필수입니다.');return;}
+  complaints.push({id:nCId++,room,phone:document.getElementById('ac-phone').value.trim(),category:document.getElementById('ac-category').value,subject:subj,body:document.getElementById('ac-body').value.trim(),date:today(),status:'신규',assignee:'',memo:'',resolved:false});
+  persist(); closeModal('addComplaintModal'); renderComplaintTable(); renderDashboard();
+  showToast('민원이 등록되었습니다.');
+}
+
+// ═══════════════════════════════
+// MY COMPLAINTS (직원)
+// ═══════════════════════════════
+function renderMyComplaints(){
+  const mine=complaints.filter(c=>c.assignee===currentUser);
+  const container=document.getElementById('myComplaintList');
+  if(mine.length===0){
+    container.innerHTML='<div class="empty-state"><div class="empty-state-icon">📭</div>배정된 민원이 없습니다.</div>';
+    updateBadge(); return;
+  }
+  container.innerHTML=mine.reverse().map(c=>`
+    <div class="my-complaint-item">
+      <div class="mci-left">
+        <div class="mci-title">${c.subject}</div>
+        <div class="mci-meta">${c.room} · ${c.category} · ${c.date}</div>
+        <div class="mci-body">${c.body}</div>
+        ${c.memo?`<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text2);">📝 ${c.memo}</div>`:''}
+      </div>
+      <div class="mci-right">
+        ${statusBadge(c.status)}
+        <button class="resolve-btn ${c.resolved?'resolved':'unresolved'}" onclick="toggleResolved(${c.id})">
+          ${c.resolved?'✓ 해결':'✗ 미해결'}
+        </button>
+      </div>
+    </div>`).join('');
+  updateBadge();
+}
+
+function toggleResolved(id){
+  const c=complaints.find(x=>x.id===id); if(!c) return;
+  c.resolved=!c.resolved;
+  if(c.resolved&&c.status==='처리중') c.status='완료';
+  if(!c.resolved&&c.status==='완료') c.status='처리중';
+  persist(); renderMyComplaints();
+  showToast(c.resolved?'해결로 변경되었습니다.':'미해결로 변경되었습니다.');
+}
+
+// ═══════════════════════════════
+// TASKS (관리소장)
+// ═══════════════════════════════
+function renderTaskList(){
+  const f=document.getElementById('taskFilter').value;
+  const uf=document.getElementById('taskUserFilter').value;
+  let list=tasks.filter(t=>{
+    if(f!=='all'&&t.status!==f) return false;
+    if(uf!=='all'&&t.assignee!==uf) return false;
+    return true;
+  }).reverse();
+  const container=document.getElementById('taskList');
+  container.innerHTML=list.length?list.map(t=>`
+    <div class="task-item">
+      <div class="task-item-left">
+        <div class="task-item-title">${t.title} ${t.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
+        <div class="task-item-meta">담당: ${t.assignee} (${USERS[t.assignee]?.role||''}) · ${t.date}</div>
+        <div class="task-item-body">${t.body}</div>
+      </div>
+      <div class="task-item-right">
+        ${taskBadge(t.status,'')}
+        <button class="btn btn-outline btn-sm" onclick="toggleTaskStatus(${t.id})">${t.status==='진행중'?'완료 처리':'재개'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id})">삭제</button>
+      </div>
+    </div>`).join('')
+    :'<div class="empty-state"><div class="empty-state-icon">📌</div>해당하는 업무가 없습니다.</div>';
+}
+
+// ═══════════════════════════════
+// MY TASKS (직원)
+// ═══════════════════════════════
+function renderMyTasks(){
+  const mine=tasks.filter(t=>t.assignee===currentUser).reverse();
+  const container=document.getElementById('myTaskList');
+  container.innerHTML=mine.length?mine.map(t=>`
+    <div class="task-item">
+      <div class="task-item-left">
+        <div class="task-item-title">${t.title} ${t.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
+        <div class="task-item-meta">지시일: ${t.date}</div>
+        <div class="task-item-body">${t.body}</div>
+      </div>
+      <div class="task-item-right">
+        ${taskBadge(t.status,'')}
+        <button class="resolve-btn ${t.status==='완료'?'resolved':'unresolved'}" onclick="toggleMyTaskStatus(${t.id})">
+          ${t.status==='완료'?'✓ 완료':'✗ 진행중'}
+        </button>
+      </div>
+    </div>`).join('')
+    :'<div class="empty-state"><div class="empty-state-icon">📌</div>배정된 업무가 없습니다.</div>';
+}
+
+function toggleMyTaskStatus(id){
+  const t=tasks.find(x=>x.id===id); if(!t) return;
+  t.status=t.status==='진행중'?'완료':'진행중';
+  persist(); renderMyTasks();
+  showToast(t.status==='완료'?'업무가 완료 처리되었습니다.':'업무가 재개되었습니다.');
+}
+
+function openNewTask(prefillAssignee,prefillTitle,prefillBody){
+  document.getElementById('tm-title').value=prefillTitle||'';
+  document.getElementById('tm-body').value=prefillBody||'';
+  document.getElementById('tm-priority').value='일반';
+  document.getElementById('tm-assignee').value=prefillAssignee||'';
+  openModal('taskModal');
+}
+function openTaskFromComplaint(id){
+  const c=complaints.find(x=>x.id===id); if(!c) return;
+  openNewTask(c.assignee||'','[민원처리] '+c.subject,'호실: '+c.room+'\n내용: '+c.body);
+}
+function saveTask(){
+  const assignee=document.getElementById('tm-assignee').value;
+  const title=document.getElementById('tm-title').value.trim();
+  const body=document.getElementById('tm-body').value.trim();
+  if(!assignee||!title||!body){alert('담당자, 제목, 내용은 필수입니다.');return;}
+  tasks.push({id:nTId++,assignee,title,body,date:today(),status:'진행중',priority:document.getElementById('tm-priority').value});
+  persist(); closeModal('taskModal'); renderTaskList(); renderDashboard();
+  showToast(assignee+'에게 업무가 지시되었습니다.');
+}
+function toggleTaskStatus(id){
+  const t=tasks.find(x=>x.id===id); if(!t) return;
+  t.status=t.status==='진행중'?'완료':'진행중';
+  persist(); renderTaskList(); renderDashboard();
+  showToast('업무 상태가 변경되었습니다.');
+}
+function deleteTask(id){
+  if(!confirm('이 업무를 삭제하시겠습니까?')) return;
+  tasks=tasks.filter(x=>x.id!==id);
+  persist(); renderTaskList(); renderDashboard();
+  showToast('업무가 삭제되었습니다.');
+}
+
+// ═══════════════════════════════
+// NOTICES
+// ═══════════════════════════════
+function renderNoticeAdmin(){
+  document.getElementById('noticeAdminList').innerHTML=[...notices].reverse().map(n=>`
+    <div class="notice-admin-item">
+      <span class="badge ${n.type==='긴급'?'badge-urgent':n.type==='시설'?'badge-inprog':'badge-done'}" style="flex-shrink:0;">${n.type}</span>
+      <div class="notice-admin-content"><div class="notice-admin-title">${n.title}</div><div class="notice-admin-meta">${n.date}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="deleteNotice(${n.id})">삭제</button>
+    </div>`).join('');
+}
+function openNewNotice(){['nm-title','nm-body'].forEach(id=>document.getElementById(id).value='');openModal('noticeModal');}
+function saveNotice(){
+  const title=document.getElementById('nm-title').value.trim();
+  const body=document.getElementById('nm-body').value.trim();
+  if(!title||!body){alert('제목과 내용을 입력해 주세요.');return;}
+  notices.push({id:nNId++,type:document.getElementById('nm-type').value,title,body,date:today()});
+  persist(); closeModal('noticeModal'); renderNoticeAdmin();
+  showToast('공지가 등록되었습니다.');
+}
+function deleteNotice(id){
+  if(!confirm('공지를 삭제하시겠습니까?')) return;
+  notices=notices.filter(x=>x.id!==id);
+  persist(); renderNoticeAdmin();
+  showToast('공지가 삭제되었습니다.');
+}
+
+// ═══════════════════════════════
+// USERS
+// ═══════════════════════════════
+function renderUsers(){
+  document.getElementById('userGrid').innerHTML=Object.keys(USERS).map(uid=>{
+    const tc=tasks.filter(t=>t.assignee===uid&&t.status==='진행중').length;
+    return `<div class="user-card">
+      <div class="user-card-id">${uid}</div>
+      <div class="user-card-role">${USERS[uid].role}</div>
+      <div class="user-card-tasks">진행 중 업무: <strong>${tc}건</strong></div>
+      ${uid!==MANAGER?`<div><button class="btn btn-outline btn-sm" style="width:100%;margin-top:4px;" onclick="openNewTask('${uid}')">업무 지시</button></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════
+// UTILS
+// ═══════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-backdrop').forEach(el=>{
+  el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');});
+});
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
