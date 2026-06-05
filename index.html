@@ -8,574 +8,113 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f7f5f0;
-    --surface: #ffffff;
-    --surface2: #f0ede6;
-    --text: #1a1a18;
-    --text2: #5c5a54;
-    --text3: #9c9a94;
-    --accent: #1a3a2a;
-    --accent2: #2d5c3e;
-    --accent-light: #e8f0eb;
-    --gold: #8a6c2a;
-    --gold-light: #f5f0e0;
-    --border: #e0ddd6;
-    --danger: #8a2a2a;
-    --danger-light: #f5e8e8;
-    --radius: 4px;
-    --radius-lg: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.7;
-  }
-
-  /* ── HEADER ── */
-  header {
-    background: var(--accent);
-    color: #fff;
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .header-inner {
-    max-width: 960px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-  }
-  .logo {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .logo-main {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: #fff;
-  }
-  .logo-sub {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.5);
-    text-transform: uppercase;
-  }
-  nav {
-    display: flex;
-    gap: 0;
-  }
-  nav a {
-    color: rgba(255,255,255,0.75);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 400;
-    padding: 0 14px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s;
-    letter-spacing: 0.03em;
-  }
-  nav a:hover, nav a.active {
-    color: #fff;
-    border-bottom-color: rgba(255,255,255,0.6);
-    background: rgba(255,255,255,0.05);
-  }
-  .admin-link {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    padding: 5px 12px;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 3px;
-    margin-left: 12px;
-    transition: all 0.15s;
-  }
-  .admin-link:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); }
-
-  /* ── HERO ── */
-  .hero {
-    background: var(--accent);
-    color: #fff;
-    padding: 3.5rem 2rem 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    right: -60px;
-    top: -60px;
-    width: 300px;
-    height: 300px;
-    border: 40px solid rgba(255,255,255,0.04);
-    border-radius: 50%;
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    right: 80px;
-    bottom: -80px;
-    width: 200px;
-    height: 200px;
-    border: 30px solid rgba(255,255,255,0.04);
-    border-radius: 50%;
-  }
-  .hero-inner {
-    max-width: 960px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-  .hero-tag {
-    display: inline-block;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    padding: 4px 12px;
-    border-radius: 2px;
-    margin-bottom: 1rem;
-    color: rgba(255,255,255,0.8);
-  }
-  .hero h1 {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 1.35;
-    margin-bottom: 0.75rem;
-  }
-  .hero p {
-    font-size: 14px;
-    color: rgba(255,255,255,0.65);
-    max-width: 480px;
-    line-height: 1.8;
-  }
-  .hero-meta {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 2rem;
-  }
-  .hero-meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .hero-meta-label {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-  }
-  .hero-meta-value {
-    font-size: 16px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.9);
-  }
-
-  /* ── LAYOUT ── */
-  .main {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  /* ── SECTION ── */
-  .section { display: none; }
-  .section.active { display: block; }
-
-  .section-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-  }
-  .section-title {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--accent);
-  }
-  .section-count {
-    font-size: 12px;
-    color: var(--text3);
-  }
-
-  /* ── NOTICE ── */
-  .notice-list { display: flex; flex-direction: column; gap: 0; }
-  .notice-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: none;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    cursor: pointer;
-    transition: background 0.1s;
-  }
-  .notice-item:first-child { border-top: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-  .notice-item:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
-  .notice-item:hover { background: var(--surface2); }
-  .notice-badge {
-    flex-shrink: 0;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    padding: 3px 8px;
-    border-radius: 2px;
-    margin-top: 2px;
-  }
-  .badge-urgent { background: var(--danger-light); color: var(--danger); }
-  .badge-general { background: var(--accent-light); color: var(--accent2); }
-  .badge-facility { background: var(--gold-light); color: var(--gold); }
-  .notice-content { flex: 1; }
-  .notice-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-  .notice-meta { font-size: 12px; color: var(--text3); }
-  .notice-arrow { font-size: 16px; color: var(--text3); margin-top: 2px; }
-
-  /* ── NOTICE MODAL ── */
-  .modal-backdrop {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 560px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  }
-  .modal-header {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .modal-title { font-size: 16px; font-weight: 500; line-height: 1.5; }
-  .modal-close {
-    background: none; border: none; cursor: pointer;
-    font-size: 20px; color: var(--text3);
-    flex-shrink: 0;
-    line-height: 1;
-    padding: 0;
-  }
-  .modal-body { padding: 1.5rem; }
-  .modal-meta { font-size: 12px; color: var(--text3); margin-bottom: 1rem; }
-  .modal-text { font-size: 14px; line-height: 1.9; color: var(--text2); white-space: pre-wrap; }
-
-  /* ── COMPLAINT FORM ── */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-  }
-  .form-note {
-    background: var(--accent-light);
-    border-left: 3px solid var(--accent2);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    padding: 0.75rem 1rem;
-    font-size: 13px;
-    color: var(--accent2);
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-  }
-  .form-group { margin-bottom: 1.25rem; }
-  .form-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    margin-bottom: 6px;
-  }
-  .form-label span { color: var(--danger); margin-left: 2px; }
-  .form-input, .form-select, .form-textarea {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 12px;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--bg);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--accent2);
-    background: var(--surface);
-  }
-  .form-textarea { resize: vertical; min-height: 120px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .form-submit {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius);
-    padding: 11px 28px;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s;
-    letter-spacing: 0.03em;
-  }
-  .form-submit:hover { background: var(--accent2); }
-  .form-success {
-    display: none;
-    background: var(--accent-light);
-    border: 1px solid var(--accent2);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    text-align: center;
-  }
-  .form-success.show { display: block; }
-  .form-success-icon { font-size: 36px; margin-bottom: 0.75rem; }
-  .form-success h3 { font-size: 16px; font-weight: 500; color: var(--accent); margin-bottom: 0.5rem; }
-  .form-success p { font-size: 13px; color: var(--text2); }
-
-  /* ── PARKING ── */
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .info-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-  }
-  .info-card-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .info-card-value {
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-  }
-  .info-card-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
-
-  .table-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-  .table-head {
-    background: var(--accent);
-    color: rgba(255,255,255,0.9);
-    padding: 0.75rem 1.25rem;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  table.fee-table { width: 100%; border-collapse: collapse; }
-  table.fee-table th {
-    background: var(--surface2);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text2);
-    padding: 10px 1.25rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  table.fee-table td {
-    padding: 10px 1.25rem;
-    font-size: 13px;
-    color: var(--text);
-    border-bottom: 1px solid var(--border);
-  }
-  table.fee-table tr:last-child td { border-bottom: none; }
-  table.fee-table tr:hover td { background: var(--surface2); }
-  .highlight-row td { font-weight: 500; color: var(--accent); }
-
-  .parking-note {
-    background: var(--gold-light);
-    border-left: 3px solid var(--gold);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    padding: 0.75rem 1rem;
-    font-size: 13px;
-    color: var(--gold);
-    line-height: 1.7;
-  }
-
-  /* ── MANAGEMENT FEE ── */
-  .fee-section-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    letter-spacing: 0.05em;
-    margin: 1.5rem 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .fee-section-title:first-child { margin-top: 0; }
-  .method-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .method-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-  }
-  .method-card-icon { font-size: 24px; margin-bottom: 0.5rem; }
-  .method-card-title { font-size: 14px; font-weight: 500; color: var(--accent); margin-bottom: 0.5rem; }
-  .method-card-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
-  .account-box {
-    background: var(--accent);
-    color: #fff;
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .account-box-label { font-size: 11px; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
-  .account-box-value { font-size: 18px; font-weight: 500; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .account-box-bank { font-size: 13px; color: rgba(255,255,255,0.65); }
-  .deadline-box {
-    background: var(--danger-light);
-    border: 1px solid rgba(138,42,42,0.2);
-    border-radius: var(--radius-lg);
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .deadline-icon { font-size: 28px; }
-  .deadline-text h4 { font-size: 14px; font-weight: 500; color: var(--danger); }
-  .deadline-text p { font-size: 13px; color: var(--text2); }
-
-  /* ── EMERGENCY ── */
-  .emergency-banner {
-    background: var(--danger);
-    color: #fff;
-    border-radius: var(--radius-lg);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .emergency-banner-icon { font-size: 22px; }
-  .emergency-banner-text { font-size: 13px; line-height: 1.6; }
-  .emergency-banner strong { font-size: 15px; display: block; }
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  .contact-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-  .contact-card-header {
-    padding: 0.75rem 1rem;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.9);
-    text-transform: uppercase;
-  }
-  .contact-card-header.green { background: var(--accent2); }
-  .contact-card-header.gold { background: var(--gold); }
-  .contact-card-header.red { background: var(--danger); }
-  .contact-card-header.gray { background: var(--text2); }
-  .contact-item {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .contact-item:last-child { border-bottom: none; }
-  .contact-name { font-size: 13px; color: var(--text); }
-  .contact-number {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    text-decoration: none;
-    letter-spacing: 0.03em;
-  }
-  .contact-number:hover { text-decoration: underline; }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--accent);
-    color: rgba(255,255,255,0.5);
-    padding: 2rem;
-    margin-top: 3rem;
-    font-size: 12px;
-    line-height: 1.8;
-  }
-  .footer-inner {
-    max-width: 960px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-  .footer-name {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 15px;
-    color: rgba(255,255,255,0.8);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .footer-right { text-align: right; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    .hero h1 { font-size: 24px; }
-    .hero-meta { gap: 1.25rem; }
-    nav a { font-size: 12px; padding: 0 10px; }
-    .logo-main { font-size: 15px; }
-    .form-row, .info-grid, .method-cards, .contact-grid { grid-template-columns: 1fr; }
-    .footer-inner { flex-direction: column; }
-    .footer-right { text-align: left; }
-  }
+:root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--text:#1a1a18;--text2:#5c5a54;--text3:#9c9a94;--accent:#1a3a2a;--accent2:#2d5c3e;--accent-light:#e8f0eb;--gold:#8a6c2a;--gold-light:#f5f0e0;--border:#e0ddd6;--danger:#8a2a2a;--danger-light:#f5e8e8;--radius:4px;--radius-lg:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+header{background:var(--accent);color:#fff;padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;flex-direction:column;gap:1px;}
+.logo-main{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:600;letter-spacing:.04em;color:#fff;}
+.logo-sub{font-size:10px;letter-spacing:.15em;color:rgba(255,255,255,.5);text-transform:uppercase;}
+nav{display:flex;gap:0;}
+nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:400;padding:0 14px;height:64px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.03em;}
+nav a:hover,nav a.active{color:#fff;border-bottom-color:rgba(255,255,255,.6);background:rgba(255,255,255,.05);}
+.admin-link{color:rgba(255,255,255,.5);text-decoration:none;font-size:11px;letter-spacing:.06em;padding:5px 12px;border:1px solid rgba(255,255,255,.2);border-radius:3px;margin-left:12px;transition:all .15s;}
+.admin-link:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);}
+.hero{background:var(--accent);color:#fff;padding:3.5rem 2rem 3rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:300px;height:300px;border:40px solid rgba(255,255,255,.04);border-radius:50%;}
+.hero::after{content:'';position:absolute;right:80px;bottom:-80px;width:200px;height:200px;border:30px solid rgba(255,255,255,.04);border-radius:50%;}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.hero-tag{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);font-size:11px;letter-spacing:.12em;padding:4px 12px;border-radius:2px;margin-bottom:1rem;color:rgba(255,255,255,.8);}
+.hero h1{font-family:'Noto Serif KR',serif;font-size:32px;font-weight:600;line-height:1.35;margin-bottom:.75rem;}
+.hero p{font-size:14px;color:rgba(255,255,255,.65);max-width:480px;line-height:1.8;}
+.hero-meta{margin-top:1.5rem;display:flex;gap:2rem;}
+.hero-meta-item{display:flex;flex-direction:column;gap:3px;}
+.hero-meta-label{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.4);text-transform:uppercase;}
+.hero-meta-value{font-size:16px;font-weight:500;color:rgba(255,255,255,.9);}
+.main{max-width:960px;margin:0 auto;padding:2rem;}
+.section{display:none;}.section.active{display:block;}
+.section-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between;}
+.section-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:600;color:var(--accent);}
+.section-count{font-size:12px;color:var(--text3);}
+.notice-list{display:flex;flex-direction:column;}
+.notice-item{background:var(--surface);border:1px solid var(--border);border-top:none;padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:1rem;cursor:pointer;transition:background .1s;}
+.notice-item:first-child{border-top:1px solid var(--border);border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.notice-item:last-child{border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+.notice-item:hover{background:var(--surface2);}
+.notice-badge{flex-shrink:0;font-size:10px;font-weight:500;letter-spacing:.05em;padding:3px 8px;border-radius:2px;margin-top:2px;}
+.badge-urgent{background:var(--danger-light);color:var(--danger);}
+.badge-general{background:var(--accent-light);color:var(--accent2);}
+.badge-facility{background:var(--gold-light);color:var(--gold);}
+.notice-content{flex:1;}.notice-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}.notice-meta{font-size:12px;color:var(--text3);}
+.notice-arrow{font-size:16px;color:var(--text3);margin-top:2px;}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;padding:2rem;}
+.modal-backdrop.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+.modal-title{font-size:16px;font-weight:500;line-height:1.5;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);flex-shrink:0;line-height:1;padding:0;}
+.modal-body{padding:1.5rem;}.modal-meta{font-size:12px;color:var(--text3);margin-bottom:1rem;}
+.modal-text{font-size:14px;line-height:1.9;color:var(--text2);white-space:pre-wrap;}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;}
+.form-note{background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;font-size:13px;color:var(--accent2);margin-bottom:1.5rem;line-height:1.6;}
+.form-group{margin-bottom:1.25rem;}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px;}
+.form-label span{color:var(--danger);margin-left:2px;}
+.form-input,.form-select,.form-textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent2);background:var(--surface);}
+.form-textarea{resize:vertical;min-height:120px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-submit{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:11px 28px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;letter-spacing:.03em;}
+.form-submit:hover{background:var(--accent2);}
+.form-submit:disabled{background:var(--text3);cursor:not-allowed;}
+.form-success{display:none;background:var(--accent-light);border:1px solid var(--accent2);border-radius:var(--radius-lg);padding:2rem;text-align:center;}
+.form-success.show{display:block;}
+.form-success-icon{font-size:36px;margin-bottom:.75rem;}
+.form-success h3{font-size:16px;font-weight:500;color:var(--accent);margin-bottom:.5rem;}
+.form-success p{font-size:13px;color:var(--text2);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;}
+.info-card-label{font-size:11px;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.info-card-value{font-size:22px;font-weight:500;color:var(--accent);font-variant-numeric:tabular-nums;}
+.info-card-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.5rem;}
+.table-head{background:var(--accent);color:rgba(255,255,255,.9);padding:.75rem 1.25rem;font-size:13px;font-weight:500;letter-spacing:.04em;}
+table.fee-table{width:100%;border-collapse:collapse;}
+table.fee-table th{background:var(--surface2);font-size:12px;font-weight:500;color:var(--text2);padding:10px 1.25rem;text-align:left;border-bottom:1px solid var(--border);}
+table.fee-table td{padding:10px 1.25rem;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);}
+table.fee-table tr:last-child td{border-bottom:none;}
+table.fee-table tr:hover td{background:var(--surface2);}
+.highlight-row td{font-weight:500;color:var(--accent);}
+.parking-note{background:var(--gold-light);border-left:3px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;font-size:13px;color:var(--gold);line-height:1.7;}
+.fee-section-title{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:.05em;margin:1.5rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.method-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.method-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;}
+.method-card-icon{font-size:24px;margin-bottom:.5rem;}
+.method-card-title{font-size:14px;font-weight:500;color:var(--accent);margin-bottom:.5rem;}
+.method-card-desc{font-size:13px;color:var(--text2);line-height:1.7;}
+.account-box{background:var(--accent);color:#fff;border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+.account-box-label{font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:6px;}
+.account-box-value{font-size:18px;font-weight:500;letter-spacing:.05em;margin-bottom:4px;}
+.account-box-bank{font-size:13px;color:rgba(255,255,255,.65);}
+.deadline-box{background:var(--danger-light);border:1px solid rgba(138,42,42,.2);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;}
+.deadline-icon{font-size:28px;}.deadline-text h4{font-size:14px;font-weight:500;color:var(--danger);}.deadline-text p{font-size:13px;color:var(--text2);}
+.emergency-banner{background:var(--danger);color:#fff;border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
+.emergency-banner-icon{font-size:22px;}.emergency-banner-text{font-size:13px;line-height:1.6;}.emergency-banner strong{font-size:15px;display:block;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.contact-card-header{padding:.75rem 1rem;font-size:12px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.9);text-transform:uppercase;}
+.contact-card-header.green{background:var(--accent2);}.contact-card-header.gold{background:var(--gold);}.contact-card-header.red{background:var(--danger);}.contact-card-header.gray{background:var(--text2);}
+.contact-item{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.contact-item:last-child{border-bottom:none;}
+.contact-name{font-size:13px;color:var(--text);}
+.contact-number{font-size:14px;font-weight:500;color:var(--accent);text-decoration:none;letter-spacing:.03em;}
+.contact-number:hover{text-decoration:underline;}
+footer{background:var(--accent);color:rgba(255,255,255,.5);padding:2rem;margin-top:3rem;font-size:12px;line-height:1.8;}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;}
+.footer-name{font-family:'Noto Serif KR',serif;font-size:15px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:4px;}
+.footer-right{text-align:right;}
+@media(max-width:640px){.hero h1{font-size:24px;}.hero-meta{gap:1.25rem;}nav a{font-size:12px;padding:0 10px;}.logo-main{font-size:15px;}.form-row,.info-grid,.method-cards,.contact-grid{grid-template-columns:1fr;}.footer-inner{flex-direction:column;}.footer-right{text-align:left;}}
 </style>
 </head>
 <body>
@@ -587,11 +126,11 @@
       <span class="logo-sub">Urban Center Plaza · Management Office</span>
     </div>
     <nav>
-      <a href="#" class="active" onclick="showSection('notice', this)">공지사항</a>
-      <a href="#" onclick="showSection('complaint', this)">민원접수</a>
-      <a href="#" onclick="showSection('parking', this)">주차안내</a>
-      <a href="#" onclick="showSection('fee', this)">관리비</a>
-      <a href="#" onclick="showSection('emergency', this)">비상연락</a>
+      <a href="#" class="active" onclick="showSection('notice',this)">공지사항</a>
+      <a href="#" onclick="showSection('complaint',this)">민원접수</a>
+      <a href="#" onclick="showSection('parking',this)">주차안내</a>
+      <a href="#" onclick="showSection('fee',this)">관리비</a>
+      <a href="#" onclick="showSection('emergency',this)">비상연락</a>
       <a href="admin.html" class="admin-link">관리자</a>
     </nav>
   </div>
@@ -603,170 +142,45 @@
     <h1>어반센터프라자<br>관리사무소</h1>
     <p>불편사항은 아래 민원접수를 이용해 주세요.</p>
     <div class="hero-meta">
-      <div class="hero-meta-item">
-        <span class="hero-meta-label">총 호실</span>
-        <span class="hero-meta-value">122세대</span>
-      </div>
-      <div class="hero-meta-item">
-        <span class="hero-meta-label">주차면수</span>
-        <span class="hero-meta-value">115면</span>
-      </div>
-      <div class="hero-meta-item">
-        <span class="hero-meta-label">운영시간</span>
-        <span class="hero-meta-value">08:30 – 17:30</span>
-      </div>
+      <div class="hero-meta-item"><span class="hero-meta-label">총 호실</span><span class="hero-meta-value">122세대</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-label">주차면수</span><span class="hero-meta-value">115면</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-label">운영시간</span><span class="hero-meta-value">08:30 – 17:30</span></div>
     </div>
   </div>
 </div>
 
 <main class="main">
 
-  <!-- ── 공지사항 ── -->
+  <!-- 공지사항 -->
   <section id="notice" class="section active">
     <div class="section-header">
       <span class="section-title">공지사항</span>
-      <span class="section-count">총 6건</span>
+      <span class="section-count" id="noticeCount">불러오는 중...</span>
     </div>
-    <div class="notice-list">
-      <div class="notice-item" onclick="openNotice(this)" data-title="[긴급] 지하 1층 배수관 공사 안내" data-date="2025-06-04" data-type="긴급" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-오는 6월 10일(화) 오전 9시부터 오후 6시까지 지하 1층 배수관 보수공사가 진행될 예정입니다.
-
-공사 중에는 지하 1층 일부 구역의 출입이 제한될 수 있으며, 소음이 발생할 수 있습니다.
-
-해당 구역 입주자분들께서는 업무에 차질이 없도록 미리 준비해 주시기 바랍니다.
-
-불편을 드려 대단히 죄송합니다.">
-        <span class="notice-badge badge-urgent">긴급</span>
-        <div class="notice-content">
-          <div class="notice-title">[긴급] 지하 1층 배수관 공사 안내</div>
-          <div class="notice-meta">2025-06-04 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
-      <div class="notice-item" onclick="openNotice(this)" data-title="2025년 6월 정기 소방점검 실시 안내" data-date="2025-05-28" data-type="시설" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-관련 법령에 따라 아래와 같이 정기 소방점검이 실시될 예정이오니, 입주자 여러분의 적극적인 협조를 부탁드립니다.
-
-■ 점검 일시: 2025년 6월 20일(금) 오전 10시 ~ 오후 3시
-■ 점검 범위: 건물 전 층 소화기, 스프링클러, 비상구 점검
-■ 점검 기관: (주)안전소방설비
-
-점검 당일 각 호실 내 소화기 위치를 확인하기 쉬운 곳에 배치해 주시면 원활한 점검이 가능합니다.">
-        <span class="notice-badge badge-facility">시설</span>
-        <div class="notice-content">
-          <div class="notice-title">2025년 6월 정기 소방점검 실시 안내</div>
-          <div class="notice-meta">2025-05-28 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
-      <div class="notice-item" onclick="openNotice(this)" data-title="주차장 CCTV 교체 완료 안내" data-date="2025-05-20" data-type="일반" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-지난 5월 19일, 주차장 내 노후화된 CCTV 카메라 8대를 고화질(4K) 제품으로 교체하였습니다.
-
-이번 교체로 인해 주차장 내 영상 품질이 크게 향상되었으며, 야간 촬영 성능 또한 개선되었습니다.
-
-입주자 여러분의 재산 보호에 더욱 만전을 기하겠습니다.">
-        <span class="notice-badge badge-general">일반</span>
-        <div class="notice-content">
-          <div class="notice-title">주차장 CCTV 교체 완료 안내</div>
-          <div class="notice-meta">2025-05-20 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
-      <div class="notice-item" onclick="openNotice(this)" data-title="5월 관리단집회 결과 안내" data-date="2025-04-25" data-type="일반" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-지난 4월 23일(수) 개최된 제2기 관리단집회 결과를 아래와 같이 안내드립니다.
-
-■ 관리단 의장: 원형득 (재선, 32표)
-■ 관리위원회 구성: 11인 위원 선출 완료
-■ 관리규약 개정: 원안 가결
-
-향후 관련 사항은 공지사항을 통해 안내드리겠습니다.
-입주자 여러분의 적극적인 참여에 감사드립니다.">
-        <span class="notice-badge badge-general">일반</span>
-        <div class="notice-content">
-          <div class="notice-title">제2기 관리단집회 결과 안내</div>
-          <div class="notice-meta">2025-04-25 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
-      <div class="notice-item" onclick="openNotice(this)" data-title="엘리베이터 정기점검 일정 안내" data-date="2025-04-10" data-type="시설" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-아래 일정으로 엘리베이터 정기점검이 진행됩니다.
-
-■ 점검 일시: 2025년 4월 18일(금) 오전 9시 ~ 오후 12시
-■ 점검 대상: 1호기, 2호기 (점검 중 운행 중단)
-■ 비상 이동: 점검 시간 중 계단 이용 바랍니다.
-
-짧은 불편이지만 안전한 운행을 위한 필수 점검이오니 양해 부탁드립니다.">
-        <span class="notice-badge badge-facility">시설</span>
-        <div class="notice-content">
-          <div class="notice-title">엘리베이터 정기점검 일정 안내</div>
-          <div class="notice-meta">2025-04-10 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
-      <div class="notice-item" onclick="openNotice(this)" data-title="2025년 관리비 납부 안내" data-date="2025-01-02" data-type="일반" data-body="안녕하세요, 어반센터프라자 관리사무소입니다.
-
-2025년도 관리비 납부 안내를 드립니다.
-
-■ 납부 기한: 매월 25일까지
-■ 납부 계좌: 농협은행 302-XXXX-XXXX-XX (예금주: 어반센터프라자관리단)
-■ 연체 시 월 2% 연체이자 부과
-
-관리비 문의는 관리사무소(031-XXX-XXXX)로 연락주시기 바랍니다.">
-        <span class="notice-badge badge-general">일반</span>
-        <div class="notice-content">
-          <div class="notice-title">2025년 관리비 납부 안내</div>
-          <div class="notice-meta">2025-01-02 · 관리사무소</div>
-        </div>
-        <span class="notice-arrow">›</span>
-      </div>
+    <div class="notice-list" id="noticeList">
+      <div style="padding:2rem;text-align:center;color:var(--text3);font-size:14px;">공지사항을 불러오는 중...</div>
     </div>
   </section>
 
-  <!-- ── 민원접수 ── -->
+  <!-- 민원접수 -->
   <section id="complaint" class="section">
-    <div class="section-header">
-      <span class="section-title">민원 / 건의 접수</span>
-    </div>
+    <div class="section-header"><span class="section-title">민원 / 건의 접수</span></div>
     <div class="form-card" id="complaintForm">
-      <div class="form-note">
-        접수된 민원은 영업일 기준 1~2일 내 담당자가 확인 후 연락드립니다.<br>
-        긴급 사항은 비상연락망을 이용해 주세요.
-      </div>
+      <div class="form-note">접수된 민원은 영업일 기준 1~2일 내 담당자가 확인 후 연락드립니다.<br>긴급 사항은 비상연락망을 이용해 주세요.</div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">호실 번호<span>*</span></label>
-          <input type="text" class="form-input" id="room" placeholder="예) 3층 301호">
-        </div>
-        <div class="form-group">
-          <label class="form-label">연락처<span>*</span></label>
-          <input type="tel" class="form-input" id="phone" placeholder="010-XXXX-XXXX">
-        </div>
+        <div class="form-group"><label class="form-label">호실 번호<span>*</span></label><input type="text" class="form-input" id="room" placeholder="예) 3층 301호"></div>
+        <div class="form-group"><label class="form-label">연락처<span>*</span></label><input type="tel" class="form-input" id="phone" placeholder="010-XXXX-XXXX"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">민원 유형<span>*</span></label>
+      <div class="form-group"><label class="form-label">민원 유형<span>*</span></label>
         <select class="form-select" id="category">
           <option value="">선택해 주세요</option>
-          <option>시설 고장 / 수리 요청</option>
-          <option>소음 / 진동</option>
-          <option>청소 / 위생</option>
-          <option>주차 문제</option>
-          <option>관리비 문의</option>
-          <option>기타 건의사항</option>
+          <option>시설 고장 / 수리 요청</option><option>소음 / 진동</option><option>청소 / 위생</option>
+          <option>주차 문제</option><option>관리비 문의</option><option>기타 건의사항</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">제목<span>*</span></label>
-        <input type="text" class="form-input" id="subject" placeholder="민원 제목을 간략히 입력해 주세요">
-      </div>
-      <div class="form-group">
-        <label class="form-label">내용<span>*</span></label>
-        <textarea class="form-textarea" id="body" placeholder="불편사항이나 건의사항을 상세히 적어 주세요."></textarea>
-      </div>
-      <button class="form-submit" onclick="submitForm()">접수하기</button>
+      <div class="form-group"><label class="form-label">제목<span>*</span></label><input type="text" class="form-input" id="subject" placeholder="민원 제목을 간략히 입력해 주세요"></div>
+      <div class="form-group"><label class="form-label">내용<span>*</span></label><textarea class="form-textarea" id="body" placeholder="불편사항이나 건의사항을 상세히 적어 주세요."></textarea></div>
+      <button class="form-submit" id="submitBtn" onclick="submitForm()">접수하기</button>
     </div>
     <div class="form-success" id="formSuccess">
       <div class="form-success-icon">✓</div>
@@ -775,196 +189,83 @@
     </div>
   </section>
 
-  <!-- ── 주차 안내 ── -->
+  <!-- 주차안내 -->
   <section id="parking" class="section">
-    <div class="section-header">
-      <span class="section-title">주차 안내 및 요금표</span>
-    </div>
+    <div class="section-header"><span class="section-title">주차 안내 및 요금표</span></div>
     <div class="info-grid">
-      <div class="info-card">
-        <div class="info-card-label">총 주차면수</div>
-        <div class="info-card-value">115면</div>
-        <div class="info-card-sub">지하 1~2층 + 지상</div>
-      </div>
-      <div class="info-card">
-        <div class="info-card-label">주차장 운영</div>
-        <div class="info-card-value">24시간</div>
-        <div class="info-card-sub">연중 무휴</div>
-      </div>
+      <div class="info-card"><div class="info-card-label">총 주차면수</div><div class="info-card-value">115면</div><div class="info-card-sub">지하 1~2층 + 지상</div></div>
+      <div class="info-card"><div class="info-card-label">주차장 운영</div><div class="info-card-value">24시간</div><div class="info-card-sub">연중 무휴</div></div>
     </div>
-
     <div class="table-card">
       <div class="table-head">방문객 주차 요금표</div>
-      <table class="fee-table">
-        <thead>
-          <tr>
-            <th>구분</th>
-            <th>요금</th>
-            <th>비고</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>최초 30분</td><td>무료</td><td>-</td></tr>
-          <tr><td>30분 초과 ~ 1시간</td><td>1,000원</td><td>30분당</td></tr>
-          <tr><td>1시간 초과</td><td>500원</td><td>10분당</td></tr>
-          <tr class="highlight-row"><td>일 최대 요금</td><td>10,000원</td><td>24시간 기준</td></tr>
-        </tbody>
-      </table>
+      <table class="fee-table"><thead><tr><th>구분</th><th>요금</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>최초 30분</td><td>무료</td><td>-</td></tr>
+        <tr><td>30분 초과 ~ 1시간</td><td>1,000원</td><td>30분당</td></tr>
+        <tr><td>1시간 초과</td><td>500원</td><td>10분당</td></tr>
+        <tr class="highlight-row"><td>일 최대 요금</td><td>10,000원</td><td>24시간 기준</td></tr>
+      </tbody></table>
     </div>
-
     <div class="table-card">
       <div class="table-head">입주자 정기권 요금표</div>
-      <table class="fee-table">
-        <thead>
-          <tr>
-            <th>종류</th>
-            <th>월 요금</th>
-            <th>차량 수</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>1구좌 (1대)</td><td>50,000원</td><td>1대</td></tr>
-          <tr><td>2구좌 (2대)</td><td>90,000원</td><td>2대</td></tr>
-          <tr><td>장애인 차량</td><td>30,000원</td><td>1대</td></tr>
-        </tbody>
-      </table>
+      <table class="fee-table"><thead><tr><th>종류</th><th>월 요금</th><th>차량 수</th></tr></thead>
+      <tbody>
+        <tr><td>1구좌 (1대)</td><td>50,000원</td><td>1대</td></tr>
+        <tr><td>2구좌 (2대)</td><td>90,000원</td><td>2대</td></tr>
+        <tr><td>장애인 차량</td><td>30,000원</td><td>1대</td></tr>
+      </tbody></table>
     </div>
-
-    <div class="parking-note">
-      ⚠ 정기권 신청 및 해지는 관리사무소 방문 또는 비상연락망으로 문의 바랍니다.<br>
-      ⚠ 이중주차, 소화전 주변, 장애인 구역 불법 주차 시 즉시 견인 조치됩니다.<br>
-      ⚠ 차량 내 귀중품 보관 및 도난 피해에 대해 관리사무소는 책임지지 않습니다.
-    </div>
+    <div class="parking-note">⚠ 정기권 신청 및 해지는 관리사무소 방문 또는 비상연락망으로 문의 바랍니다.<br>⚠ 이중주차, 소화전 주변, 장애인 구역 불법 주차 시 즉시 견인 조치됩니다.<br>⚠ 차량 내 귀중품 보관 및 도난 피해에 대해 관리사무소는 책임지지 않습니다.</div>
   </section>
 
-  <!-- ── 관리비 ── -->
+  <!-- 관리비 -->
   <section id="fee" class="section">
-    <div class="section-header">
-      <span class="section-title">관리비 납부 안내</span>
-    </div>
-
-    <div class="deadline-box" style="margin-bottom:1.5rem;">
-      <div class="deadline-icon">📅</div>
-      <div class="deadline-text">
-        <h4>납부 기한: 매월 25일까지</h4>
-        <p>기한 초과 시 연체이자(월 2%)가 부과됩니다.</p>
-      </div>
-    </div>
-
+    <div class="section-header"><span class="section-title">관리비 납부 안내</span></div>
+    <div class="deadline-box" style="margin-bottom:1.5rem;"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 매월 25일까지</h4><p>기한 초과 시 연체이자(월 2%)가 부과됩니다.</p></div></div>
     <div class="fee-section-title">납부 계좌</div>
-    <div class="account-box">
-      <div class="account-box-label">예금주</div>
-      <div class="account-box-value">어반센터프라자 관리단</div>
-      <div class="account-box-bank">농협은행 · 302-XXXX-XXXX-XX</div>
-    </div>
-
+    <div class="account-box"><div class="account-box-label">예금주</div><div class="account-box-value">어반센터프라자 관리단</div><div class="account-box-bank">농협은행 · 302-XXXX-XXXX-XX</div></div>
     <div class="fee-section-title">납부 방법</div>
     <div class="method-cards">
-      <div class="method-card">
-        <div class="method-card-icon">🏦</div>
-        <div class="method-card-title">계좌이체</div>
-        <div class="method-card-desc">위 계좌로 직접 이체 시, 반드시 호실 번호를 입금자명에 포함해 주세요.<br>예) <em>301호홍길동</em></div>
-      </div>
-      <div class="method-card">
-        <div class="method-card-icon">🏢</div>
-        <div class="method-card-title">관리사무소 방문</div>
-        <div class="method-card-desc">평일 08:30 ~ 17:30에 관리사무소를 직접 방문하여 납부 가능합니다. (현금/카드)</div>
-      </div>
+      <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체</div><div class="method-card-desc">위 계좌로 직접 이체 시, 반드시 호실 번호를 입금자명에 포함해 주세요.<br>예) <em>301호홍길동</em></div></div>
+      <div class="method-card"><div class="method-card-icon">🏢</div><div class="method-card-title">관리사무소 방문</div><div class="method-card-desc">평일 08:30 ~ 17:30에 관리사무소를 직접 방문하여 납부 가능합니다. (현금/카드)</div></div>
     </div>
-
     <div class="fee-section-title">관리비 항목</div>
-    <div class="table-card">
-      <table class="fee-table">
-        <thead>
-          <tr>
-            <th>항목</th>
-            <th>내용</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>일반관리비</td><td>관리인력, 행정 운영비</td></tr>
-          <tr><td>청소비</td><td>건물 공용 구역 청소</td></tr>
-          <tr><td>소독비</td><td>분기별 방역 및 소독</td></tr>
-          <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지</td></tr>
-          <tr><td>공용 전기료</td><td>공용 조명, 전기설비</td></tr>
-          <tr><td>공용 수도료</td><td>공용 수도 사용료</td></tr>
-          <tr><td>장기수선충당금</td><td>건물 장기 수선 적립</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="form-note" style="margin-top:0;">
-      관리비 명세서는 매월 초 각 호실 우편함에 발송됩니다.<br>
-      분실 또는 문의사항은 관리사무소로 연락주시기 바랍니다.
-    </div>
+    <div class="table-card"><table class="fee-table"><thead><tr><th>항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>일반관리비</td><td>관리인력, 행정 운영비</td></tr><tr><td>청소비</td><td>건물 공용 구역 청소</td></tr>
+      <tr><td>소독비</td><td>분기별 방역 및 소독</td></tr><tr><td>승강기 유지비</td><td>엘리베이터 점검·유지</td></tr>
+      <tr><td>공용 전기료</td><td>공용 조명, 전기설비</td></tr><tr><td>공용 수도료</td><td>공용 수도 사용료</td></tr>
+      <tr><td>장기수선충당금</td><td>건물 장기 수선 적립</td></tr>
+    </tbody></table></div>
+    <div class="form-note" style="margin-top:0;">관리비 명세서는 매월 초 각 호실 우편함에 발송됩니다.<br>분실 또는 문의사항은 관리사무소로 연락주시기 바랍니다.</div>
   </section>
 
-  <!-- ── 비상연락망 ── -->
+  <!-- 비상연락망 -->
   <section id="emergency" class="section">
-    <div class="section-header">
-      <span class="section-title">비상연락망</span>
-    </div>
-
-    <div class="emergency-banner">
-      <div class="emergency-banner-icon">🚨</div>
-      <div class="emergency-banner-text">
-        <strong>생명·재산 위협 시 즉시 119 / 112 신고</strong>
-        아래 연락처는 건물 내 시설 문제 등 비응급 상황에 이용해 주세요.
-      </div>
-    </div>
-
+    <div class="section-header"><span class="section-title">비상연락망</span></div>
+    <div class="emergency-banner"><div class="emergency-banner-icon">🚨</div><div class="emergency-banner-text"><strong>생명·재산 위협 시 즉시 119 / 112 신고</strong>아래 연락처는 건물 내 시설 문제 등 비응급 상황에 이용해 주세요.</div></div>
     <div class="contact-grid">
       <div class="contact-card">
         <div class="contact-card-header green">관리사무소</div>
-        <div class="contact-item">
-          <span class="contact-name">관리사무소 (주간)</span>
-          <a href="tel:031-298-9086" class="contact-number">031-298-9086</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">관리소장 (긴급)</span>
-          <a href="tel:010-9374-8444" class="contact-number">010-9374-8444</a>
-        </div>
+        <div class="contact-item"><span class="contact-name">관리사무소 (주간)</span><a href="tel:031-298-9086" class="contact-number">031-298-9086</a></div>
+        <div class="contact-item"><span class="contact-name">관리소장 (긴급)</span><a href="tel:010-9374-8444" class="contact-number">010-9374-8444</a></div>
       </div>
       <div class="contact-card">
         <div class="contact-card-header gold">시설 / 설비</div>
-        <div class="contact-item">
-          <span class="contact-name">승강기 담당</span>
-          <a href="tel:031-548-1338" class="contact-number">031-548-1338</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">소방 담당</span>
-          <a href="tel:010-3319-5343" class="contact-number">010-3319-5343</a>
-        </div>
+        <div class="contact-item"><span class="contact-name">승강기 담당</span><a href="tel:031-548-1338" class="contact-number">031-548-1338</a></div>
+        <div class="contact-item"><span class="contact-name">소방 담당</span><a href="tel:010-3319-5343" class="contact-number">010-3319-5343</a></div>
       </div>
       <div class="contact-card">
         <div class="contact-card-header red">응급 / 재난</div>
-        <div class="contact-item">
-          <span class="contact-name">화재·응급 (119)</span>
-          <a href="tel:119" class="contact-number">119</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">범죄·사고 (112)</span>
-          <a href="tel:112" class="contact-number">112</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">가스 긴급</span>
-          <a href="tel:1544-4500" class="contact-number">1544-4500</a>
-        </div>
+        <div class="contact-item"><span class="contact-name">화재·응급 (119)</span><a href="tel:119" class="contact-number">119</a></div>
+        <div class="contact-item"><span class="contact-name">범죄·사고 (112)</span><a href="tel:112" class="contact-number">112</a></div>
+        <div class="contact-item"><span class="contact-name">가스 긴급</span><a href="tel:1544-4500" class="contact-number">1544-4500</a></div>
       </div>
       <div class="contact-card">
         <div class="contact-card-header gray">지자체 / 기관</div>
-        <div class="contact-item">
-          <span class="contact-name">화성시청</span>
-          <a href="tel:031-369-2000" class="contact-number">031-369-2000</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">봉담읍사무소</span>
-          <a href="tel:031-369-5500" class="contact-number">031-369-5500</a>
-        </div>
-        <div class="contact-item">
-          <span class="contact-name">한국전력 (정전)</span>
-          <a href="tel:123" class="contact-number">123</a>
-        </div>
+        <div class="contact-item"><span class="contact-name">화성시청</span><a href="tel:031-369-2000" class="contact-number">031-369-2000</a></div>
+        <div class="contact-item"><span class="contact-name">봉담읍사무소</span><a href="tel:031-369-5500" class="contact-number">031-369-5500</a></div>
+        <div class="contact-item"><span class="contact-name">한국전력 (정전)</span><a href="tel:123" class="contact-number">123</a></div>
       </div>
     </div>
   </section>
@@ -973,33 +274,88 @@
 
 <footer>
   <div class="footer-inner">
-    <div>
-      <div class="footer-name">어반센터프라자 관리사무소</div>
-      경기도 화성시 봉담읍<br>
-      운영시간: 평일 08:30 – 17:30 (토·일·공휴일 휴무)
-    </div>
-    <div class="footer-right">
-      주차 115면<br>
-      © 2025 어반센터프라자
-    </div>
+    <div><div class="footer-name">어반센터프라자 관리사무소</div>경기도 화성시 봉담읍<br>운영시간: 평일 08:30 – 17:30 (토·일·공휴일 휴무)</div>
+    <div class="footer-right">주차 115면<br>© 2025 어반센터프라자</div>
   </div>
 </footer>
 
-<!-- 공지 모달 -->
-<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div id="modalTitle" class="modal-title"></div>
-      </div>
-      <button class="modal-close" onclick="closeModalDirect()">×</button>
-    </div>
-    <div class="modal-body">
-      <div id="modalMeta" class="modal-meta"></div>
-      <div id="modalBody" class="modal-text"></div>
-    </div>
+    <div class="modal-header"><div id="modalTitle" class="modal-title"></div><button class="modal-close" onclick="document.getElementById('modalBackdrop').classList.remove('open')">×</button></div>
+    <div class="modal-body"><div id="modalMeta" class="modal-meta"></div><div id="modalBody" class="modal-text"></div></div>
   </div>
 </div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ★ Firebase 설정 (본인 프로젝트 config로 교체하세요)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── 공지사항 실시간 로드 ──
+const noticesQ = query(collection(db, 'notices'), orderBy('date', 'desc'));
+onSnapshot(noticesQ, (snap) => {
+  const list = document.getElementById('noticeList');
+  const count = document.getElementById('noticeCount');
+  if (snap.empty) {
+    list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3);font-size:14px;">등록된 공지사항이 없습니다.</div>';
+    count.textContent = '총 0건';
+    return;
+  }
+  count.textContent = `총 ${snap.size}건`;
+  const typeMap = { '긴급':'badge-urgent', '시설':'badge-facility', '일반':'badge-general' };
+  list.innerHTML = snap.docs.map((doc, i) => {
+    const n = doc.data();
+    const isFirst = i === 0, isLast = i === snap.size - 1;
+    const style = isFirst && isLast ? 'border-radius:var(--radius-lg);border-top:1px solid var(--border);'
+      : isFirst ? 'border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-top:1px solid var(--border);'
+      : isLast ? 'border-radius:0 0 var(--radius-lg) var(--radius-lg);' : '';
+    const body = (n.body||'').replace(/"/g,'&quot;');
+    return `<div class="notice-item" style="${style}" onclick="openNotice('${(n.title||'').replace(/'/g,"\\'")}','${n.date||''}','${body}')">
+      <span class="notice-badge ${typeMap[n.type]||'badge-general'}">${n.type||'일반'}</span>
+      <div class="notice-content"><div class="notice-title">${n.title||''}</div><div class="notice-meta">${n.date||''} · 관리사무소</div></div>
+      <span class="notice-arrow">›</span>
+    </div>`;
+  }).join('');
+});
+
+// ── 민원 접수 → Firebase 저장 ──
+window.submitForm = async function() {
+  const room = document.getElementById('room').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const cat = document.getElementById('category').value;
+  const subj = document.getElementById('subject').value.trim();
+  const body = document.getElementById('body').value.trim();
+  if (!room || !phone || !cat || !subj || !body) { alert('필수 항목(*)을 모두 입력해 주세요.'); return; }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = '접수 중...';
+  try {
+    await addDoc(collection(db, 'complaints'), {
+      room, phone, category: cat, subject: subj, body,
+      date: new Date().toISOString().slice(0,10),
+      status: '신규', assignee: '', memo: '', resolved: false,
+      createdAt: new Date()
+    });
+    document.getElementById('complaintForm').style.display = 'none';
+    document.getElementById('formSuccess').classList.add('show');
+  } catch(e) {
+    alert('접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    btn.disabled = false; btn.textContent = '접수하기';
+  }
+};
+</script>
 
 <script>
 function showSection(id, el) {
@@ -1009,35 +365,11 @@ function showSection(id, el) {
   if (el) el.classList.add('active');
   return false;
 }
-
-function openNotice(el) {
-  document.getElementById('modalTitle').textContent = el.dataset.title;
-  document.getElementById('modalMeta').textContent = el.dataset.date + ' · 관리사무소';
-  document.getElementById('modalBody').textContent = el.dataset.body;
+function openNotice(title, date, body) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMeta').textContent = date + ' · 관리사무소';
+  document.getElementById('modalBody').textContent = body;
   document.getElementById('modalBackdrop').classList.add('open');
-}
-
-function closeModal(e) {
-  if (e.target === document.getElementById('modalBackdrop'))
-    document.getElementById('modalBackdrop').classList.remove('open');
-}
-
-function closeModalDirect() {
-  document.getElementById('modalBackdrop').classList.remove('open');
-}
-
-function submitForm() {
-  const room = document.getElementById('room').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const cat = document.getElementById('category').value;
-  const subj = document.getElementById('subject').value.trim();
-  const body = document.getElementById('body').value.trim();
-  if (!room || !phone || !cat || !subj || !body) {
-    alert('필수 항목(*)을 모두 입력해 주세요.');
-    return;
-  }
-  document.getElementById('complaintForm').style.display = 'none';
-  document.getElementById('formSuccess').classList.add('show');
 }
 </script>
 </body>
