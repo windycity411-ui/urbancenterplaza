@@ -534,6 +534,9 @@ window.renderBoard = function(){
       </div>
     </div>`).join('');
 };
+
+// 민원 접수
+window.submitForm = async function(){
   const room=document.getElementById('room').value.trim();
   const phone=document.getElementById('phone').value.trim();
   const cat=document.getElementById('category').value;
