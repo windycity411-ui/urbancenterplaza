@@ -179,7 +179,101 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .cal-empty{font-size:13px;color:var(--text3);text-align:center;padding:1.5rem 0;}
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#fff;padding:12px 20px;border-radius:var(--radius-lg);font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:all .25s;z-index:999;}
 .toast.show{transform:translateY(0);opacity:1;}
-@media(max-width:768px){.stat-grid{grid-template-columns:1fr 1fr;}.adm-sidebar{display:none;}}
+@media(max-width:768px){
+  /* ── 통계 그리드 ── */
+  .stat-grid{grid-template-columns:1fr 1fr;}
+
+  /* ── 사이드바 숨김 ── */
+  .adm-sidebar{display:none;}
+
+  /* ── 헤더 ── */
+  .adm-header{padding:0 1rem;height:50px;}
+  .adm-logo{font-size:14px;}
+  .adm-user{display:none;}
+  .adm-logout{font-size:11px;padding:4px 8px;}
+
+  /* ── 콘텐츠 영역 ── */
+  .adm-content{padding:1rem .875rem 80px;}
+  .adm-page-title{font-size:16px;margin-bottom:1rem;padding-bottom:.75rem;flex-wrap:wrap;gap:.5rem;}
+  .adm-page-title .btn{font-size:11px;padding:4px 8px;}
+
+  /* ── 테이블 → 카드 방식 ── */
+  .table-card{border-radius:var(--radius-lg);}
+  .table-toolbar{flex-wrap:wrap;gap:.5rem;padding:.75rem 1rem;}
+  .toolbar-right{width:100%;display:flex;flex-wrap:wrap;gap:.5rem;}
+  .search-input{width:100%;}
+  table.adm-table thead{display:none;}
+  table.adm-table tbody tr{display:block;border-bottom:1px solid var(--border);padding:.75rem 1rem;}
+  table.adm-table tbody tr:last-child{border-bottom:none;}
+  table.adm-table td{display:block;padding:2px 0;border:none;font-size:13px;}
+  table.adm-table td:before{content:attr(data-label);font-size:11px;color:var(--text3);display:block;margin-bottom:1px;}
+  table.adm-table td[style*="white-space:nowrap"]{white-space:normal !important;}
+
+  /* ── 필터 ── */
+  .filter-select{font-size:12px;padding:6px 8px;}
+
+  /* ── 모달 ── */
+  .modal-backdrop{padding:0;align-items:flex-end;}
+  .modal{border-radius:16px 16px 0 0;max-height:90vh;max-width:100%;}
+  .modal-header{padding:1rem 1.25rem .875rem;}
+  .modal-body{padding:1rem 1.25rem;}
+  .modal-footer{padding:.875rem 1.25rem;}
+  .modal-form-input,.modal-form-select,.modal-form-textarea{font-size:16px;}
+
+  /* ── 직원 현황 카드 ── */
+  .staff-grid{grid-template-columns:1fr 1fr;}
+
+  /* ── 호실 카드 ── */
+  .unit-cards{grid-template-columns:repeat(3,1fr);}
+  .unit-card{padding:.75rem .625rem;}
+  .unit-num{font-size:11px;}
+  .unit-name{font-size:13px;}
+  .unit-floor-tabs{gap:3px;}
+  .unit-floor-tab{padding:4px 8px;font-size:11px;}
+
+  /* ── 업무/민원 아이템 ── */
+  .task-item{flex-direction:column;gap:.75rem;}
+  .task-item-right{flex-direction:row;align-items:center;justify-content:flex-end;flex-wrap:wrap;}
+  .my-complaint-item{flex-direction:column;gap:.75rem;}
+  .mci-right{flex-direction:row;align-items:center;gap:.5rem;}
+
+  /* ── 로그 ── */
+  .log-item{flex-wrap:wrap;}
+  .log-badge{margin-top:4px;}
+
+  /* ── 캘린더 ── */
+  .cal-day{min-height:52px;padding:4px;}
+  .cal-day-num{font-size:11px;}
+  .cal-dot{font-size:8px;padding:1px 3px;}
+  .cal-dow{font-size:10px;}
+
+  /* ── 하단 탭바 ── */
+  .mobile-bottom-nav{
+    display:flex !important;
+    position:fixed;bottom:0;left:0;right:0;z-index:200;
+    background:var(--surface);border-top:1px solid var(--border);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mobile-bottom-nav-inner{
+    display:grid;width:100%;
+  }
+}
+
+@media(min-width:769px){
+  .mobile-bottom-nav{display:none !important;}
+}
+
+/* ── 하단 탭바 공통 스타일 ── */
+.mobile-bottom-nav{display:none;}
+.mbn-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 4px 6px;gap:2px;cursor:pointer;border:none;background:none;
+  color:var(--text3);font-family:'Noto Sans KR',sans-serif;font-size:9px;
+  font-weight:500;transition:color .15s;flex:1;
+}
+.mbn-item.active{color:var(--accent);}
+.mbn-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.mbn-badge{position:absolute;top:4px;right:calc(50% - 18px);background:var(--danger);color:#fff;font-size:9px;min-width:16px;height:16px;border-radius:8px;text-align:center;line-height:16px;padding:0 3px;}
 </style>
 </head>
 <body>
@@ -569,6 +663,11 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <button class="btn btn-primary" onclick="savePassword()">변경</button>
     </div>
   </div>
+</div>
+
+<!-- 모바일 하단 탭바 -->
+<div class="mobile-bottom-nav" id="mobileBottomNav">
+  <div class="mobile-bottom-nav-inner" id="mobileBottomNavInner"></div>
 </div>
 
 <!-- 민원 알림 팝업 -->
@@ -1044,6 +1143,14 @@ function buildSidebar(){
       <div class="sidebar-item" id="sb-users" onclick="gotoSection('users')">👤 계정 목록</div>
       <div class="sidebar-section">바로가기</div>
       <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
+    // 관리소장 모바일 탭바
+    buildMobileNav([
+      {id:'dashboard', icon:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>', label:'홈'},
+      {id:'complaints', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', label:'민원', badge:true},
+      {id:'tasks', icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>', label:'업무'},
+      {id:'units', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>', label:'호실'},
+      {id:'staffstatus', icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', label:'직원'},
+    ]);
   } else {
     sb.innerHTML=`
       <div class="sidebar-section">내 업무</div>
@@ -1053,7 +1160,24 @@ function buildSidebar(){
       <div class="sidebar-item" id="sb-myaccount" onclick="gotoSection('myaccount')">🔐 내 계정</div>
       <div class="sidebar-section">바로가기</div>
       <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
+    // 직원 모바일 탭바
+    buildMobileNav([
+      {id:'mycomplaints', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', label:'민원', badge:true},
+      {id:'mytasks', icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>', label:'내 업무'},
+      {id:'myaccount', icon:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', label:'내 계정'},
+    ]);
   }
+}
+
+function buildMobileNav(items){
+  const inner = document.getElementById('mobileBottomNavInner');
+  inner.style.gridTemplateColumns = `repeat(${items.length},1fr)`;
+  inner.innerHTML = items.map(item => `
+    <button class="mbn-item" id="mbn-${item.id}" onclick="gotoSection('${item.id}')" style="position:relative;">
+      <svg viewBox="0 0 24 24">${item.icon}</svg>
+      ${item.label}
+      ${item.badge ? `<span class="mbn-badge" id="mbnBadge" style="display:none;">0</span>` : ''}
+    </button>`).join('');
 }
 
 function initSelects(){
@@ -1071,9 +1195,12 @@ function initSelects(){
 function gotoSection(id){
   document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.mbn-item').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('active');
   const sb = document.getElementById('sb-'+id);
   if(sb) sb.classList.add('active');
+  const mbn = document.getElementById('mbn-'+id);
+  if(mbn) mbn.classList.add('active');
   if(id==='dashboard') renderDashboard();
   if(id==='staffstatus') renderStaffStatus();
   if(id==='complaints') renderComplaintTable();
@@ -1085,6 +1212,7 @@ function gotoSection(id){
   if(id==='mycomplaints') renderMyComplaints();
   if(id==='mytasks') renderMyTasks();
   if(id==='myaccount') renderMyAccount();
+  window.scrollTo(0,0);
 }
 
 function updateBadge(){
@@ -1094,6 +1222,12 @@ function updateBadge(){
     : c.filter(x=>x.assignee===currentUser&&!x.resolved).length;
   const el = document.getElementById('sidebarBadge');
   if(el) el.textContent = count;
+  // 모바일 배지
+  const mbnBadge = document.getElementById('mbnBadge');
+  if(mbnBadge){
+    mbnBadge.textContent = count;
+    mbnBadge.style.display = count > 0 ? 'block' : 'none';
+  }
 }
 
 // ── 배지/헬퍼 ──
