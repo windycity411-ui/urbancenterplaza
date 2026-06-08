@@ -493,16 +493,21 @@ onSnapshot(query(collection(db,'notices'), orderBy('createdAt','desc')), (snap) 
 });
 
 // 민원 게시판 실시간 로드
-let allComplaints = [];
+window.allComplaints = [];
 onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), (snap) => {
-  allComplaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
-  renderBoard();
+  window.allComplaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
+  // 게시판 탭이 열려있을 때만 렌더링
+  const boardWrap = document.getElementById('complaint-board-wrap');
+  if(boardWrap && boardWrap.style.display !== 'none'){
+    window.renderBoard && window.renderBoard();
+  }
 });
 
 window.renderBoard = function(){
   const f = document.getElementById('boardFilter')?.value || 'all';
   const sf = document.getElementById('boardStatusFilter')?.value || 'all';
-  let list = allComplaints.filter(c => {
+  const data = window.allComplaints || [];
+  let list = data.filter(c => {
     if(f !== 'all' && c.category !== f) return false;
     if(sf !== 'all' && c.status !== sf) return false;
     return true;
@@ -569,7 +574,10 @@ function switchComplaintTab(tab){
   document.getElementById('complaint-board-wrap').style.display = isForm ? 'none' : 'block';
   document.getElementById('tab-form').classList.toggle('active', isForm);
   document.getElementById('tab-board').classList.toggle('active', !isForm);
-  if(!isForm) window.renderBoard && window.renderBoard();
+  if(!isForm){
+    // 탭 전환 후 DOM이 보이는 상태에서 렌더링
+    setTimeout(() => window.renderBoard && window.renderBoard(), 0);
+  }
 }
 function openNotice(title,date,body){
   document.getElementById('modalTitle').textContent=title;
