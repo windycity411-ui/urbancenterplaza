@@ -1322,6 +1322,27 @@ const UNIT_FLOORS = {
   '7층': Array.from({length:8},(_,i)=>String(701+i)),
   '8층': Array.from({length:8},(_,i)=>String(801+i)),
 };
+
+// 병합 호실: 대표호실 → [함께 쓰는 호실들]
+// 대표 호실 카드 하나로 표시, 나머지는 숨김
+const MERGED_UNITS = {
+  '101': ['102'],       // 101/102호
+  '305': ['321'],       // 척마디 정형외과 (305/321호)
+  '601': ['602','603','604','605','606','607','608',
+          '701','702','703','704','705','706','707','708',
+          '801','802','803','804','805','806','807','808'], // 한방병원 전층
+};
+// 숨겨야 할 호실 목록 (역방향 인덱스)
+const HIDDEN_UNITS = new Set();
+Object.entries(MERGED_UNITS).forEach(([lead, subs]) => subs.forEach(s => HIDDEN_UNITS.add(s)));
+
+// 대표호실의 표시 호실번호 레이블
+const MERGED_LABEL = {
+  '101': '101/102호',
+  '305': '305/321호',
+  '601': '6~8층',
+};
+
 let currentFloor = 'all';
 let editingUnit = null;
 
@@ -1333,14 +1354,12 @@ function renderUnits(){
   // 층 탭 생성
   const tabContainer = document.getElementById('unitFloorTabs');
   if(tabContainer && !tabContainer.children.length){
-    const allBtn = `<div class="unit-floor-tab ${currentFloor==='all'?'active':''}" onclick="setFloor('all')">전체 (122)</div>`;
+    const allBtn = `<div class="unit-floor-tab ${currentFloor==='all'?'active':''}" onclick="setFloor('all')">전체</div>`;
     const floorBtns = Object.keys(UNIT_FLOORS).map(f=>{
-      const cnt = UNIT_FLOORS[f].filter(n=>u[n]?.name).length;
-      return `<div class="unit-floor-tab ${currentFloor===f?'active':''}" onclick="setFloor('${f}')">${f} <span style="font-size:10px;opacity:.7;">${cnt}/${UNIT_FLOORS[f].length}</span></div>`;
+      return `<div class="unit-floor-tab ${currentFloor===f?'active':''}" onclick="setFloor('${f}')">${f}</div>`;
     }).join('');
     tabContainer.innerHTML = allBtn + floorBtns;
   } else if(tabContainer){
-    // 탭 active 상태 업데이트
     tabContainer.querySelectorAll('.unit-floor-tab').forEach((t,i)=>{
       const floors = ['all',...Object.keys(UNIT_FLOORS)];
       t.classList.toggle('active', floors[i]===currentFloor);
@@ -1355,29 +1374,35 @@ function renderUnits(){
   filtered.forEach(floor => {
     const rooms = UNIT_FLOORS[floor];
     if(!rooms) return;
-    const cards = rooms.filter(num => {
-      if(!q) return true;
-      const d = u[num]||{};
-      return num.includes(q)||(d.name||'').includes(q)||(d.business||'').toLowerCase().includes(q);
-    }).map(num => {
-      const d = u[num]||{};
-      const hasData = !!d.name;
-      // 계약 만료 30일 이내 체크
-      let statusCls = hasData ? 'occupied' : 'vacant';
-      let statusLabel = hasData ? '입주' : '공실';
-      if(hasData && d.contractEnd){
-        const diff = (new Date(d.contractEnd) - today) / (1000*60*60*24);
-        if(diff <= 30 && diff >= 0){ statusCls='expiring'; statusLabel='만료임박'; }
-        if(diff < 0){ statusCls='expiring'; statusLabel='만료'; }
-      }
-      return `<div class="unit-card ${statusCls}" onclick="openUnit('${num}')">
-        <span class="unit-status ${statusCls}">${statusLabel}</span>
-        <div class="unit-num">${num}호</div>
-        <div class="unit-name">${d.business||'<span style="color:var(--text3);font-weight:400;font-size:13px;">미등록</span>'}</div>
-      </div>`;
-    }).join('');
-    const total = rooms.length;
-    const occupied = rooms.filter(n=>u[n]?.name).length;
+
+    const cards = rooms
+      .filter(num => !HIDDEN_UNITS.has(num)) // 병합된 서브 호실 숨김
+      .filter(num => {
+        if(!q) return true;
+        const d = u[num]||{};
+        const label = MERGED_LABEL[num] || (num+'호');
+        return label.includes(q)||(d.name||'').includes(q)||(d.business||'').toLowerCase().includes(q);
+      })
+      .map(num => {
+        const d = u[num]||{};
+        const hasBusiness = !!d.business;
+        let statusCls = hasBusiness ? 'occupied' : 'vacant';
+        let statusLabel = hasBusiness ? '입주' : '공실';
+        if(hasBusiness && d.contractEnd){
+          const diff = (new Date(d.contractEnd) - today) / (1000*60*60*24);
+          if(diff <= 30 && diff >= 0){ statusCls='expiring'; statusLabel='만료임박'; }
+          if(diff < 0){ statusCls='expiring'; statusLabel='만료'; }
+        }
+        const displayNum = MERGED_LABEL[num] || (num+'호');
+        return `<div class="unit-card ${statusCls}" onclick="openUnit('${num}')">
+          <span class="unit-status ${statusCls}">${statusLabel}</span>
+          <div class="unit-num">${displayNum}</div>
+          <div class="unit-name">${d.business||'<span style="color:var(--text3);font-weight:400;font-size:13px;">미등록</span>'}</div>
+        </div>`;
+      }).join('');
+
+    const total = rooms.filter(n=>!HIDDEN_UNITS.has(n)).length;
+    const occupied = rooms.filter(n=>!HIDDEN_UNITS.has(n)&&(window.units||{})[n]?.business).length;
     html += `<div class="unit-grid-section">
       <div class="unit-floor-label">${floor} <span>${occupied}/${total} 입주</span></div>
       <div class="unit-cards">${cards||'<div style="color:var(--text3);font-size:13px;">검색 결과 없음</div>'}</div>
