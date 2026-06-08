@@ -135,9 +135,9 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .unit-card.occupied{border-left:3px solid var(--accent2);}
 .unit-card.vacant{border-left:3px solid var(--border);opacity:.7;}
 .unit-card.expiring{border-left:3px solid var(--gold);}
-.unit-num{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;font-family:monospace;}
-.unit-name{font-size:13px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.unit-business{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit-num{font-size:12px;font-weight:600;color:var(--accent2);margin-bottom:5px;font-family:monospace;}
+.unit-name{font-size:15px;font-weight:700;color:#1a1a18;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit-business{font-size:13px;font-weight:500;color:#2d2d2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .unit-status{position:absolute;top:.625rem;right:.625rem;font-size:9px;font-weight:500;padding:2px 5px;border-radius:2px;}
 .unit-status.occupied{background:var(--accent-light);color:var(--accent2);}
 .unit-status.vacant{background:var(--surface2);color:var(--text3);}
@@ -1373,8 +1373,7 @@ function renderUnits(){
       return `<div class="unit-card ${statusCls}" onclick="openUnit('${num}')">
         <span class="unit-status ${statusCls}">${statusLabel}</span>
         <div class="unit-num">${num}호</div>
-        <div class="unit-name">${d.name||'<span style="color:var(--text3)">미등록</span>'}</div>
-        <div class="unit-business">${d.business||''}</div>
+        <div class="unit-name">${d.business||'<span style="color:var(--text3);font-weight:400;font-size:13px;">미등록</span>'}</div>
       </div>`;
     }).join('');
     const total = rooms.length;
