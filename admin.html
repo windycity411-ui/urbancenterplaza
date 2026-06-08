@@ -869,7 +869,7 @@ window.setDoc = setDoc;
 window.doc = doc;
 window.db = db;
 window.deleteDoc = deleteDoc;
-window.renderAttSection = function(uid){ renderAttSection(uid); };
+// renderAttSection은 일반 스크립트에서 직접 접근 가능
 window.saveCalMemoToDb = async function(dateStr, memo){
   await setDoc(doc(db,'calendar_memos', dateStr), { memo });
 };
@@ -974,7 +974,7 @@ window.checkIn = async function(targetUid){
     });
   }
   showToast(`${uid} 출근 체크 완료: ${timeStr}`);
-  if(typeof renderAttSection === 'function') renderAttSection();
+  setTimeout(function(){ if(typeof renderAttSection==='function') renderAttSection(); }, 300);
 };
 
 window.checkOut = async function(targetUid){
@@ -994,7 +994,7 @@ window.checkOut = async function(targetUid){
     checkOut: timeStr, workMinutes: Math.max(0, workMinutes), updatedAt: new Date()
   });
   showToast(`${uid} 퇴근 체크 완료: ${timeStr}`);
-  if(typeof renderAttSection === 'function') renderAttSection();
+  setTimeout(function(){ if(typeof renderAttSection==='function') renderAttSection(); }, 300);
 };
 
 // ── 실시간 리스너 ──
