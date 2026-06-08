@@ -495,7 +495,12 @@ table.adm-table tr:hover td{background:var(--surface2);}
   <div class="modal" style="max-width:560px;">
     <div class="modal-header">
       <span class="modal-header-title" id="unitModalTitle">호실 정보</span>
-      <button class="modal-close" onclick="closeModal('unitModal')">×</button>
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <a id="um-phoneBtn" href="#" style="display:none;align-items:center;gap:4px;background:var(--accent-light);color:var(--accent2);border:1px solid var(--accent2);border-radius:var(--radius);padding:5px 10px;font-size:12px;font-weight:500;text-decoration:none;">
+          📞 전화
+        </a>
+        <button class="modal-close" onclick="closeModal('unitModal')">×</button>
+      </div>
     </div>
     <div class="modal-body">
       <div style="background:var(--accent);color:#fff;border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.25rem;font-size:15px;font-weight:500;" id="um-roomNum"></div>
@@ -1171,7 +1176,7 @@ function renderComplaintTable(){
   });
   document.getElementById('complaintTableBody').innerHTML = list.length ? list.map(x=>`
     <tr>
-      <td>${x.room}</td><td>${x.phone}</td><td>${x.category}</td>
+      <td>${x.room}</td><td>${x.phone?`<a href="tel:${x.phone}" style="color:var(--accent);text-decoration:none;">${x.phone}</a>`:'-'}</td><td>${x.category}</td>
       <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${x.subject}</td>
       <td>${x.date}</td><td>${statusBadge(x.status)}</td>
       <td style="font-size:12px;">${x.assignee?(x.assignee+'<br><span style="color:var(--text3)">'+USERS[x.assignee]?.role+'</span>'):'<span style="color:var(--text3)">미배정</span>'}</td>
@@ -1191,7 +1196,9 @@ function openComplaint(id){
   const c = (window.complaints||[]).find(x=>x._id===id); if(!c) return;
   window._setEditingComplaintId(id);
   document.getElementById('cd-room').textContent=c.room;
-  document.getElementById('cd-phone').textContent=c.phone;
+  document.getElementById('cd-phone').innerHTML = c.phone
+    ? `<a href="tel:${c.phone}" style="color:var(--accent);text-decoration:none;font-weight:500;">${c.phone}</a>`
+    : '-';
   document.getElementById('cd-category').textContent=c.category;
   document.getElementById('cd-subject').textContent=c.subject;
   document.getElementById('cd-body').textContent=c.body;
@@ -1696,6 +1703,15 @@ function openUnit(num){
   editingUnit = num;
   const d = (window.units||{})[num]||{};
   document.getElementById('unitModalTitle').textContent = `${num}호 정보`;
+  // 연락처 있으면 전화 버튼 표시
+  const phoneBtn = document.getElementById('um-phoneBtn');
+  if(d.phone && phoneBtn){
+    phoneBtn.href = `tel:${d.phone}`;
+    phoneBtn.style.display = 'inline-flex';
+    phoneBtn.title = d.phone;
+  } else if(phoneBtn){
+    phoneBtn.style.display = 'none';
+  }
   document.getElementById('um-roomNum').textContent = `${num}호 ${d.name?'· '+d.name:''}`;
   document.getElementById('um-name').value = d.name||'';
   document.getElementById('um-phone').value = d.phone||'';
