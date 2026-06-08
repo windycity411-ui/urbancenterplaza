@@ -80,6 +80,33 @@ header{background:var(--accent);color:#fff;padding:0 1.5rem;position:sticky;top:
 .modal-meta{font-size:11px;color:var(--text3);margin-bottom:.875rem;}
 .modal-text{font-size:14px;line-height:1.9;color:var(--text2);white-space:pre-wrap;}
 
+/* ── 민원 탭 ── */
+.complaint-tabs{display:flex;gap:0;margin-bottom:1.25rem;border-bottom:2px solid var(--border);}
+.complaint-tab{background:none;border:none;padding:.75rem 1.25rem;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.complaint-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.complaint-tab:hover{color:var(--text);}
+.btn-view-board{margin-top:1rem;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:10px 20px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+
+/* ── 민원 게시판 ── */
+.board-filter-row{display:flex;align-items:center;gap:.625rem;margin-bottom:1rem;flex-wrap:wrap;}
+.board-filter{border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;font-size:12px;font-family:'Noto Sans KR',sans-serif;color:var(--text2);background:var(--bg);outline:none;}
+.board-count{font-size:12px;color:var(--text3);margin-left:auto;}
+.board-list{display:flex;flex-direction:column;}
+.board-item{background:var(--surface);border:1px solid var(--border);border-top:none;padding:.875rem 1rem;display:flex;align-items:center;gap:.875rem;}
+.board-item:first-child{border-top:1px solid var(--border);border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.board-item:last-child{border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+.board-item:only-child{border-radius:var(--radius-lg);border-top:1px solid var(--border);}
+.board-num{font-size:11px;color:var(--text3);width:28px;text-align:center;flex-shrink:0;}
+.board-content{flex:1;min-width:0;}
+.board-title{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.board-meta{font-size:11px;color:var(--text3);}
+.board-status{flex-shrink:0;}
+.board-badge{display:inline-block;font-size:10px;font-weight:500;padding:3px 8px;border-radius:2px;}
+.board-badge.new{background:var(--info-light);color:#1a3a6a;}
+.board-badge.inprog{background:var(--gold-light);color:var(--gold);}
+.board-badge.done{background:var(--green-light);color:#1a5c1a;}
+.board-empty{padding:3rem 1rem;text-align:center;color:var(--text3);font-size:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+
 /* ── 폼 ── */
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;}
 .form-note{background:var(--accent-light);border-left:3px solid var(--accent2);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;font-size:13px;color:var(--accent2);margin-bottom:1.25rem;line-height:1.6;}
@@ -249,28 +276,61 @@ footer{background:var(--accent);color:rgba(255,255,255,.5);padding:1.5rem 1.25re
 
   <!-- 민원접수 -->
   <section id="complaint" class="section">
-    <div class="section-header"><span class="section-title">민원 / 건의 접수</span></div>
-    <div class="form-card" id="complaintForm">
-      <div class="form-note">접수된 민원은 영업일 기준 1~2일 내 담당자가 확인 후 연락드립니다.<br>긴급 사항은 비상연락망을 이용해 주세요.</div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">호실 번호<span>*</span></label><input type="text" class="form-input" id="room" placeholder="예) 3층 301호"></div>
-        <div class="form-group"><label class="form-label">연락처<span>*</span></label><input type="tel" class="form-input" id="phone" placeholder="010-XXXX-XXXX"></div>
+    <div class="section-header">
+      <span class="section-title">민원 / 건의</span>
+    </div>
+    <!-- 탭 -->
+    <div class="complaint-tabs">
+      <button class="complaint-tab active" id="tab-form" onclick="switchComplaintTab('form')">✏️ 민원 접수</button>
+      <button class="complaint-tab" id="tab-board" onclick="switchComplaintTab('board')">📋 접수 현황</button>
+    </div>
+
+    <!-- 접수 폼 -->
+    <div id="complaint-form-wrap">
+      <div class="form-card" id="complaintForm">
+        <div class="form-note">접수된 민원은 영업일 기준 1~2일 내 담당자가 확인 후 연락드립니다.<br>긴급 사항은 비상연락망을 이용해 주세요.</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">호실 번호<span>*</span></label><input type="text" class="form-input" id="room" placeholder="예) 3층 301호"></div>
+          <div class="form-group"><label class="form-label">연락처<span>*</span></label><input type="tel" class="form-input" id="phone" placeholder="010-XXXX-XXXX"></div>
+        </div>
+        <div class="form-group"><label class="form-label">민원 유형<span>*</span></label>
+          <select class="form-select" id="category">
+            <option value="">선택해 주세요</option>
+            <option>시설 고장 / 수리 요청</option><option>소음 / 진동</option><option>청소 / 위생</option>
+            <option>주차 문제</option><option>관리비 문의</option><option>기타 건의사항</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">제목<span>*</span></label><input type="text" class="form-input" id="subject" placeholder="민원 제목을 간략히 입력해 주세요"></div>
+        <div class="form-group"><label class="form-label">내용<span>*</span></label><textarea class="form-textarea" id="body" placeholder="불편사항이나 건의사항을 상세히 적어 주세요."></textarea></div>
+        <button class="form-submit" id="submitBtn" onclick="submitForm()">접수하기</button>
       </div>
-      <div class="form-group"><label class="form-label">민원 유형<span>*</span></label>
-        <select class="form-select" id="category">
-          <option value="">선택해 주세요</option>
+      <div class="form-success" id="formSuccess">
+        <div class="form-success-icon">✓</div>
+        <h3>민원이 접수되었습니다</h3>
+        <p>영업일 기준 1~2일 내에 담당자가 확인 후 연락드리겠습니다.<br>감사합니다.</p>
+        <button class="btn-view-board" onclick="switchComplaintTab('board')">접수 현황 보기 →</button>
+      </div>
+    </div>
+
+    <!-- 게시판 -->
+    <div id="complaint-board-wrap" style="display:none;">
+      <div class="board-filter-row">
+        <select class="board-filter" id="boardFilter" onchange="renderBoard()">
+          <option value="all">전체 유형</option>
           <option>시설 고장 / 수리 요청</option><option>소음 / 진동</option><option>청소 / 위생</option>
           <option>주차 문제</option><option>관리비 문의</option><option>기타 건의사항</option>
         </select>
+        <select class="board-filter" id="boardStatusFilter" onchange="renderBoard()">
+          <option value="all">전체 상태</option>
+          <option value="신규">신규</option>
+          <option value="처리중">처리중</option>
+          <option value="완료">완료</option>
+        </select>
+        <span class="board-count" id="boardCount"></span>
       </div>
-      <div class="form-group"><label class="form-label">제목<span>*</span></label><input type="text" class="form-input" id="subject" placeholder="민원 제목을 간략히 입력해 주세요"></div>
-      <div class="form-group"><label class="form-label">내용<span>*</span></label><textarea class="form-textarea" id="body" placeholder="불편사항이나 건의사항을 상세히 적어 주세요."></textarea></div>
-      <button class="form-submit" id="submitBtn" onclick="submitForm()">접수하기</button>
-    </div>
-    <div class="form-success" id="formSuccess">
-      <div class="form-success-icon">✓</div>
-      <h3>민원이 접수되었습니다</h3>
-      <p>영업일 기준 1~2일 내에 담당자가 확인 후 연락드리겠습니다.<br>감사합니다.</p>
+      <div class="board-list" id="boardList">
+        <div style="padding:2rem;text-align:center;color:var(--text3);font-size:14px;">불러오는 중...</div>
+      </div>
     </div>
   </section>
 
@@ -432,8 +492,43 @@ onSnapshot(query(collection(db,'notices'), orderBy('createdAt','desc')), (snap) 
   }).join('');
 });
 
-// 민원 접수
-window.submitForm = async function(){
+// 민원 게시판 실시간 로드
+let allComplaints = [];
+onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), (snap) => {
+  allComplaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
+  renderBoard();
+});
+
+window.renderBoard = function(){
+  const f = document.getElementById('boardFilter')?.value || 'all';
+  const sf = document.getElementById('boardStatusFilter')?.value || 'all';
+  let list = allComplaints.filter(c => {
+    if(f !== 'all' && c.category !== f) return false;
+    if(sf !== 'all' && c.status !== sf) return false;
+    return true;
+  });
+  const count = document.getElementById('boardCount');
+  if(count) count.textContent = `총 ${list.length}건`;
+  const container = document.getElementById('boardList');
+  if(!container) return;
+  if(!list.length){
+    container.innerHTML = '<div class="board-empty">접수된 민원이 없습니다.</div>';
+    return;
+  }
+  const statusMap = { '신규':'new', '처리중':'inprog', '완료':'done' };
+  const statusLabel = { '신규':'접수', '처리중':'처리중', '완료':'완료' };
+  container.innerHTML = list.map((c, i) => `
+    <div class="board-item">
+      <span class="board-num">${list.length - i}</span>
+      <div class="board-content">
+        <div class="board-title">${c.subject || ''}</div>
+        <div class="board-meta">${c.category || ''} · ${c.date || ''}</div>
+      </div>
+      <div class="board-status">
+        <span class="board-badge ${statusMap[c.status] || 'new'}">${statusLabel[c.status] || c.status}</span>
+      </div>
+    </div>`).join('');
+};
   const room=document.getElementById('room').value.trim();
   const phone=document.getElementById('phone').value.trim();
   const cat=document.getElementById('category').value;
@@ -461,14 +556,20 @@ window.submitForm = async function(){
 function showSection(id, el, mnavId){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  // 데스크탑 nav
   document.querySelectorAll('.desktop-nav a').forEach(a=>a.classList.remove('active'));
   if(el && el.tagName==='A') el.classList.add('active');
-  // 모바일 nav
   document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
   if(el && el.tagName==='BUTTON') el.classList.add('active');
   window.scrollTo(0,0);
   return false;
+}
+function switchComplaintTab(tab){
+  const isForm = tab === 'form';
+  document.getElementById('complaint-form-wrap').style.display = isForm ? 'block' : 'none';
+  document.getElementById('complaint-board-wrap').style.display = isForm ? 'none' : 'block';
+  document.getElementById('tab-form').classList.toggle('active', isForm);
+  document.getElementById('tab-board').classList.toggle('active', !isForm);
+  if(!isForm) window.renderBoard && window.renderBoard();
 }
 function openNotice(title,date,body){
   document.getElementById('modalTitle').textContent=title;
