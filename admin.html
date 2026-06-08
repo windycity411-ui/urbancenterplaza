@@ -1198,6 +1198,14 @@ function today(){ return new Date().toISOString().slice(0,10); }
 </script>
 
 <script>
+// ── 출퇴근 설정 (모듈 외부에서도 접근 가능하도록 여기서 선언) ──
+function loadAttSettings(){
+  try { return JSON.parse(localStorage.getItem('ucp_att_settings')||'{}'); } catch(e){ return {}; }
+}
+function saveAttSettingsData(data){
+  localStorage.setItem('ucp_att_settings', JSON.stringify(data));
+}
+
 // ── 인증 ──
 const MANAGER = 'UB001';
 let currentUser = null;
@@ -2187,10 +2195,12 @@ function renderMyAttendance(){
 function renderTodayAttendance(){
   const dateStr = new Date().toISOString().slice(0,10);
   document.getElementById('attTodayHeader').textContent = dateStr;
-  const settings = window.loadAttSettings();
+  const settings = loadAttSettings();
   const atts = (window.attendances||[]).filter(a => a.date===dateStr);
+  const staffList = window.STAFF_VISIBLE || [];
+  const users = window.USERS || {};
 
-  document.getElementById('attTodayBody').innerHTML = STAFF_VISIBLE.map(uid => {
+  document.getElementById('attTodayBody').innerHTML = staffList.map(uid => {
     const a = atts.find(x => x.uid===uid);
     const baseTime = settings[uid]||'09:00';
     const isLate = a?.checkIn && a.checkIn > baseTime;
@@ -2198,14 +2208,16 @@ function renderTodayAttendance(){
     if(a?.checkIn && !a?.checkOut) statusBadge = '<span class="badge badge-inprog">근무중</span>';
     else if(a?.checkOut) statusBadge = '<span class="badge badge-resolved">퇴근</span>';
     return `<tr>
-      <td><strong>${uid}</strong><br><span style="font-size:11px;color:var(--text3);">${USERS[uid]?.role||''}</span></td>
+      <td><strong>${uid}</strong><br><span style="font-size:11px;color:var(--text3);">${users[uid]?.role||''}</span></td>
       <td>${a?.checkIn ? `${a.checkIn}${isLate?' <span class="badge badge-urgent">지각</span>':''}` : '-'}</td>
       <td>${a?.checkOut||'-'}</td>
       <td>${a?.workMinutes ? fmtMin(a.workMinutes) : '-'}</td>
       <td>${statusBadge}</td>
     </tr>`;
-  }).join('');
+  }).join('')||'<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--text3);">직원 정보 없음</td></tr>';
 }
+
+// ── 출퇴근 로그 (관리소장) ──}
 
 // ── 출퇴근 로그 (관리소장) ──
 function renderAttLog(){
@@ -2216,7 +2228,7 @@ function renderAttLog(){
     if(mFilter && !a.date.startsWith(mFilter)) return false;
     return true;
   }).sort((a,b)=>a.date<b.date?1:-1);
-  const settings = window.loadAttSettings();
+  const settings = loadAttSettings();
 
   // 월간 요약
   const summary = {};
@@ -2266,7 +2278,7 @@ function switchLogTab(tab){
 
 // ── 출근 기준시간 설정 ──
 function openAttendanceSettings(){
-  const settings = window.loadAttSettings();
+  const settings = loadAttSettings();
   document.getElementById('attSettingsGrid').innerHTML = STAFF_VISIBLE.map(uid => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border);">
       <div><div style="font-size:13px;font-weight:500;">${uid}</div><div style="font-size:11px;color:var(--text3);">${USERS[uid]?.role||''}</div></div>
@@ -2280,7 +2292,7 @@ function saveAttSettings(){
     const el = document.getElementById(`attTime-${uid}`);
     if(el) settings[uid] = el.value;
   });
-  window.saveAttSettingsData(settings);
+  saveAttSettingsData(settings);
   window.attSettings = settings;
   closeModal('attSettingsModal');
   showToast('출근 기준시간이 저장되었습니다.');
@@ -2290,7 +2302,7 @@ function saveAttSettings(){
 function exportAttCSV(){
   const uFilter = document.getElementById('attLogUserFilter')?.value||'all';
   const mFilter = document.getElementById('attLogMonthFilter')?.value||'';
-  const settings = window.loadAttSettings();
+  const settings = loadAttSettings();
   const atts = (window.attendances||[]).filter(a => {
     if(uFilter!=='all' && a.uid!==uFilter) return false;
     if(mFilter && !a.date.startsWith(mFilter)) return false;
