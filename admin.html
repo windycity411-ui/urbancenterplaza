@@ -243,7 +243,13 @@ table.adm-table tr:hover td{background:var(--surface2);}
 
       <!-- 민원 관리 -->
       <div class="adm-section" id="sec-complaints">
-        <div class="adm-page-title">민원 관리<button class="btn btn-primary btn-sm" onclick="openAddComplaint()">+ 직접 등록</button></div>
+        <div class="adm-page-title">
+          민원 관리
+          <div style="display:flex;gap:.5rem;">
+            <button class="btn btn-danger btn-sm" onclick="deleteAllComplaints()">🗑 전체 삭제</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddComplaint()">+ 직접 등록</button>
+          </div>
+        </div>
         <div class="table-card">
           <div class="table-toolbar">
             <span class="table-toolbar-title">전체 민원</span>
@@ -253,7 +259,7 @@ table.adm-table tr:hover td{background:var(--surface2);}
               <input type="text" class="search-input" id="complaintSearch" placeholder="호실 또는 제목 검색" oninput="renderComplaintTable()">
             </div>
           </div>
-          <table class="adm-table"><thead><tr><th>호실</th><th>연락처</th><th>유형</th><th>제목</th><th>접수일</th><th>상태</th><th>담당자</th><th>처리여부</th><th>처리</th></tr></thead>
+          <table class="adm-table"><thead><tr><th>호실</th><th>연락처</th><th>유형</th><th>제목</th><th>접수일</th><th>상태</th><th>담당자</th><th>처리여부</th><th>처리</th><th>삭제</th></tr></thead>
           <tbody id="complaintTableBody"></tbody></table>
         </div>
       </div>
@@ -1173,8 +1179,11 @@ function renderComplaintTable(){
         <button class="btn btn-outline btn-sm" onclick="openComplaint('${x._id}')" style="margin-right:4px;">상세</button>
         <button class="btn btn-gold btn-sm" onclick="openTaskFromComplaint('${x._id}')">업무지시</button>
       </td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="deleteComplaint('${x._id}','${x.subject.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">삭제</button>
+      </td>
     </tr>`).join('')
-    : '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text3);">해당하는 민원이 없습니다.</td></tr>';
+    : '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text3);">해당하는 민원이 없습니다.</td></tr>';
 }
 
 function openComplaint(id){
@@ -1206,6 +1215,45 @@ function openComplaint(id){
 }
 
 function openAddComplaint(){ ['ac-room','ac-phone','ac-subject','ac-body'].forEach(id=>document.getElementById(id).value=''); openModal('addComplaintModal'); }
+
+// ── 민원 삭제 ──
+window.deleteComplaint = async function(id, subject){
+  if(!confirm(`"${subject}"\n\n이 민원을 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`)) return;
+  try {
+    await deleteDoc(doc(window.db,'complaints',id));
+    showToast('민원이 삭제되었습니다.');
+  } catch(e){ alert('삭제 중 오류가 발생했습니다: '+e.message); }
+};
+
+async function deleteAllComplaints(){
+  const c = window.complaints||[];
+  if(!c.length){ showToast('삭제할 민원이 없습니다.'); return; }
+  // 필터 적용 여부 확인
+  const f = document.getElementById('complaintFilter').value;
+  const rf = document.getElementById('resolvedFilter').value;
+  const q = document.getElementById('complaintSearch').value.trim().toLowerCase();
+  const isFiltered = f!=='all'||rf!=='all'||q;
+  const filtered = c.filter(x=>{
+    if(f!=='all'&&x.status!==f) return false;
+    if(rf==='resolved'&&!x.resolved) return false;
+    if(rf==='unresolved'&&x.resolved) return false;
+    if(q&&!x.room.toLowerCase().includes(q)&&!x.subject.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const msg = isFiltered
+    ? `현재 필터된 민원 ${filtered.length}건을 삭제하시겠습니까?\n(전체 ${c.length}건 중 ${filtered.length}건)\n\n삭제 후 복구할 수 없습니다.`
+    : `전체 민원 ${c.length}건을 모두 삭제하시겠습니까?\n\n⚠️ 삭제 후 복구할 수 없습니다.`;
+  if(!confirm(msg)) return;
+  if(!isFiltered && !confirm('정말로 모든 민원을 삭제합니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  try {
+    showToast(`삭제 중... (0/${filtered.length})`);
+    for(let i=0; i<filtered.length; i++){
+      await deleteDoc(doc(window.db,'complaints',filtered[i]._id));
+      if(i%5===0) showToast(`삭제 중... (${i+1}/${filtered.length})`);
+    }
+    showToast(`${filtered.length}건의 민원이 삭제되었습니다.`);
+  } catch(e){ alert('삭제 중 오류: '+e.message); }
+}
 
 // ── 배정된 민원 (직원) ──
 function renderMyComplaints(){
