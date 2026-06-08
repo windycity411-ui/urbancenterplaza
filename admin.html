@@ -547,6 +547,52 @@ table.adm-table tr:hover td{background:var(--surface2);}
   </div>
 </div>
 
+<!-- 민원 알림 팝업 -->
+<div id="alertPopup" style="display:none;position:fixed;top:1.25rem;right:1.25rem;z-index:999;width:320px;">
+  <div style="background:#fff;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.18);border:1px solid var(--border);overflow:hidden;">
+    <div style="background:var(--danger);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <span style="font-size:18px;">🔔</span>
+        <span style="color:#fff;font-size:13px;font-weight:500;">새 민원이 접수되었습니다</span>
+      </div>
+      <button onclick="closeAlertPopup()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;line-height:1;padding:0;">×</button>
+    </div>
+    <div style="padding:1rem;">
+      <div id="alertRoom" style="font-size:12px;color:var(--text3);margin-bottom:3px;"></div>
+      <div id="alertSubject" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;"></div>
+      <div id="alertCategory" style="font-size:12px;color:var(--text2);margin-bottom:.875rem;"></div>
+      <div style="display:flex;gap:.5rem;">
+        <button onclick="goToComplaint()" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">민원 확인하기</button>
+        <button onclick="closeAlertPopup()" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">닫기</button>
+      </div>
+    </div>
+    <div id="alertProgress" style="height:3px;background:var(--danger);transform-origin:left;transition:transform linear;"></div>
+  </div>
+</div>
+
+<!-- 업무 지시 알림 팝업 (직원용) -->
+<div id="taskAlertPopup" style="display:none;position:fixed;top:1.25rem;right:1.25rem;z-index:999;width:320px;">
+  <div style="background:#fff;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.18);border:1px solid var(--border);overflow:hidden;">
+    <div style="background:var(--accent);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <span style="font-size:18px;">📌</span>
+        <span style="color:#fff;font-size:13px;font-weight:500;">새 업무가 지시되었습니다</span>
+      </div>
+      <button onclick="closeTaskAlertPopup()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;line-height:1;padding:0;">×</button>
+    </div>
+    <div style="padding:1rem;">
+      <div id="taskAlertPriority" style="font-size:11px;margin-bottom:4px;"></div>
+      <div id="taskAlertTitle" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;"></div>
+      <div id="taskAlertBody" style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:.875rem;max-height:60px;overflow:hidden;"></div>
+      <div style="display:flex;gap:.5rem;">
+        <button onclick="goToMyTasks()" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">업무 확인하기</button>
+        <button onclick="closeTaskAlertPopup()" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">닫기</button>
+      </div>
+    </div>
+    <div id="taskAlertProgress" style="height:3px;background:var(--accent);transform-origin:left;transition:transform linear;"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Firebase SDK -->
@@ -646,9 +692,29 @@ onSnapshot(collection(db,'units'), snap => {
 });
 
 // ── 실시간 리스너 ──
+let prevComplaintIds = null; // 최초 로드 구분용
 onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), snap => {
   complaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
   window.complaints = complaints;
+
+  // 새 민원 알림 (관리소장만, 최초 로드 제외)
+  if(window.isManager && window.isManager() && prevComplaintIds !== null){
+    const currentIds = new Set(complaints.map(c => c._id));
+    const newComplaints = complaints.filter(c => !prevComplaintIds.has(c._id));
+    if(newComplaints.length > 0){
+      showComplaintAlert(newComplaints[0]);
+      // 브라우저 알림도 함께
+      if(Notification.permission === 'granted'){
+        new Notification('새 민원 접수', {
+          body: `[${newComplaints[0].room}] ${newComplaints[0].subject}`,
+          icon: ''
+        });
+      }
+    }
+  }
+  if(prevComplaintIds === null) prevComplaintIds = new Set();
+  complaints.forEach(c => prevComplaintIds.add(c._id));
+
   if(document.getElementById('sec-complaints').classList.contains('active')) renderComplaintTable();
   if(document.getElementById('sec-dashboard').classList.contains('active')) renderDashboard();
   if(document.getElementById('sec-mycomplaints').classList.contains('active')) renderMyComplaints();
@@ -656,9 +722,32 @@ onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), snap
   updateBadge();
 });
 
+let prevTaskIds = null;
 onSnapshot(query(collection(db,'tasks'), orderBy('createdAt','desc')), snap => {
   tasks = snap.docs.map(d => ({...d.data(), _id: d.id}));
   window.tasks = tasks;
+
+  // 새 업무 알림 (직원만, 최초 로드 제외)
+  if(window.currentUser && !window.isManager() && prevTaskIds !== null){
+    const newTasks = tasks.filter(t =>
+      !prevTaskIds.has(t._id) &&
+      t.assignee === window.currentUser &&
+      t.status === '진행중'
+    );
+    if(newTasks.length > 0){
+      playDingDong();
+      showTaskAlert(newTasks[0]);
+      if(Notification.permission === 'granted'){
+        new Notification('새 업무 지시', {
+          body: newTasks[0].title,
+          icon: ''
+        });
+      }
+    }
+  }
+  if(prevTaskIds === null) prevTaskIds = new Set();
+  tasks.forEach(t => prevTaskIds.add(t._id));
+
   if(document.getElementById('sec-tasks').classList.contains('active')){
     renderTaskList();
     if(window.calView) renderCalendar();
@@ -835,6 +924,7 @@ function enterAdmin(){
   else{badge.textContent=USERS[currentUser].role;badge.className='adm-role-badge adm-role-staff';}
   document.getElementById('currentUserDisplay').textContent = currentUser+' ('+USERS[currentUser].role+')';
   buildSidebar(); initSelects(); initLogFilters();
+  requestNotificationPermission();
   isManager() ? gotoSection('dashboard') : gotoSection('mycomplaints');
 }
 
@@ -1608,6 +1698,108 @@ function changeMyPassword(){
 }
 
 // ── 유틸 ──
+// ── 알림음 (Web Audio API) ──
+function playDingDong(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // 첫 번째 음 (딩)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.connect(gain1); gain1.connect(ctx.destination);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    osc1.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.3);
+    gain1.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 0.5);
+    // 두 번째 음 (동)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.connect(gain2); gain2.connect(ctx.destination);
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(660, ctx.currentTime + 0.4);
+    osc2.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.8);
+    gain2.gain.setValueAtTime(0.35, ctx.currentTime + 0.4);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+    osc2.start(ctx.currentTime + 0.4);
+    osc2.stop(ctx.currentTime + 0.9);
+  } catch(e){ console.warn('알림음 재생 실패:', e); }
+}
+
+// ── 업무 알림 팝업 ──
+let taskAlertTimer = null;
+
+function showTaskAlert(task){
+  const priorityColor = task.priority==='긴급' ? '#8a2a2a' : '#8a6c2a';
+  const priorityText = task.priority==='긴급' ? '🚨 긴급 업무' : task.priority==='낮음' ? '🔵 일반 업무' : '📌 업무 지시';
+  document.getElementById('taskAlertPriority').innerHTML = `<span style="color:${priorityColor};font-weight:500;">${priorityText}</span>`;
+  document.getElementById('taskAlertTitle').textContent = task.title;
+  document.getElementById('taskAlertBody').textContent = task.body;
+  const popup = document.getElementById('taskAlertPopup');
+  popup.style.display = 'block';
+  // 진행바
+  const bar = document.getElementById('taskAlertProgress');
+  bar.style.transition = 'none';
+  bar.style.transform = 'scaleX(1)';
+  setTimeout(() => {
+    bar.style.transition = 'transform 10s linear';
+    bar.style.transform = 'scaleX(0)';
+  }, 50);
+  if(taskAlertTimer) clearTimeout(taskAlertTimer);
+  taskAlertTimer = setTimeout(closeTaskAlertPopup, 10000);
+}
+
+function closeTaskAlertPopup(){
+  document.getElementById('taskAlertPopup').style.display = 'none';
+  if(taskAlertTimer) clearTimeout(taskAlertTimer);
+}
+
+function goToMyTasks(){
+  closeTaskAlertPopup();
+  gotoSection('mytasks');
+}
+
+// ── 민원 알림 팝업 ──
+let alertTimer = null;
+let alertComplaintId = null;
+
+function showComplaintAlert(complaint){
+  alertComplaintId = complaint._id;
+  document.getElementById('alertRoom').textContent = `${complaint.room} · ${complaint.date}`;
+  document.getElementById('alertSubject').textContent = complaint.subject;
+  document.getElementById('alertCategory').textContent = complaint.category;
+  const popup = document.getElementById('alertPopup');
+  popup.style.display = 'block';
+  // 애니메이션 진행바 (10초 후 자동 닫힘)
+  const bar = document.getElementById('alertProgress');
+  bar.style.transition = 'none';
+  bar.style.transform = 'scaleX(1)';
+  setTimeout(() => {
+    bar.style.transition = 'transform 10s linear';
+    bar.style.transform = 'scaleX(0)';
+  }, 50);
+  if(alertTimer) clearTimeout(alertTimer);
+  alertTimer = setTimeout(closeAlertPopup, 10000);
+}
+
+function closeAlertPopup(){
+  document.getElementById('alertPopup').style.display = 'none';
+  if(alertTimer) clearTimeout(alertTimer);
+}
+
+function goToComplaint(){
+  closeAlertPopup();
+  gotoSection('complaints');
+}
+
+// ── 브라우저 알림 권한 요청 (로그인 후) ──
+function requestNotificationPermission(){
+  if('Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission();
+  }
+}
+
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-backdrop').forEach(el=>{
