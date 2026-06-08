@@ -869,6 +869,7 @@ window.setDoc = setDoc;
 window.doc = doc;
 window.db = db;
 window.deleteDoc = deleteDoc;
+window.renderAttSection = function(uid){ renderAttSection(uid); };
 window.saveCalMemoToDb = async function(dateStr, memo){
   await setDoc(doc(db,'calendar_memos', dateStr), { memo });
 };
@@ -973,7 +974,7 @@ window.checkIn = async function(targetUid){
     });
   }
   showToast(`${uid} 출근 체크 완료: ${timeStr}`);
-  renderAttSection(uid);
+  if(typeof renderAttSection === 'function') renderAttSection(uid);
 };
 
 window.checkOut = async function(targetUid){
@@ -993,7 +994,7 @@ window.checkOut = async function(targetUid){
     checkOut: timeStr, workMinutes: Math.max(0, workMinutes), updatedAt: new Date()
   });
   showToast(`${uid} 퇴근 체크 완료: ${timeStr}`);
-  renderAttSection(uid);
+  if(typeof renderAttSection === 'function') renderAttSection(uid);
 };
 
 // ── 실시간 리스너 ──
@@ -2144,12 +2145,11 @@ function renderAttCard(uid, dateStr){
     detailHtml=`출근: <strong>${today.checkIn}</strong> · 퇴근: <strong>${today.checkOut}</strong> · 근무: <strong>${fmtMin(today.workMinutes)}</strong>${isLate?' <span class="badge badge-urgent">지각</span>':''}`;
   }
 
-  const isSelf = (uid === window.currentUser) || isManager();
-  const btnHtml = isSelf ? `
+  const btnHtml = `
     <div style="display:flex;gap:.625rem;margin-top:1rem;">
-      <button class="btn btn-primary" style="flex:1;padding:11px;" ${inDisabled} onclick="checkIn('${uid}')">${inBtnLabel}</button>
-      <button class="btn btn-outline" style="flex:1;padding:11px;" ${outDisabled} onclick="checkOut('${uid}')">🔴 퇴근</button>
-    </div>` : '';
+      <button class="btn btn-primary" style="flex:1;padding:13px;font-size:15px;" ${inDisabled} onclick="checkIn('${uid}')">${inBtnLabel}</button>
+      <button class="btn btn-outline" style="flex:1;padding:13px;font-size:15px;" ${outDisabled} onclick="checkOut('${uid}')">🔴 퇴근</button>
+    </div>`;
 
   return `<div class="table-card" style="margin-bottom:.875rem;">
     <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
