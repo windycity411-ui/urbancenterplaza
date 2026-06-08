@@ -701,6 +701,7 @@ window.isManager = () => window.currentUser === MANAGER;
 window.setDoc = setDoc;
 window.doc = doc;
 window.db = db;
+window.deleteDoc = deleteDoc;
 window.saveCalMemoToDb = async function(dateStr, memo){
   await setDoc(doc(db,'calendar_memos', dateStr), { memo });
 };
@@ -1220,7 +1221,7 @@ function openAddComplaint(){ ['ac-room','ac-phone','ac-subject','ac-body'].forEa
 window.deleteComplaint = async function(id, subject){
   if(!confirm(`"${subject}"\n\n이 민원을 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`)) return;
   try {
-    await deleteDoc(doc(window.db,'complaints',id));
+    await window.deleteDoc(window.doc(window.db,'complaints',id));
     showToast('민원이 삭제되었습니다.');
   } catch(e){ alert('삭제 중 오류가 발생했습니다: '+e.message); }
 };
@@ -1248,7 +1249,7 @@ async function deleteAllComplaints(){
   try {
     showToast(`삭제 중... (0/${filtered.length})`);
     for(let i=0; i<filtered.length; i++){
-      await deleteDoc(doc(window.db,'complaints',filtered[i]._id));
+      await window.deleteDoc(window.doc(window.db,'complaints',filtered[i]._id));
       if(i%5===0) showToast(`삭제 중... (${i+1}/${filtered.length})`);
     }
     showToast(`${filtered.length}건의 민원이 삭제되었습니다.`);
