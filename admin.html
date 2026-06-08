@@ -498,33 +498,6 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <!-- 내 계정 (직원) -->
       <div class="adm-section" id="sec-myaccount">
         <div class="adm-page-title">내 계정</div>
-        <!-- 출퇴근 카드 -->
-        <div class="table-card" style="margin-bottom:1rem;">
-          <div class="table-toolbar"><span class="table-toolbar-title">⏰ 출퇴근 체크</span><span id="attTodayDate" style="font-size:12px;color:var(--text3);"></span></div>
-          <div style="padding:1.25rem;">
-            <!-- 현재 상태 -->
-            <div id="attStatus" style="text-align:center;margin-bottom:1.25rem;">
-              <div style="font-size:32px;margin-bottom:.5rem;" id="attStatusIcon">⏸</div>
-              <div style="font-size:14px;font-weight:500;color:var(--text2);" id="attStatusText">오늘 출근 전</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="attStatusSub"></div>
-            </div>
-            <!-- 버튼 -->
-            <div style="display:flex;gap:.75rem;">
-              <button id="attCheckInBtn" class="btn btn-primary" style="flex:1;padding:13px;font-size:15px;" onclick="checkIn()">🟢 출근</button>
-              <button id="attCheckOutBtn" class="btn btn-outline" style="flex:1;padding:13px;font-size:15px;" onclick="checkOut()" disabled>🔴 퇴근</button>
-            </div>
-            <!-- 오늘 기록 -->
-            <div id="attTodayRecord" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:none;">
-              <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:.5rem;">오늘 기록</div>
-              <div id="attTodayDetail" style="font-size:13px;color:var(--text2);line-height:1.8;"></div>
-            </div>
-          </div>
-        </div>
-        <!-- 이번 달 출퇴근 이력 -->
-        <div class="table-card" style="margin-bottom:1rem;">
-          <div class="table-toolbar"><span class="table-toolbar-title">📅 이번 달 출퇴근</span></div>
-          <div id="attMyMonthly" style="padding:.5rem 0;"></div>
-        </div>
         <!-- 계정 정보 -->
         <div class="table-card" style="max-width:400px;">
           <div style="padding:1.5rem;">
@@ -565,6 +538,15 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <div class="adm-section" id="sec-mytasks">
         <div class="adm-page-title">내 업무</div>
         <div id="myTaskList"></div>
+      </div>
+
+      <!-- 출퇴근 (공통) -->
+      <div class="adm-section" id="sec-attendance">
+        <div class="adm-page-title">
+          출퇴근
+          <span id="attPageDate" style="font-size:13px;color:var(--text3);font-weight:400;font-family:'Noto Sans KR',sans-serif;"></span>
+        </div>
+        <div id="attMainCard"></div>
       </div>
 
     </div>
@@ -953,6 +935,7 @@ let attendances = [];
 onSnapshot(query(collection(db,'attendance'), orderBy('date','desc')), snap => {
   attendances = snap.docs.map(d => ({...d.data(), _id: d.id}));
   window.attendances = attendances;
+  if(document.getElementById('sec-attendance').classList.contains('active')) renderAttSection();
   if(document.getElementById('sec-myaccount').classList.contains('active')) renderMyAttendance();
   if(document.getElementById('sec-staffstatus').classList.contains('active')) renderTodayAttendance();
   if(document.getElementById('sec-logs').classList.contains('active') &&
@@ -969,16 +952,18 @@ function saveAttSettingsData(data){
 window.attSettings = loadAttSettings();
 
 // ── 출퇴근 체크 ──
-window.checkIn = async function(){
+window.checkIn = async function(targetUid){
   const now = new Date();
   const dateStr = now.toISOString().slice(0,10);
   const timeStr = now.toTimeString().slice(0,5);
-  const uid = window.currentUser;
-  // 오늘 이미 출근 기록 있는지 확인
-  const existing = attendances.find(a => a.uid===uid && a.date===dateStr);
+  const uid = targetUid || window.currentUser;
+  const existing = (window.attendances||[]).find(a => a.uid===uid && a.date===dateStr);
   if(existing && existing.checkIn){
     if(!confirm('이미 출근 기록이 있습니다. 출근 시간을 수정하시겠습니까?')) return;
-    await updateDoc(doc(db,'attendance',existing._id), { checkIn: timeStr, updatedAt: new Date() });
+    // 퇴근 기록도 초기화
+    await updateDoc(doc(db,'attendance',existing._id), {
+      checkIn: timeStr, checkOut: '', workMinutes: 0, updatedAt: new Date()
+    });
   } else if(existing){
     await updateDoc(doc(db,'attendance',existing._id), { checkIn: timeStr, updatedAt: new Date() });
   } else {
@@ -987,29 +972,28 @@ window.checkIn = async function(){
       createdAt: new Date(), updatedAt: new Date()
     });
   }
-  showToast(`출근 체크 완료: ${timeStr}`);
-  renderMyAttendance();
+  showToast(`${uid} 출근 체크 완료: ${timeStr}`);
+  renderAttSection(uid);
 };
 
-window.checkOut = async function(){
+window.checkOut = async function(targetUid){
   const now = new Date();
   const dateStr = now.toISOString().slice(0,10);
   const timeStr = now.toTimeString().slice(0,5);
-  const uid = window.currentUser;
-  const existing = attendances.find(a => a.uid===uid && a.date===dateStr);
+  const uid = targetUid || window.currentUser;
+  const existing = (window.attendances||[]).find(a => a.uid===uid && a.date===dateStr);
   if(!existing || !existing.checkIn){
     alert('출근 기록이 없습니다. 먼저 출근 체크를 해주세요.');
     return;
   }
-  // 근무시간 계산
   const [ih, im] = existing.checkIn.split(':').map(Number);
   const [oh, om] = timeStr.split(':').map(Number);
   const workMinutes = (oh*60+om) - (ih*60+im);
   await updateDoc(doc(db,'attendance',existing._id), {
     checkOut: timeStr, workMinutes: Math.max(0, workMinutes), updatedAt: new Date()
   });
-  showToast(`퇴근 체크 완료: ${timeStr}`);
-  renderMyAttendance();
+  showToast(`${uid} 퇴근 체크 완료: ${timeStr}`);
+  renderAttSection(uid);
 };
 
 // ── 실시간 리스너 ──
@@ -1275,6 +1259,8 @@ function buildSidebar(){
   const sb = document.getElementById('sidebar');
   if(isManager()){
     sb.innerHTML=`
+      <div class="sidebar-section">내 업무</div>
+      <div class="sidebar-item" id="sb-attendance" onclick="gotoSection('attendance')">🕐 출퇴근</div>
       <div class="sidebar-section">메인</div>
       <div class="sidebar-item" id="sb-dashboard" onclick="gotoSection('dashboard')">📊 대시보드</div>
       <div class="sidebar-item" id="sb-staffstatus" onclick="gotoSection('staffstatus')">👥 직원 현황</div>
@@ -1290,6 +1276,7 @@ function buildSidebar(){
       <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
     // 관리소장 모바일 탭바
     buildMobileNav([
+      {id:'attendance', icon:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label:'출퇴근'},
       {id:'dashboard', icon:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>', label:'홈'},
       {id:'complaints', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', label:'민원', badge:true},
       {id:'tasks', icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>', label:'업무'},
@@ -1299,6 +1286,7 @@ function buildSidebar(){
   } else {
     sb.innerHTML=`
       <div class="sidebar-section">내 업무</div>
+      <div class="sidebar-item" id="sb-attendance" onclick="gotoSection('attendance')">🕐 출퇴근</div>
       <div class="sidebar-item" id="sb-mycomplaints" onclick="gotoSection('mycomplaints')">📋 배정된 민원 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
       <div class="sidebar-item" id="sb-mytasks" onclick="gotoSection('mytasks')">📌 내 업무</div>
       <div class="sidebar-section">설정</div>
@@ -1307,6 +1295,7 @@ function buildSidebar(){
       <div class="sidebar-item" onclick="window.open('index.html','_blank')">🔗 입주자 사이트</div>`;
     // 직원 모바일 탭바
     buildMobileNav([
+      {id:'attendance', icon:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label:'출퇴근'},
       {id:'mycomplaints', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', label:'민원', badge:true},
       {id:'mytasks', icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>', label:'내 업무'},
       {id:'myaccount', icon:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', label:'내 계정'},
@@ -1347,6 +1336,7 @@ function gotoSection(id){
   const mbn = document.getElementById('mbn-'+id);
   if(mbn) mbn.classList.add('active');
   if(id==='dashboard') renderDashboard();
+  if(id==='attendance') renderAttSection();
   if(id==='staffstatus'){ renderStaffStatus(); renderTodayAttendance(); }
   if(id==='complaints') renderComplaintTable();
   if(id==='tasks') renderTaskList();
@@ -2090,56 +2080,95 @@ function exportUnitsCSV(){
   a.click();
 }
 
-// ── 출퇴근 렌더링 (직원) ──
-function renderMyAttendance(){
-  const uid = currentUser;
+// ── 출퇴근 섹션 렌더링 (공통) ──
+function renderAttSection(targetUid){
+  const uid = targetUid || window.currentUser;
   const dateStr = new Date().toISOString().slice(0,10);
-  document.getElementById('attTodayDate').textContent = dateStr;
-  const today = (window.attendances||[]).find(a => a.uid===uid && a.date===dateStr);
-  const icon = document.getElementById('attStatusIcon');
-  const text = document.getElementById('attStatusText');
-  const sub = document.getElementById('attStatusSub');
-  const inBtn = document.getElementById('attCheckInBtn');
-  const outBtn = document.getElementById('attCheckOutBtn');
-  const rec = document.getElementById('attTodayRecord');
-  const det = document.getElementById('attTodayDetail');
+  const pageDate = document.getElementById('attPageDate');
+  if(pageDate) pageDate.textContent = dateStr;
 
-  if(!today || !today.checkIn){
-    icon.textContent='⏸'; text.textContent='오늘 출근 전'; sub.textContent='';
-    inBtn.disabled=false; outBtn.disabled=true; rec.style.display='none';
-  } else if(today.checkIn && !today.checkOut){
-    icon.textContent='🟢'; text.textContent='근무 중'; sub.textContent=`출근: ${today.checkIn}`;
-    inBtn.disabled=true; outBtn.disabled=false; rec.style.display='block';
-    det.innerHTML=`출근: ${today.checkIn}`;
-  } else {
-    icon.textContent='🔵'; text.textContent='퇴근 완료';
-    sub.textContent=`근무: ${fmtMin(today.workMinutes)}`;
-    inBtn.disabled=true; outBtn.disabled=true; rec.style.display='block';
-    det.innerHTML=`출근: ${today.checkIn} · 퇴근: ${today.checkOut} · 근무: ${fmtMin(today.workMinutes)}`;
-  }
+  const container = document.getElementById('attMainCard');
+  if(!container) return;
 
-  // 이번 달 기록
   const ym = dateStr.slice(0,7);
-  const myMonth = (window.attendances||[]).filter(a => a.uid===uid && a.date.startsWith(ym))
-    .sort((a,b)=>a.date<b.date?1:-1);
-  const container = document.getElementById('attMyMonthly');
-  if(!myMonth.length){
-    container.innerHTML='<div style="padding:1rem;text-align:center;color:var(--text3);font-size:13px;">이번 달 기록 없음</div>';
-    return;
+
+  if(isManager()){
+    // 관리소장: 본인 + 전 직원 출퇴근 카드
+    const allUids = [MANAGER, ...STAFF_VISIBLE];
+    container.innerHTML = allUids.map(u => renderAttCard(u, dateStr)).join('')
+      + renderMonthlyRecord(MANAGER, ym);
+  } else {
+    // 직원: 본인 카드 + 이달 기록
+    container.innerHTML = renderAttCard(uid, dateStr) + renderMonthlyRecord(uid, ym);
   }
-  container.innerHTML = myMonth.map(a => {
-    const settings = loadAttSettings();
-    const baseTime = settings[uid] || '09:00';
+}
+
+function renderMonthlyRecord(uid, ym){
+  const myMonth = (window.attendances||[])
+    .filter(a => a.uid===uid && a.date.startsWith(ym))
+    .sort((a,b)=>a.date<b.date?1:-1);
+  if(!myMonth.length) return `<div class="table-card" style="margin-bottom:.875rem;"><div class="table-toolbar"><span class="table-toolbar-title">📅 ${ym} 출퇴근 기록</span></div><div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:13px;">이번 달 기록이 없습니다.</div></div>`;
+  const settings = loadAttSettings();
+  const baseTime = settings[uid]||'09:00';
+  const rows = myMonth.map(a => {
     const isLate = a.checkIn && a.checkIn > baseTime;
-    return `<div style="display:flex;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);gap:1rem;">
-      <span style="font-size:13px;font-weight:500;color:var(--text);width:80px;flex-shrink:0;">${a.date.slice(5)}</span>
-      <span style="font-size:13px;color:var(--text2);flex:1;">
-        출근: ${a.checkIn||'-'} · 퇴근: ${a.checkOut||'-'}
-        ${a.workMinutes?` · ${fmtMin(a.workMinutes)}`:''}
+    return `<div style="display:flex;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);gap:.75rem;">
+      <span style="font-size:13px;font-weight:500;color:var(--text);width:64px;flex-shrink:0;">${a.date.slice(5)}</span>
+      <span style="font-size:12px;color:var(--text2);flex:1;">
+        출근 ${a.checkIn||'-'} · 퇴근 ${a.checkOut||'-'}${a.workMinutes?` · ${fmtMin(a.workMinutes)}`:''}
       </span>
-      ${isLate?'<span class="badge badge-urgent" style="flex-shrink:0;">지각</span>':'<span class="badge badge-resolved" style="flex-shrink:0;">정상</span>'}
+      ${isLate?'<span class="badge badge-urgent">지각</span>':'<span class="badge badge-resolved" style="background:var(--green-light);color:var(--green);">정상</span>'}
     </div>`;
   }).join('');
+  return `<div class="table-card" style="margin-bottom:.875rem;"><div class="table-toolbar"><span class="table-toolbar-title">📅 ${ym} 출퇴근 기록</span></div>${rows}</div>`;
+}
+
+function renderAttCard(uid, dateStr){
+  const today = (window.attendances||[]).find(a => a.uid===uid && a.date===dateStr);
+  const settings = loadAttSettings();
+  const baseTime = settings[uid]||'09:00';
+  const isLate = today?.checkIn && today.checkIn > baseTime;
+
+  let statusIcon='⏸', statusText='출근 전', statusColor='var(--text3)';
+  let inDisabled='', outDisabled='disabled';
+  let inBtnLabel='🟢 출근', detailHtml='';
+
+  if(today?.checkIn && !today?.checkOut){
+    statusIcon='🟢'; statusText='근무 중'; statusColor='var(--green)';
+    inDisabled='disabled'; outDisabled='';
+    detailHtml=`출근: <strong>${today.checkIn}</strong>`;
+  } else if(today?.checkIn && today?.checkOut){
+    statusIcon='🔵'; statusText=`퇴근 완료 · ${fmtMin(today.workMinutes)}`; statusColor='var(--info)';
+    outDisabled='disabled';
+    inBtnLabel='🔄 재출근';
+    detailHtml=`출근: <strong>${today.checkIn}</strong> · 퇴근: <strong>${today.checkOut}</strong> · 근무: <strong>${fmtMin(today.workMinutes)}</strong>${isLate?' <span class="badge badge-urgent">지각</span>':''}`;
+  }
+
+  const isSelf = (uid === window.currentUser) || isManager();
+  const btnHtml = isSelf ? `
+    <div style="display:flex;gap:.625rem;margin-top:1rem;">
+      <button class="btn btn-primary" style="flex:1;padding:11px;" ${inDisabled} onclick="checkIn('${uid}')">${inBtnLabel}</button>
+      <button class="btn btn-outline" style="flex:1;padding:11px;" ${outDisabled} onclick="checkOut('${uid}')">🔴 퇴근</button>
+    </div>` : '';
+
+  return `<div class="table-card" style="margin-bottom:.875rem;">
+    <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+      <div><strong style="font-size:14px;">${uid}</strong> <span style="font-size:12px;color:var(--text3);">${USERS[uid]?.role||''}</span></div>
+      <span style="font-size:13px;font-weight:500;color:${statusColor};">${statusIcon} ${statusText}</span>
+    </div>
+    <div style="padding:1rem 1.25rem;">
+      ${detailHtml ? `<div style="font-size:13px;color:var(--text2);margin-bottom:.5rem;">${detailHtml}</div>` : ''}
+      ${btnHtml}
+    </div>
+  </div>`;
+}
+
+// ── 출퇴근 렌더링 (직원 내 계정 탭) ──
+function renderMyAttendance(){
+  // 출퇴근 탭이 열려있으면 거기서도 업데이트
+  if(document.getElementById('sec-attendance').classList.contains('active')){
+    renderAttSection();
+  }
 }
 
 // ── 오늘 출퇴근 현황 (관리소장) ──
