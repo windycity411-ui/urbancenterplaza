@@ -1337,7 +1337,7 @@ function gotoSection(id){
   const mbn = document.getElementById('mbn-'+id);
   if(mbn) mbn.classList.add('active');
   if(id==='dashboard') renderDashboard();
-  if(id==='attendance') renderAttSection();
+  if(id==='attendance') setTimeout(()=>renderAttSection(), 50);
   if(id==='staffstatus'){ renderStaffStatus(); renderTodayAttendance(); }
   if(id==='complaints') renderComplaintTable();
   if(id==='tasks') renderTaskList();
@@ -2092,14 +2092,15 @@ function renderAttSection(targetUid){
   if(!container) return;
 
   const ym = dateStr.slice(0,7);
+  const mgr = window.isManager ? window.isManager() : false;
+  const manager = window.MANAGER || 'UB001';
+  const staffList = window.STAFF_VISIBLE || [];
 
-  if(isManager()){
-    // 관리소장: 본인 + 전 직원 출퇴근 카드
-    const allUids = [MANAGER, ...STAFF_VISIBLE];
+  if(mgr){
+    const allUids = [manager, ...staffList];
     container.innerHTML = allUids.map(u => renderAttCard(u, dateStr)).join('')
-      + renderMonthlyRecord(MANAGER, ym);
+      + renderMonthlyRecord(manager, ym);
   } else {
-    // 직원: 본인 카드 + 이달 기록
     container.innerHTML = renderAttCard(uid, dateStr) + renderMonthlyRecord(uid, ym);
   }
 }
@@ -2129,6 +2130,7 @@ function renderAttCard(uid, dateStr){
   const settings = loadAttSettings();
   const baseTime = settings[uid]||'09:00';
   const isLate = today?.checkIn && today.checkIn > baseTime;
+  const users = window.USERS || {};
 
   let statusIcon='⏸', statusText='출근 전', statusColor='var(--text3)';
   let inDisabled='', outDisabled='disabled';
@@ -2147,13 +2149,13 @@ function renderAttCard(uid, dateStr){
 
   const btnHtml = `
     <div style="display:flex;gap:.625rem;margin-top:1rem;">
-      <button class="btn btn-primary" style="flex:1;padding:13px;font-size:15px;" ${inDisabled} onclick="checkIn('${uid}')">${inBtnLabel}</button>
-      <button class="btn btn-outline" style="flex:1;padding:13px;font-size:15px;" ${outDisabled} onclick="checkOut('${uid}')">🔴 퇴근</button>
+      <button class="btn btn-primary" style="flex:1;padding:13px;font-size:15px;" ${inDisabled} onclick="window.checkIn('${uid}')">${inBtnLabel}</button>
+      <button class="btn btn-outline" style="flex:1;padding:13px;font-size:15px;" ${outDisabled} onclick="window.checkOut('${uid}')">🔴 퇴근</button>
     </div>`;
 
   return `<div class="table-card" style="margin-bottom:.875rem;">
     <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
-      <div><strong style="font-size:14px;">${uid}</strong> <span style="font-size:12px;color:var(--text3);">${USERS[uid]?.role||''}</span></div>
+      <div><strong style="font-size:14px;">${uid}</strong> <span style="font-size:12px;color:var(--text3);">${users[uid]?.role||''}</span></div>
       <span style="font-size:13px;font-weight:500;color:${statusColor};">${statusIcon} ${statusText}</span>
     </div>
     <div style="padding:1rem 1.25rem;">
