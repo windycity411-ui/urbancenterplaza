@@ -416,6 +416,10 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <div class="modal-field"><div class="modal-field-label">제목</div><div class="modal-field-value" id="cd-subject"></div></div>
       <div class="modal-field"><div class="modal-field-label">내용</div><div class="modal-field-value" id="cd-body"></div></div>
       <div class="modal-field"><div class="modal-field-label">접수일</div><div class="modal-field-value" id="cd-date"></div></div>
+      <div class="modal-field" id="cd-photos-wrap" style="display:none;">
+        <div class="modal-field-label">첨부 사진</div>
+        <div id="cd-photos" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"></div>
+      </div>
       <hr class="modal-divider">
       <div style="margin-bottom:8px;"><label class="modal-form-label">상태 변경</label><select class="modal-form-select" id="cd-status"><option>신규</option><option>처리중</option><option>완료</option></select></div>
       <div style="margin-bottom:8px;"><label class="modal-form-label">담당자 배정</label><select class="modal-form-select" id="cd-assignee"></select></div>
@@ -434,6 +438,15 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <div style="margin-bottom:10px;"><label class="modal-form-label">업무 제목 <span style="color:var(--danger)">*</span></label><input type="text" class="modal-form-input" id="tm-title" placeholder="업무 제목"></div>
       <div style="margin-bottom:10px;"><label class="modal-form-label">업무 내용 <span style="color:var(--danger)">*</span></label><textarea class="modal-form-textarea" id="tm-body" style="min-height:120px;" placeholder="구체적인 업무 지시 내용"></textarea></div>
       <div><label class="modal-form-label">우선순위</label><select class="modal-form-select" id="tm-priority"><option>일반</option><option>긴급</option><option>낮음</option></select></div>
+      <!-- 사진 첨부 -->
+      <div style="margin-top:4px;">
+        <label class="modal-form-label">사진 첨부 <span style="color:var(--text3);font-weight:400;">(최대 3장)</span></label>
+        <div id="tm-photoUpload" onclick="document.getElementById('tm-photoInput').click()" style="border:2px dashed var(--border);border-radius:var(--radius);padding:1rem;text-align:center;cursor:pointer;font-size:13px;color:var(--text3);transition:all .15s;">
+          📷 사진 추가하기
+        </div>
+        <input type="file" id="tm-photoInput" accept="image/*" multiple style="display:none;" onchange="handleTaskPhotoSelect(event)">
+        <div id="tm-photoPreview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('taskModal')">취소</button><button class="btn btn-primary" onclick="saveTask()">지시</button></div>
   </div>
@@ -617,6 +630,57 @@ const db = getFirestore(app);
 // ── 전역 데이터 ──
 let complaints = [], tasks = [], notices = [];
 let editingComplaintId = null;
+
+// ── Cloudinary ──
+const CLOUD_NAME = 'duuhuh22p';
+const UPLOAD_PRESET = 'urbancenter';
+
+async function uploadToCloudinary(file, folder='complaints'){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', UPLOAD_PRESET);
+  fd.append('folder', `urbancenter/${folder}`);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.secure_url;
+}
+
+// 업무 지시 사진
+let taskPhotos = [];
+
+window.handleTaskPhotoSelect = function(e){
+  const files = Array.from(e.target.files);
+  const remaining = 3 - taskPhotos.length;
+  if(remaining <= 0){ alert('사진은 최대 3장까지 첨부할 수 있습니다.'); return; }
+  const toAdd = files.slice(0, remaining);
+  toAdd.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      taskPhotos.push({ file, preview: ev.target.result });
+      renderTaskPhotoPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+};
+
+function renderTaskPhotoPreviews(){
+  const area = document.getElementById('tm-photoPreview');
+  if(!area) return;
+  area.innerHTML = taskPhotos.map((p,i) => `
+    <div style="position:relative;width:72px;height:72px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;">
+      <img src="${p.preview}" style="width:100%;height:100%;object-fit:cover;">
+      <button onclick="removeTaskPhoto(${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;line-height:1;">×</button>
+    </div>`).join('');
+  const uploadBtn = document.getElementById('tm-photoUpload');
+  if(uploadBtn) uploadBtn.style.display = taskPhotos.length >= 3 ? 'none' : 'block';
+}
+
+window.removeTaskPhoto = function(i){
+  taskPhotos.splice(i,1);
+  renderTaskPhotoPreviews();
+};
 
 // ── 사용자 정의 ──
 const ROLES={UB001:'관리소장',UB002:'전기과장',UB003:'경비',UB004:'경비',UB005:'미화',UB006:'미화',UB007:'청소2',UB008:'전기담당',UB009:'소방담당',UB010:'주차담당',UB011:'행정1',UB012:'행정2',UB013:'시설1',UB014:'시설2',UB015:'시설3',UB016:'경비4',UB017:'경비5',UB018:'청소3',UB019:'주차2',UB020:'총괄'};
@@ -813,12 +877,23 @@ window.saveTask = async function() {
   const body = document.getElementById('tm-body').value.trim();
   if(!assignee||!title||!body){alert('담당자, 제목, 내용은 필수입니다.');return;}
   const priority = document.getElementById('tm-priority').value;
+  // 사진 업로드
+  let photoUrls = [];
+  if(taskPhotos.length > 0){
+    showToast('사진 업로드 중...');
+    for(const p of taskPhotos){
+      const url = await uploadToCloudinary(p.file, 'tasks');
+      photoUrls.push(url);
+    }
+  }
   await addDoc(collection(db,'tasks'), {
     assignee, title, body, date: today(),
-    status:'진행중', priority, createdAt: new Date()
+    status:'진행중', priority, photos: photoUrls, createdAt: new Date()
   });
   await writeLog('업무','등록', title,
     `${assignee}(${USERS[assignee]?.role||''})에게 업무 지시 [${priority}]`, assignee);
+  taskPhotos = [];
+  renderTaskPhotoPreviews();
   closeModal('taskModal'); showToast(assignee+'에게 업무가 지시되었습니다.');
 };
 
@@ -1112,6 +1187,19 @@ function openComplaint(id){
   document.getElementById('cd-status').value=c.status;
   document.getElementById('cd-assignee').value=c.assignee||'';
   document.getElementById('cd-memo').value=c.memo||'';
+  // 사진 표시
+  const photosWrap = document.getElementById('cd-photos-wrap');
+  const photosArea = document.getElementById('cd-photos');
+  if(c.photos && c.photos.length > 0){
+    photosWrap.style.display = 'block';
+    photosArea.innerHTML = c.photos.map(url=>`
+      <a href="${url}" target="_blank" style="display:block;width:80px;height:80px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;">
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+      </a>`).join('');
+  } else {
+    photosWrap.style.display = 'none';
+    photosArea.innerHTML = '';
+  }
   openModal('complaintModal');
 }
 
@@ -1152,6 +1240,7 @@ function renderTaskList(){
         <div class="task-item-title">${x.title} ${x.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
         <div class="task-item-meta">담당: ${x.assignee} (${USERS[x.assignee]?.role||''}) · ${x.date}</div>
         <div class="task-item-body">${x.body}</div>
+        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${url}" style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
       </div>
       <div class="task-item-right">
         ${taskBadge(x.status,'')}
@@ -1171,6 +1260,7 @@ function renderMyTasks(){
         <div class="task-item-title">${x.title} ${x.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
         <div class="task-item-meta">지시일: ${x.date}</div>
         <div class="task-item-body">${x.body}</div>
+        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${url}" style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
       </div>
       <div class="task-item-right">
         ${taskBadge(x.status,'')}
@@ -1187,6 +1277,11 @@ function openNewTask(prefillAssignee,prefillTitle,prefillBody){
   document.getElementById('tm-body').value=prefillBody||'';
   document.getElementById('tm-priority').value='일반';
   document.getElementById('tm-assignee').value=prefillAssignee||'';
+  // 사진 초기화
+  taskPhotos=[];
+  renderTaskPhotoPreviews();
+  const uploadBtn=document.getElementById('tm-photoUpload');
+  if(uploadBtn) uploadBtn.style.display='block';
   openModal('taskModal');
 }
 
