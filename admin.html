@@ -950,6 +950,8 @@ function loadAttSettings(){
 function saveAttSettingsData(data){
   localStorage.setItem('ucp_att_settings', JSON.stringify(data));
 }
+window.loadAttSettings = loadAttSettings;
+window.saveAttSettingsData = saveAttSettingsData;
 window.attSettings = loadAttSettings();
 
 // ── 출퇴근 체크 ──
@@ -2185,7 +2187,7 @@ function renderMyAttendance(){
 function renderTodayAttendance(){
   const dateStr = new Date().toISOString().slice(0,10);
   document.getElementById('attTodayHeader').textContent = dateStr;
-  const settings = loadAttSettings();
+  const settings = window.loadAttSettings();
   const atts = (window.attendances||[]).filter(a => a.date===dateStr);
 
   document.getElementById('attTodayBody').innerHTML = STAFF_VISIBLE.map(uid => {
@@ -2214,7 +2216,7 @@ function renderAttLog(){
     if(mFilter && !a.date.startsWith(mFilter)) return false;
     return true;
   }).sort((a,b)=>a.date<b.date?1:-1);
-  const settings = loadAttSettings();
+  const settings = window.loadAttSettings();
 
   // 월간 요약
   const summary = {};
@@ -2264,7 +2266,7 @@ function switchLogTab(tab){
 
 // ── 출근 기준시간 설정 ──
 function openAttendanceSettings(){
-  const settings = loadAttSettings();
+  const settings = window.loadAttSettings();
   document.getElementById('attSettingsGrid').innerHTML = STAFF_VISIBLE.map(uid => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border);">
       <div><div style="font-size:13px;font-weight:500;">${uid}</div><div style="font-size:11px;color:var(--text3);">${USERS[uid]?.role||''}</div></div>
@@ -2278,7 +2280,7 @@ function saveAttSettings(){
     const el = document.getElementById(`attTime-${uid}`);
     if(el) settings[uid] = el.value;
   });
-  saveAttSettingsData(settings);
+  window.saveAttSettingsData(settings);
   window.attSettings = settings;
   closeModal('attSettingsModal');
   showToast('출근 기준시간이 저장되었습니다.');
@@ -2288,7 +2290,7 @@ function saveAttSettings(){
 function exportAttCSV(){
   const uFilter = document.getElementById('attLogUserFilter')?.value||'all';
   const mFilter = document.getElementById('attLogMonthFilter')?.value||'';
-  const settings = loadAttSettings();
+  const settings = window.loadAttSettings();
   const atts = (window.attendances||[]).filter(a => {
     if(uFilter!=='all' && a.uid!==uFilter) return false;
     if(mFilter && !a.date.startsWith(mFilter)) return false;
