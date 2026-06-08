@@ -121,6 +121,29 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .log-badge.resolve{background:var(--green-light);color:var(--green);}
 .log-badge.unresolve{background:var(--danger-light);color:var(--danger);}
 
+/* ── 호실 관리 ── */
+.unit-floor-tabs{display:flex;gap:4px;margin-bottom:1rem;flex-wrap:wrap;}
+.unit-floor-tab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:5px 12px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .12s;}
+.unit-floor-tab:hover{border-color:var(--accent2);color:var(--accent);}
+.unit-floor-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.unit-grid-section{margin-bottom:1.5rem;}
+.unit-floor-label{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.625rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.unit-floor-label span{font-size:11px;color:var(--text3);}
+.unit-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.625rem;}
+.unit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.875rem;cursor:pointer;transition:all .15s;position:relative;}
+.unit-card:hover{border-color:var(--accent2);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.unit-card.occupied{border-left:3px solid var(--accent2);}
+.unit-card.vacant{border-left:3px solid var(--border);opacity:.7;}
+.unit-card.expiring{border-left:3px solid var(--gold);}
+.unit-num{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;font-family:monospace;}
+.unit-name{font-size:13px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit-business{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit-status{position:absolute;top:.625rem;right:.625rem;font-size:9px;font-weight:500;padding:2px 5px;border-radius:2px;}
+.unit-status.occupied{background:var(--accent-light);color:var(--accent2);}
+.unit-status.vacant{background:var(--surface2);color:var(--text3);}
+.unit-status.expiring{background:var(--gold-light);color:var(--gold);}
+.vehicle-row{display:grid;grid-template-columns:1fr 1fr 28px;gap:6px;margin-bottom:6px;align-items:center;}
+
 /* ── 캘린더 ── */
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1.25rem;}
 .cal-title{font-size:16px;font-weight:500;color:var(--accent);}
@@ -288,6 +311,27 @@ table.adm-table tr:hover td{background:var(--surface2);}
         <div id="noticeAdminList"></div>
       </div>
 
+      <!-- 호실 관리 (관리소장) -->
+      <div class="adm-section" id="sec-units">
+        <div class="adm-page-title">
+          호실 관리
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <input type="text" class="search-input" id="unitSearch" placeholder="호실·입주자명 검색" oninput="renderUnits()">
+            <select class="filter-select" id="unitFloorFilter" onchange="renderUnits()">
+              <option value="all">전체 층</option>
+              <option value="1">1층</option><option value="2">2층</option><option value="3">3층</option>
+              <option value="4">4층</option><option value="5">5층</option><option value="6">6층</option>
+              <option value="7">7층</option><option value="8">8층</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="exportUnitsCSV()">📥 CSV</button>
+          </div>
+        </div>
+        <!-- 층별 탭 -->
+        <div class="unit-floor-tabs" id="unitFloorTabs"></div>
+        <!-- 호실 그리드 -->
+        <div id="unitGrid"></div>
+      </div>
+
       <!-- 업무 로그 (관리소장) -->
       <div class="adm-section" id="sec-logs">
         <div class="adm-page-title">
@@ -427,6 +471,43 @@ table.adm-table tr:hover td{background:var(--surface2);}
   </div>
 </div>
 
+<!-- 호실 수정 모달 -->
+<div class="modal-backdrop" id="unitModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <span class="modal-header-title" id="unitModalTitle">호실 정보</span>
+      <button class="modal-close" onclick="closeModal('unitModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--accent);color:#fff;border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.25rem;font-size:15px;font-weight:500;" id="um-roomNum"></div>
+
+      <div style="font-size:12px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;">입주자 정보</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div><label class="modal-form-label">입주자명</label><input type="text" class="modal-form-input" id="um-name" placeholder="홍길동" style="margin-bottom:0;"></div>
+        <div><label class="modal-form-label">연락처</label><input type="text" class="modal-form-input" id="um-phone" placeholder="010-XXXX-XXXX" style="margin-bottom:0;"></div>
+      </div>
+
+      <div style="font-size:12px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;margin-top:1rem;">계약 정보</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div><label class="modal-form-label">입주일</label><input type="date" class="modal-form-input" id="um-moveIn" style="margin-bottom:0;"></div>
+        <div><label class="modal-form-label">계약 만료일</label><input type="date" class="modal-form-input" id="um-contractEnd" style="margin-bottom:0;"></div>
+      </div>
+      <div><label class="modal-form-label">업종 / 용도</label><input type="text" class="modal-form-input" id="um-business" placeholder="예) 미용실, 사무실, 편의점" style="margin-bottom:0;"></div>
+
+      <div style="font-size:12px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;margin-top:1rem;">차량 정보</div>
+      <div id="um-vehicles"></div>
+      <button class="btn btn-outline btn-sm" onclick="addVehicleRow()" style="margin-top:6px;">+ 차량 추가</button>
+
+      <div style="font-size:12px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;margin-top:1rem;">메모</div>
+      <textarea class="modal-form-textarea" id="um-memo" placeholder="특이사항 등 메모" style="min-height:60px;margin-bottom:0;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('unitModal')">취소</button>
+      <button class="btn btn-primary" onclick="saveUnit()">저장</button>
+    </div>
+  </div>
+</div>
+
 <!-- 비밀번호 변경 모달 (관리소장용) -->
 <div class="modal-backdrop" id="pwModal">
   <div class="modal">
@@ -471,7 +552,7 @@ table.adm-table tr:hover td{background:var(--surface2);}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ★ Firebase 설정 (본인 프로젝트 config로 교체하세요)
 const firebaseConfig = {
@@ -500,6 +581,12 @@ USERS['UB001'].pw='1111';
 const MANAGER='UB001';
 window.USERS = USERS; window.ROLES = ROLES; window.STAFF_VISIBLE = STAFF_VISIBLE; window.MANAGER = MANAGER;
 window.isManager = () => window.currentUser === MANAGER;
+window.setDoc = setDoc;
+window.doc = doc;
+window.db = db;
+window.saveCalMemoToDb = async function(dateStr, memo){
+  await setDoc(doc(db,'calendar_memos', dateStr), { memo });
+};
 
 // ── 캘린더 메모 Firebase 저장/로드 ──
 onSnapshot(collection(db,'calendar_memos'), snap => {
@@ -521,12 +608,6 @@ window.addDocFn = async function(dateStr, memo){
       await setDoc(doc(db,'calendar_memos', dateStr), { memo });
     } catch(e2){}
   }
-};
-
-// setDoc import for memo
-import { setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-window.saveCalMemoToDb = async function(dateStr, memo){
-  await setDoc(doc(db,'calendar_memos', dateStr), { memo });
 };
 
 // ── 실시간 리스너: 로그 ──
@@ -554,6 +635,15 @@ async function writeLog(type, action, subject, detail, targetUser){
   } catch(e){ console.warn('로그 저장 실패:', e); }
 }
 window.writeLog = writeLog;
+
+// ── 실시간 리스너: 호실 ──
+let units = {};
+onSnapshot(collection(db,'units'), snap => {
+  units = {};
+  snap.docs.forEach(d => { units[d.id] = {...d.data(), _id: d.id}; });
+  window.units = units;
+  if(document.getElementById('sec-units').classList.contains('active')) renderUnits();
+});
 
 // ── 실시간 리스너 ──
 onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), snap => {
@@ -769,6 +859,7 @@ function buildSidebar(){
       <div class="sidebar-item" id="sb-complaints" onclick="gotoSection('complaints')">📋 민원 관리 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
       <div class="sidebar-item" id="sb-tasks" onclick="gotoSection('tasks')">📌 업무 지시</div>
       <div class="sidebar-section">설정</div>
+      <div class="sidebar-item" id="sb-units" onclick="gotoSection('units')">🏢 호실 관리</div>
       <div class="sidebar-item" id="sb-logs" onclick="gotoSection('logs')">📝 업무 로그</div>
       <div class="sidebar-item" id="sb-notices" onclick="gotoSection('notices')">📢 공지 관리</div>
       <div class="sidebar-item" id="sb-users" onclick="gotoSection('users')">👤 계정 목록</div>
@@ -810,6 +901,7 @@ function gotoSection(id){
   if(id==='tasks') renderTaskList();
   if(id==='notices') renderNoticeAdmin();
   if(id==='users') renderUsers();
+  if(id==='units') renderUnits();
   if(id==='logs') renderLogs();
   if(id==='mycomplaints') renderMyComplaints();
   if(id==='mytasks') renderMyTasks();
@@ -1217,6 +1309,180 @@ function saveCalMemo(){
   renderCalendar();
   selectCalDate(calSelectedDate);
   showToast('메모가 저장되었습니다.');
+}
+
+// ── 호실 관리 ──
+const UNIT_FLOORS = {
+  '1층': Array.from({length:29},(_,i)=>String(101+i)),
+  '2층': Array.from({length:23},(_,i)=>String(201+i)),
+  '3층': Array.from({length:23},(_,i)=>String(301+i)),
+  '4층': Array.from({length:15},(_,i)=>String(401+i)),
+  '5층': Array.from({length:8},(_,i)=>String(501+i)),
+  '6층': Array.from({length:8},(_,i)=>String(601+i)),
+  '7층': Array.from({length:8},(_,i)=>String(701+i)),
+  '8층': Array.from({length:8},(_,i)=>String(801+i)),
+};
+let currentFloor = 'all';
+let editingUnit = null;
+
+function renderUnits(){
+  const q = (document.getElementById('unitSearch')?.value||'').trim().toLowerCase();
+  const ff = document.getElementById('unitFloorFilter')?.value||'all';
+  const u = window.units||{};
+
+  // 층 탭 생성
+  const tabContainer = document.getElementById('unitFloorTabs');
+  if(tabContainer && !tabContainer.children.length){
+    const allBtn = `<div class="unit-floor-tab ${currentFloor==='all'?'active':''}" onclick="setFloor('all')">전체 (122)</div>`;
+    const floorBtns = Object.keys(UNIT_FLOORS).map(f=>{
+      const cnt = UNIT_FLOORS[f].filter(n=>u[n]?.name).length;
+      return `<div class="unit-floor-tab ${currentFloor===f?'active':''}" onclick="setFloor('${f}')">${f} <span style="font-size:10px;opacity:.7;">${cnt}/${UNIT_FLOORS[f].length}</span></div>`;
+    }).join('');
+    tabContainer.innerHTML = allBtn + floorBtns;
+  } else if(tabContainer){
+    // 탭 active 상태 업데이트
+    tabContainer.querySelectorAll('.unit-floor-tab').forEach((t,i)=>{
+      const floors = ['all',...Object.keys(UNIT_FLOORS)];
+      t.classList.toggle('active', floors[i]===currentFloor);
+    });
+  }
+
+  const today = new Date();
+  const floorsToShow = currentFloor==='all' ? Object.keys(UNIT_FLOORS) : [currentFloor];
+  const filtered = ff!=='all' ? [`${ff}층`] : floorsToShow;
+
+  let html = '';
+  filtered.forEach(floor => {
+    const rooms = UNIT_FLOORS[floor];
+    if(!rooms) return;
+    const cards = rooms.filter(num => {
+      if(!q) return true;
+      const d = u[num]||{};
+      return num.includes(q)||(d.name||'').includes(q)||(d.business||'').toLowerCase().includes(q);
+    }).map(num => {
+      const d = u[num]||{};
+      const hasData = !!d.name;
+      // 계약 만료 30일 이내 체크
+      let statusCls = hasData ? 'occupied' : 'vacant';
+      let statusLabel = hasData ? '입주' : '공실';
+      if(hasData && d.contractEnd){
+        const diff = (new Date(d.contractEnd) - today) / (1000*60*60*24);
+        if(diff <= 30 && diff >= 0){ statusCls='expiring'; statusLabel='만료임박'; }
+        if(diff < 0){ statusCls='expiring'; statusLabel='만료'; }
+      }
+      return `<div class="unit-card ${statusCls}" onclick="openUnit('${num}')">
+        <span class="unit-status ${statusCls}">${statusLabel}</span>
+        <div class="unit-num">${num}호</div>
+        <div class="unit-name">${d.name||'<span style="color:var(--text3)">미등록</span>'}</div>
+        <div class="unit-business">${d.business||''}</div>
+      </div>`;
+    }).join('');
+    const total = rooms.length;
+    const occupied = rooms.filter(n=>u[n]?.name).length;
+    html += `<div class="unit-grid-section">
+      <div class="unit-floor-label">${floor} <span>${occupied}/${total} 입주</span></div>
+      <div class="unit-cards">${cards||'<div style="color:var(--text3);font-size:13px;">검색 결과 없음</div>'}</div>
+    </div>`;
+  });
+  document.getElementById('unitGrid').innerHTML = html;
+}
+
+function setFloor(floor){
+  currentFloor = floor;
+  // 탭 active 갱신
+  const tabs = document.getElementById('unitFloorTabs');
+  if(tabs){
+    tabs.querySelectorAll('.unit-floor-tab').forEach((t,i)=>{
+      const floors = ['all',...Object.keys(UNIT_FLOORS)];
+      t.classList.toggle('active', floors[i]===floor);
+    });
+  }
+  // 층 필터 select도 동기화
+  const sel = document.getElementById('unitFloorFilter');
+  if(sel) sel.value = floor==='all'?'all':floor.replace('층','');
+  renderUnits();
+}
+
+let vehicleCount = 0;
+function openUnit(num){
+  editingUnit = num;
+  const d = (window.units||{})[num]||{};
+  document.getElementById('unitModalTitle').textContent = `${num}호 정보`;
+  document.getElementById('um-roomNum').textContent = `${num}호 ${d.name?'· '+d.name:''}`;
+  document.getElementById('um-name').value = d.name||'';
+  document.getElementById('um-phone').value = d.phone||'';
+  document.getElementById('um-moveIn').value = d.moveIn||'';
+  document.getElementById('um-contractEnd').value = d.contractEnd||'';
+  document.getElementById('um-business').value = d.business||'';
+  document.getElementById('um-memo').value = d.memo||'';
+  // 차량 정보
+  vehicleCount = 0;
+  const vContainer = document.getElementById('um-vehicles');
+  vContainer.innerHTML = '';
+  const vehicles = d.vehicles||[];
+  if(vehicles.length){
+    vehicles.forEach(v => addVehicleRow(v.num, v.type));
+  } else {
+    addVehicleRow();
+  }
+  openModal('unitModal');
+}
+
+function addVehicleRow(num='', type=''){
+  vehicleCount++;
+  const id = vehicleCount;
+  const row = document.createElement('div');
+  row.className = 'vehicle-row';
+  row.id = `vrow-${id}`;
+  row.innerHTML = `
+    <input type="text" class="modal-form-input" id="vnum-${id}" placeholder="차량번호" value="${num}" style="margin-bottom:0;">
+    <input type="text" class="modal-form-input" id="vtype-${id}" placeholder="차종 (예: 소나타)" value="${type}" style="margin-bottom:0;">
+    <button onclick="document.getElementById('vrow-${id}').remove()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;">×</button>`;
+  document.getElementById('um-vehicles').appendChild(row);
+}
+
+async function saveUnit(){
+  const num = editingUnit; if(!num) return;
+  // 차량 정보 수집
+  const vehicles = [];
+  document.querySelectorAll('[id^="vrow-"]').forEach(row => {
+    const id = row.id.replace('vrow-','');
+    const vn = document.getElementById(`vnum-${id}`)?.value.trim();
+    const vt = document.getElementById(`vtype-${id}`)?.value.trim();
+    if(vn||vt) vehicles.push({num:vn||'', type:vt||''});
+  });
+  const data = {
+    room: num,
+    name: document.getElementById('um-name').value.trim(),
+    phone: document.getElementById('um-phone').value.trim(),
+    moveIn: document.getElementById('um-moveIn').value,
+    contractEnd: document.getElementById('um-contractEnd').value,
+    business: document.getElementById('um-business').value.trim(),
+    memo: document.getElementById('um-memo').value.trim(),
+    vehicles,
+    updatedAt: new Date()
+  };
+  await window.setDoc(window.doc(window.db,'units',num), data);
+  closeModal('unitModal');
+  showToast(`${num}호 정보가 저장되었습니다.`);
+}
+
+function exportUnitsCSV(){
+  const u = window.units||{};
+  const rows = [['호실','입주자명','연락처','업종','입주일','계약만료일','차량번호','차종','메모']];
+  Object.keys(UNIT_FLOORS).forEach(floor => {
+    UNIT_FLOORS[floor].forEach(num => {
+      const d = u[num]||{};
+      const v1 = d.vehicles?.[0]||{};
+      rows.push([num+'호', d.name||'', d.phone||'', d.business||'', d.moveIn||'', d.contractEnd||'', v1.num||'', v1.type||'', d.memo||'']);
+    });
+  });
+  const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `어반센터프라자_호실정보_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
 
 // ── 계정 목록 (관리소장) ──
