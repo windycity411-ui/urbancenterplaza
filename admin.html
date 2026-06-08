@@ -974,7 +974,7 @@ window.checkIn = async function(targetUid){
     });
   }
   showToast(`${uid} 출근 체크 완료: ${timeStr}`);
-  if(typeof renderAttSection === 'function') renderAttSection(uid);
+  if(typeof renderAttSection === 'function') renderAttSection();
 };
 
 window.checkOut = async function(targetUid){
@@ -994,7 +994,7 @@ window.checkOut = async function(targetUid){
     checkOut: timeStr, workMinutes: Math.max(0, workMinutes), updatedAt: new Date()
   });
   showToast(`${uid} 퇴근 체크 완료: ${timeStr}`);
-  if(typeof renderAttSection === 'function') renderAttSection(uid);
+  if(typeof renderAttSection === 'function') renderAttSection();
 };
 
 // ── 실시간 리스너 ──
@@ -2081,89 +2081,97 @@ function exportUnitsCSV(){
   a.click();
 }
 
-// ── 출퇴근 섹션 렌더링 (공통) ──
-function renderAttSection(targetUid){
-  const uid = targetUid || window.currentUser;
-  const dateStr = new Date().toISOString().slice(0,10);
-  const pageDate = document.getElementById('attPageDate');
-  if(pageDate) pageDate.textContent = dateStr;
-
+// ── 출퇴근 섹션 ──
+function renderAttSection(){
   const container = document.getElementById('attMainCard');
-  if(!container) return;
+  if(!container){ return; }
 
-  const ym = dateStr.slice(0,7);
-  const mgr = window.isManager ? window.isManager() : false;
-  const manager = window.MANAGER || 'UB001';
-  const staffList = window.STAFF_VISIBLE || [];
+  const dateStr = new Date().toISOString().slice(0,10);
+  const el = document.getElementById('attPageDate');
+  if(el) el.textContent = dateStr;
 
-  if(mgr){
-    const allUids = [manager, ...staffList];
-    container.innerHTML = allUids.map(u => renderAttCard(u, dateStr)).join('')
-      + renderMonthlyRecord(manager, ym);
-  } else {
-    container.innerHTML = renderAttCard(uid, dateStr) + renderMonthlyRecord(uid, ym);
-  }
-}
-
-function renderMonthlyRecord(uid, ym){
-  const myMonth = (window.attendances||[])
-    .filter(a => a.uid===uid && a.date.startsWith(ym))
-    .sort((a,b)=>a.date<b.date?1:-1);
-  if(!myMonth.length) return `<div class="table-card" style="margin-bottom:.875rem;"><div class="table-toolbar"><span class="table-toolbar-title">📅 ${ym} 출퇴근 기록</span></div><div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:13px;">이번 달 기록이 없습니다.</div></div>`;
-  const settings = loadAttSettings();
-  const baseTime = settings[uid]||'09:00';
-  const rows = myMonth.map(a => {
-    const isLate = a.checkIn && a.checkIn > baseTime;
-    return `<div style="display:flex;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);gap:.75rem;">
-      <span style="font-size:13px;font-weight:500;color:var(--text);width:64px;flex-shrink:0;">${a.date.slice(5)}</span>
-      <span style="font-size:12px;color:var(--text2);flex:1;">
-        출근 ${a.checkIn||'-'} · 퇴근 ${a.checkOut||'-'}${a.workMinutes?` · ${fmtMin(a.workMinutes)}`:''}
-      </span>
-      ${isLate?'<span class="badge badge-urgent">지각</span>':'<span class="badge badge-resolved" style="background:var(--green-light);color:var(--green);">정상</span>'}
-    </div>`;
-  }).join('');
-  return `<div class="table-card" style="margin-bottom:.875rem;"><div class="table-toolbar"><span class="table-toolbar-title">📅 ${ym} 출퇴근 기록</span></div>${rows}</div>`;
-}
-
-function renderAttCard(uid, dateStr){
-  const today = (window.attendances||[]).find(a => a.uid===uid && a.date===dateStr);
-  const settings = loadAttSettings();
-  const baseTime = settings[uid]||'09:00';
-  const isLate = today?.checkIn && today.checkIn > baseTime;
+  const atts = window.attendances || [];
   const users = window.USERS || {};
+  const mgr = window.currentUser === 'UB001';
+  const uid = window.currentUser || '';
 
-  let statusIcon='⏸', statusText='출근 전', statusColor='var(--text3)';
-  let inDisabled='', outDisabled='disabled';
-  let inBtnLabel='🟢 출근', detailHtml='';
+  // 표시할 UID 목록
+  const uids = mgr
+    ? ['UB001','UB002','UB003','UB004','UB005','UB006']
+    : [uid];
 
-  if(today?.checkIn && !today?.checkOut){
-    statusIcon='🟢'; statusText='근무 중'; statusColor='var(--green)';
-    inDisabled='disabled'; outDisabled='';
-    detailHtml=`출근: <strong>${today.checkIn}</strong>`;
-  } else if(today?.checkIn && today?.checkOut){
-    statusIcon='🔵'; statusText=`퇴근 완료 · ${fmtMin(today.workMinutes)}`; statusColor='var(--info)';
-    outDisabled='disabled';
-    inBtnLabel='🔄 재출근';
-    detailHtml=`출근: <strong>${today.checkIn}</strong> · 퇴근: <strong>${today.checkOut}</strong> · 근무: <strong>${fmtMin(today.workMinutes)}</strong>${isLate?' <span class="badge badge-urgent">지각</span>':''}`;
+  let html = '';
+  uids.forEach(function(u){
+    const rec = atts.find(function(a){ return a.uid===u && a.date===dateStr; });
+    const role = users[u] ? users[u].role : '';
+
+    // 상태 계산
+    let statusTxt = '출근 전';
+    let statusColor = '#9c9a94';
+    let inLabel = '🟢 출근';
+    let inDis = '';
+    let outDis = 'disabled';
+    let detailTxt = '';
+
+    if(rec && rec.checkIn && !rec.checkOut){
+      statusTxt = '근무 중';
+      statusColor = '#1a5c1a';
+      inDis = 'disabled';
+      outDis = '';
+      detailTxt = '출근: ' + rec.checkIn;
+    } else if(rec && rec.checkIn && rec.checkOut){
+      statusTxt = '퇴근 완료';
+      statusColor = '#1a3a6a';
+      inLabel = '🔄 재출근';
+      outDis = 'disabled';
+      const mins = rec.workMinutes || 0;
+      const hh = Math.floor(mins/60), mm = mins%60;
+      const wt = hh > 0 ? hh+'시간 '+mm+'분' : mm+'분';
+      detailTxt = '출근: '+rec.checkIn+' · 퇴근: '+rec.checkOut+' · '+wt;
+    }
+
+    html += '<div class="table-card" style="margin-bottom:.875rem;">';
+    html += '<div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">';
+    html += '<div><strong style="font-size:15px;">'+u+'</strong> <span style="font-size:12px;color:var(--text3);">'+role+'</span></div>';
+    html += '<span style="font-size:13px;font-weight:500;color:'+statusColor+';">'+statusTxt+'</span>';
+    html += '</div>';
+    html += '<div style="padding:1.25rem;">';
+    if(detailTxt){
+      html += '<div style="font-size:13px;color:#5c5a54;margin-bottom:1rem;">'+detailTxt+'</div>';
+    }
+    html += '<div style="display:flex;gap:.75rem;">';
+    html += '<button '+inDis+' onclick="window.checkIn(\''+u+'\')" style="flex:1;background:#1a3a2a;color:#fff;border:none;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(inDis?'0.4':'1')+';">'+inLabel+'</button>';
+    html += '<button '+outDis+' onclick="window.checkOut(\''+u+'\')" style="flex:1;background:#fff;color:#1a3a2a;border:1px solid #e0ddd6;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(outDis?'0.4':'1')+';">🔴 퇴근</button>';
+    html += '</div></div></div>';
+  });
+
+  // 이번 달 기록 (본인만)
+  const ym = dateStr.slice(0,7);
+  const myRecs = atts
+    .filter(function(a){ return a.uid===uid && a.date.startsWith(ym); })
+    .sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+
+  html += '<div class="table-card">';
+  html += '<div class="table-toolbar"><span class="table-toolbar-title">📅 '+ym+' 출퇴근 기록</span></div>';
+  if(myRecs.length === 0){
+    html += '<div style="padding:1.5rem;text-align:center;color:#9c9a94;font-size:13px;">이번 달 기록이 없습니다.</div>';
+  } else {
+    myRecs.forEach(function(a){
+      const mins = a.workMinutes || 0;
+      const hh = Math.floor(mins/60), mm = mins%60;
+      const wt = mins ? (hh > 0 ? hh+'시간 '+mm+'분' : mm+'분') : '';
+      html += '<div style="display:flex;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);gap:.75rem;">';
+      html += '<span style="font-size:13px;font-weight:500;min-width:60px;">'+a.date.slice(5)+'</span>';
+      html += '<span style="font-size:12px;color:#5c5a54;flex:1;">출근 '+(a.checkIn||'-')+' · 퇴근 '+(a.checkOut||'-')+(wt?' · '+wt:'')+'</span>';
+      html += '</div>';
+    });
   }
+  html += '</div>';
 
-  const btnHtml = `
-    <div style="display:flex;gap:.625rem;margin-top:1rem;">
-      <button class="btn btn-primary" style="flex:1;padding:13px;font-size:15px;" ${inDisabled} onclick="window.checkIn('${uid}')">${inBtnLabel}</button>
-      <button class="btn btn-outline" style="flex:1;padding:13px;font-size:15px;" ${outDisabled} onclick="window.checkOut('${uid}')">🔴 퇴근</button>
-    </div>`;
-
-  return `<div class="table-card" style="margin-bottom:.875rem;">
-    <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
-      <div><strong style="font-size:14px;">${uid}</strong> <span style="font-size:12px;color:var(--text3);">${users[uid]?.role||''}</span></div>
-      <span style="font-size:13px;font-weight:500;color:${statusColor};">${statusIcon} ${statusText}</span>
-    </div>
-    <div style="padding:1rem 1.25rem;">
-      ${detailHtml ? `<div style="font-size:13px;color:var(--text2);margin-bottom:.5rem;">${detailHtml}</div>` : ''}
-      ${btnHtml}
-    </div>
-  </div>`;
+  container.innerHTML = html;
 }
+
+function renderMonthlyRecord(){ }
 
 // ── 출퇴근 렌더링 (직원 내 계정 탭) ──
 function renderMyAttendance(){
