@@ -435,7 +435,6 @@ table.adm-table tr:hover td{background:var(--surface2);}
         <div class="adm-page-title">공지 관리<button class="btn btn-primary btn-sm" onclick="openNewNotice()">+ 공지 등록</button></div>
         <div id="noticeAdminList"></div>
       </div>
-
       <!-- 연간 업무 계획 -->
       <div class="adm-section" id="sec-annualplan">
         <div class="adm-page-title">
@@ -702,7 +701,6 @@ table.adm-table tr:hover td{background:var(--surface2);}
     </div>
   </div>
 </div>
-
 <!-- 연간 업무 계획 편집 모달 -->
 <div class="modal-backdrop" id="annualEditModal">
   <div class="modal">
@@ -2057,6 +2055,7 @@ function renderUnits(){
           <span class="unit-status ${statusCls}">${statusLabel}</span>
           <div class="unit-num">${displayNum}</div>
           <div class="unit-name">${d.business||'<span style="color:var(--text3);font-weight:400;font-size:13px;">미등록</span>'}</div>
+          ${d.phone?`<a href="tel:${d.phone}" onclick="event.stopPropagation()" style="font-size:11px;color:var(--accent2);text-decoration:none;">📞 ${d.phone}</a>`:''}
         </div>`;
       }).join('');
 
