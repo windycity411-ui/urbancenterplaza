@@ -1402,7 +1402,9 @@ function initSelects(){
   ['cd-assignee','tm-assignee','taskUserFilter'].forEach(sid => {
     const el = document.getElementById(sid); if(!el) return;
     el.innerHTML = sid==='taskUserFilter' ? '<option value="all">전체 담당자</option>' : '<option value="">미배정</option>';
-    Object.keys(USERS).forEach(uid => {
+    // 활성 계정(STAFF_VISIBLE)만 표시
+    const activeUids = [MANAGER, ...STAFF_VISIBLE];
+    activeUids.forEach(uid => {
       const o = document.createElement('option');
       o.value=uid; o.textContent=uid+' ('+USERS[uid].role+')';
       el.appendChild(o);
