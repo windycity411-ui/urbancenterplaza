@@ -877,9 +877,9 @@ window.saveCalMemoToDb = async function(dateStr, memo){
 // ── 캘린더 메모 Firebase 저장/로드 ──
 onSnapshot(collection(db,'calendar_memos'), snap => {
   snap.docs.forEach(d => {
-    window.calMemos = window.calMemos || {};
-    window.calMemos[d.id] = d.data().memo || '';
+    calMemos[d.id] = d.data().memo || '';
   });
+  window.calMemos = calMemos;
   if(window.calView) window.renderCalendar && window.renderCalendar();
 });
 
@@ -1763,7 +1763,13 @@ function renderCalendar(){
   (window.complaints||[]).forEach(c => {
     if(c.status !== '신규') addEvent(c.date, 'complaint', `[민원] ${c.room} ${c.subject}`, c.status);
   });
-  Object.entries(calMemos).forEach(([d,m]) => { if(m) addEvent(d, 'memo', m, ''); });
+  // 메모: 여러 줄이면 첫 번째 줄만 dot에 표시
+  Object.entries(calMemos).forEach(([d,m]) => {
+    if(m){
+      const firstLine = m.split('\n')[0];
+      addEvent(d, 'memo', firstLine, '');
+    }
+  });
 
   let html = '';
   let dayCount = 0;
@@ -1814,22 +1820,26 @@ function selectCalDate(dateStr){
   document.getElementById('calDetailTitle').textContent = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
   document.getElementById('calMemoInput').value = calMemos[dateStr] || '';
 
-  // 해당 날짜 이벤트 목록
   const dayTasks = (window.tasks||[]).filter(t => t.date === dateStr);
   const dayComplaints = (window.complaints||[]).filter(c => c.date === dateStr && c.status !== '신규');
   const memo = calMemos[dateStr];
 
   let html = '';
   if(memo){
-    html += `<div class="cal-event-item memo-event">
-      <div class="cal-event-title">📝 ${memo}</div>
-      <div class="cal-event-meta">메모</div>
-    </div>`;
+    // 줄바꿈 분리해서 항목별로 표시
+    memo.split('\n').forEach(line => {
+      if(!line.trim()) return;
+      html += `<div class="cal-event-item memo-event">
+        <div class="cal-event-title">📝 ${line}</div>
+        <div class="cal-event-meta">메모</div>
+      </div>`;
+    });
   }
   dayTasks.forEach(t => {
+    const users = window.USERS || {};
     html += `<div class="cal-event-item task-event">
       <div class="cal-event-title">${t.title}</div>
-      <div class="cal-event-meta">업무 · ${t.assignee}(${USERS[t.assignee]?.role||''}) · ${taskBadge(t.status,t.priority)}</div>
+      <div class="cal-event-meta">업무 · ${t.assignee}(${users[t.assignee]?.role||''}) · ${taskBadge(t.status,t.priority)}</div>
     </div>`;
   });
   dayComplaints.forEach(c => {
