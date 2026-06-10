@@ -18,6 +18,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--text:#1a1a18;--text2:#5c5a54;--text3:#9c9a94;--accent:#1a3a2a;--accent2:#2d5c3e;--accent-light:#e8f0eb;--gold:#8a6c2a;--gold-light:#f5f0e0;--border:#e0ddd6;--danger:#8a2a2a;--danger-light:#f5e8e8;--info:#1a3a6a;--info-light:#e8eef8;--green:#1a5c1a;--green-light:#e8f4e8;--radius:4px;--radius-lg:8px;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1270,125 +1271,154 @@ window.today = today;
 function today(){ return new Date().toISOString().slice(0,10); }
 
 // ══════════════════════════════════════════════════
-// 관리비 관리 (CSV → Firebase)
+// 관리비 관리 (Excel/CSV → Firebase)
+// 어반센터프라자 관리비 파일 형식 기준:
+//   행4 = 헤더, A=호수, B=상호, C=관리비(합계),
+//   H=입금액, I=총미납금, N=공급가액, O=부가세, P=비과세
 // ══════════════════════════════════════════════════
 
-let feeParsedData = [];    // 파싱된 CSV 행
-let feeColMap = {};        // { room:'호실', total:'합계', ... }
-let feeHistoryUnsub = null;
+let feeParsedData = [];  // 파싱된 행 배열
+let feeRawHeaders = [];  // 원본 헤더
 
-// 관리비 섹션 초기화
+// 숫자 변환 헬퍼
+function toNum(v) {
+  if (v == null) return 0;
+  const n = parseInt(String(v).replace(/,/g,''));
+  return isNaN(n) ? 0 : n;
+}
+
+// ── 섹션 초기화 ──────────────────────────────────
 window.initFeesSection = function() {
   const now = new Date();
-  const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('feeMonth').value = ym;
+  document.getElementById('feeMonth').value =
+    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   loadFeeHistory();
 };
 
-// CSV/Excel 파일 불러오기
+// ── 파일 불러오기 (xlsx / csv 모두 지원) ──────────
 window.loadFeeFile = function() {
-  const file = document.getElementById('feeFile').files[0];
-  if (!file) { showToast('파일을 선택해 주세요.', true); return; }
+  const file  = document.getElementById('feeFile').files[0];
   const month = document.getElementById('feeMonth').value;
+  if (!file)  { showToast('파일을 선택해 주세요.', true); return; }
   if (!month) { showToast('부과 년월을 선택해 주세요.', true); return; }
+  if (typeof XLSX === 'undefined') { showToast('XLSX 라이브러리 로딩 중입니다. 잠시 후 다시 시도하세요.', true); return; }
 
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const text = e.target.result;
-      const { headers, rows } = parseCSVText(text);
-      if (!rows.length) { showToast('데이터 행이 없습니다.', true); return; }
-      feeParsedData = rows;
-      feeColMap = detectColumns(headers);
-      renderFeePreview(headers, rows);
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, { type: 'array', cellDates: false });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+
+      // 전체를 2차원 배열로 변환
+      const allRows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+
+      // 헤더 행 자동 감지: '호'와 '관리비'(또는 '상호') 포함 행
+      let headerIdx = -1;
+      for (let i = 0; i < Math.min(allRows.length, 8); i++) {
+        const s = allRows[i].map(c => String(c ?? '')).join('');
+        if ((s.includes('호') || s.includes('호수')) && s.includes('관리비')) {
+          headerIdx = i; break;
+        }
+      }
+      if (headerIdx === -1) { showToast('헤더 행을 찾을 수 없습니다.\n행에 "호수"와 "관리비" 컬럼이 있는지 확인하세요.', true); return; }
+
+      const headers  = allRows[headerIdx].map(h => String(h ?? '').trim());
+      const dataRows = allRows.slice(headerIdx + 1).filter(row => {
+        const roomVal = row[0];
+        // 호실 값이 숫자이고 0 초과인 행만 (합계행·빈행 제외)
+        return roomVal != null && !isNaN(Number(roomVal)) && Number(roomVal) > 0;
+      });
+
+      if (!dataRows.length) { showToast('데이터 행이 없습니다.', true); return; }
+
+      // 컬럼 인덱스 매핑
+      const CI = buildColIdx(headers);
+
+      // 같은 호실 여러 행 → 합산 (예: 105호 + 105호 퇴실관리비)
+      const merged = {};
+      dataRows.forEach(row => {
+        const room = String(row[CI.room] ?? '').trim();
+        if (!room) return;
+        const biz    = String(row[CI.biz] ?? '').trim();
+        const total  = toNum(row[CI.total]);
+        const paid   = toNum(row[CI.paid]);
+        const unpaid = toNum(row[CI.unpaid]);
+        const supply = toNum(row[CI.supply]);
+        const vat    = toNum(row[CI.vat]);
+        const nontax = toNum(row[CI.nontax]);
+
+        if (merged[room]) {
+          // 같은 호실 두 번째 행: 금액 합산, 상호는 첫 행 우선
+          merged[room].total  += total;
+          merged[room].paid   += paid;
+          merged[room].unpaid  = toNum(row[CI.unpaid]); // 마지막 행의 미납금 사용
+          merged[room].supply += supply;
+          merged[room].vat    += vat;
+          merged[room].nontax += nontax;
+        } else {
+          merged[room] = { room, biz, total, paid, unpaid, supply, vat, nontax };
+        }
+      });
+
+      feeParsedData  = Object.values(merged);
+      feeRawHeaders  = headers;
+      renderFeePreview(feeParsedData);
     } catch(err) {
       showToast('파일 파싱 오류: ' + err.message, true);
     }
   };
-  reader.readAsText(file, 'UTF-8');
+  reader.readAsArrayBuffer(file);
 };
 
-// CSV 파싱 (따옴표 포함 처리)
-function parseCSVText(text) {
-  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n')
-                    .split('\n').filter(l => l.trim());
-  if (lines.length < 2) throw new Error('헤더 + 데이터 행이 최소 2줄 필요합니다.');
-
-  function splitLine(line) {
-    const result = []; let cur = ''; let inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
-      else { cur += c; }
-    }
-    result.push(cur.trim());
-    return result;
-  }
-
-  const headers = splitLine(lines[0]).map(h => h.replace(/^"|"$/g,'').trim());
-  const rows = lines.slice(1).map(line => {
-    const vals = splitLine(line).map(v => v.replace(/^"|"$/g,'').trim());
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = vals[i] ?? ''; });
-    return obj;
-  }).filter(r => Object.values(r).some(v => v !== ''));
-
-  return { headers, rows };
-}
-
-// 컬럼 자동 감지
-function detectColumns(headers) {
-  const map = {};
-  const rules = {
-    room:    ['호실','호수','unit','room','동호','호','번호'],
-    total:   ['합계','총액','total','납부금액','청구금액','부과금액','납부액','관리비합계'],
-    general: ['일반관리비','일반 관리비','관리비'],
-    clean:   ['청소비','청소'],
-    disinfect:['소독비','소독'],
-    elevator:['승강기유지비','승강기','엘리베이터'],
-    elec:    ['공용전기료','공용전기','전기료'],
-    water:   ['공용수도료','공용수도','수도료'],
-    reserve: ['장기수선충당금','장기수선','충당금'],
-    area:    ['면적','전용면적','㎡','m2'],
+// 컬럼 인덱스 빌더
+function buildColIdx(headers) {
+  const find = (...keys) => {
+    const idx = headers.findIndex(h => keys.some(k => h.replace(/\s/g,'').includes(k.replace(/\s/g,''))));
+    return idx === -1 ? null : idx;
   };
-  for (const [key, candidates] of Object.entries(rules)) {
-    const found = headers.find(h => candidates.some(c => h.includes(c)));
-    if (found) map[key] = found;
-  }
-  return map;
+  return {
+    room:   find('호수','호 수','호') ?? 0,
+    biz:    find('상호명','상 호','상호','업체명') ?? 1,
+    total:  find('당월부과금액','관리비','합계','총부과') ?? 2,
+    paid:   find('입금액','납부액','입금') ?? 7,
+    unpaid: find('총미납금','총 미납금','미납금','미납') ?? 8,
+    supply: find('공급가액','공급액') ?? 13,
+    vat:    find('부가세') ?? 14,
+    nontax: find('비과세') ?? 15,
+  };
 }
 
-// 미리보기 렌더링
-function renderFeePreview(headers, rows) {
-  // 컬럼 매핑 안내
-  const mapLines = Object.entries(feeColMap).map(([k,v]) => {
-    const labels = {room:'호실',total:'합계',general:'일반관리비',clean:'청소비',
-      disinfect:'소독비',elevator:'승강기유지비',elec:'공용전기료',water:'공용수도료',
-      reserve:'장기수선충당금',area:'면적'};
-    return `<span style="background:#fff;border:1px solid var(--border);border-radius:3px;padding:2px 7px;">${labels[k]||k} → <strong>${v}</strong></span>`;
-  }).join(' ');
-
-  const hasRoom  = !!feeColMap.room;
-  const hasTotal = !!feeColMap.total;
-  const warn = (!hasRoom || !hasTotal)
-    ? `<div style="color:var(--danger);margin-top:.5rem;">⚠️ ${!hasRoom?'호실 컬럼':'합계 컬럼'} 미감지 — 컬럼명을 확인하세요.</div>` : '';
-
-  document.getElementById('feeColMapping').innerHTML =
-    `<strong>자동 감지된 컬럼:</strong> ${mapLines || '없음'}${warn}`;
-
-  // 테이블
+// ── 미리보기 렌더링 ────────────────────────────────
+function renderFeePreview(rows) {
   const thead = document.getElementById('feePreviewHead');
   const tbody = document.getElementById('feePreviewBody');
-  thead.innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
-  tbody.innerHTML = rows.slice(0,20).map(r =>
-    `<tr>${headers.map(h=>`<td>${r[h]??''}</td>`).join('')}</tr>`
-  ).join('');
+  const fmt   = n => n ? n.toLocaleString() : '-';
+  const paidBadge = r => r.unpaid === 0
+    ? '<span style="color:#1a5c1a;font-weight:500;">✔ 납부완료</span>'
+    : `<span style="color:#8a2a2a;font-weight:500;">미납 ${fmt(r.unpaid)}원</span>`;
 
-  const total = rows.length;
+  thead.innerHTML = `<tr>
+    <th>호실</th><th>상호명</th><th>당월부과금액</th>
+    <th>공급가액</th><th>부가세</th><th>비과세</th>
+    <th>입금액</th><th>납부상태</th>
+  </tr>`;
+
+  tbody.innerHTML = rows.slice(0, 30).map(r => `<tr>
+    <td>${r.room}</td>
+    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.biz}</td>
+    <td style="text-align:right;">${fmt(r.total)}</td>
+    <td style="text-align:right;">${fmt(r.supply)}</td>
+    <td style="text-align:right;">${fmt(r.vat)}</td>
+    <td style="text-align:right;">${fmt(r.nontax)}</td>
+    <td style="text-align:right;">${fmt(r.paid)}</td>
+    <td>${paidBadge(r)}</td>
+  </tr>`).join('');
+
   document.getElementById('feePreviewCount').textContent =
-    `총 ${total}세대${total > 20 ? ' (20개만 미리보기)' : ''}`;
-
+    `총 ${rows.length}세대${rows.length > 30 ? ' (30개만 표시)' : ''}`;
+  document.getElementById('feeColMapping').innerHTML =
+    `<span style="color:var(--text2);">파일에서 ${rows.length}세대 데이터를 읽었습니다. 미리보기를 확인 후 저장하세요.</span>`;
   document.getElementById('feePreviewCard').style.display = 'block';
 }
 
@@ -1398,13 +1428,9 @@ window.cancelFeePreview = function() {
   document.getElementById('feeFile').value = '';
 };
 
-// Firebase에 저장
+// ── Firebase에 저장 ────────────────────────────────
 window.importFeeData = async function() {
   if (!feeParsedData.length) return;
-  if (!feeColMap.room || !feeColMap.total) {
-    showToast('호실·합계 컬럼을 감지하지 못했습니다. CSV 컬럼명을 확인하세요.', true);
-    return;
-  }
   const month = document.getElementById('feeMonth').value;
   if (!month) { showToast('부과 년월을 선택하세요.', true); return; }
   if (!confirm(`${month} 관리비 ${feeParsedData.length}세대를 저장하시겠습니까?`)) return;
@@ -1415,29 +1441,20 @@ window.importFeeData = async function() {
   try {
     const [year, mon] = month.split('-');
     const period = `${year}년 ${parseInt(mon)}월`;
-    const colK = { general:'general', clean:'clean', disinfect:'disinfect',
-      elevator:'elevator', elec:'elec', water:'water', reserve:'reserve', area:'area' };
 
-    const writes = feeParsedData.map(row => {
-      const room = String(row[feeColMap.room] || '').trim().replace(/\s/g,'');
-      const total = parseInt(String(row[feeColMap.total]||'0').replace(/,/g,'')) || 0;
-      const items = {};
-      for (const [k, label] of Object.entries(colK)) {
-        if (feeColMap[k]) {
-          const v = parseInt(String(row[feeColMap[k]]||'0').replace(/,/g,''));
-          if (!isNaN(v) && v > 0) items[k] = v;
-        }
-      }
-      const docId = `${year}${mon}_${room}`;
+    const writes = feeParsedData.map(r => {
+      const docId = `${year}${mon}_${r.room}`;
       return setDoc(doc(db, 'management_fees', docId), {
         year: parseInt(year), month: parseInt(mon), period,
-        room, total, items, uploadedAt: new Date(), uploadedBy: window.currentUser || ''
+        room: r.room, biz: r.biz,
+        total: r.total, paid: r.paid, unpaid: r.unpaid,
+        isPaid: r.unpaid === 0,
+        items: { supply: r.supply, vat: r.vat, nontax: r.nontax },
+        uploadedAt: new Date(), uploadedBy: window.currentUser || ''
       });
     });
-
     await Promise.all(writes);
 
-    // 업로드 이력 기록
     await setDoc(doc(db, 'fee_uploads', `${year}${mon}`), {
       year: parseInt(year), month: parseInt(mon), period,
       count: feeParsedData.length, uploadedAt: new Date(),
@@ -1453,7 +1470,7 @@ window.importFeeData = async function() {
   }
 };
 
-// 업로드 내역 로드
+// ── 업로드 내역 ────────────────────────────────────
 function loadFeeHistory() {
   const el = document.getElementById('feeHistoryList');
   if (!el) return;
@@ -1464,8 +1481,7 @@ function loadFeeHistory() {
         const r = d.data();
         const date = r.uploadedAt?.toDate?.()?.toLocaleDateString('ko-KR') || '';
         return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
-          <div>
-            <strong>${r.period}</strong>
+          <div><strong>${r.period}</strong>
             <span style="margin-left:.75rem;color:var(--text3);font-size:12px;">${r.count}세대 · ${date} 업로드</span>
           </div>
           <button class="btn btn-sm btn-outline btn-danger" onclick="confirmDeleteFeeMonth('${d.id}','${r.period}')">삭제</button>
@@ -1474,15 +1490,14 @@ function loadFeeHistory() {
     });
 }
 
-// 월 데이터 삭제
 window.confirmDeleteFeeMonth = async function(uploadId, period) {
-  if (!confirm(`${period} 관리비 데이터를 삭제하시겠습니까?\n입주자 조회에서도 사라집니다.`)) return;
-  const [y, m] = uploadId.match(/(\d{4})(\d{2})/).slice(1);
-  // fee_uploads 문서 삭제
+  if (!confirm(`${period} 관리비 데이터를 삭제하시겠습니까?`)) return;
+  const m = uploadId.match(/^(\d{4})(\d{2})$/);
+  if (!m) return;
+  const [, y, mo] = m;
   await deleteDoc(doc(db, 'fee_uploads', uploadId));
-  // management_fees 문서 일괄 삭제
   const snap = await getDocs(query(collection(db,'management_fees'),
-    where('year','==',parseInt(y)), where('month','==',parseInt(m))));
+    where('year','==',parseInt(y)), where('month','==',parseInt(mo))));
   await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
   showToast(`${period} 관리비 데이터가 삭제되었습니다.`);
   loadFeeHistory();

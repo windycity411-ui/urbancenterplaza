@@ -801,8 +801,8 @@ function switchFeeTab(tab){
 
 // ── 관리비 조회 ──
 async function lookupFee(){
-  const room  = document.getElementById('feeLookupRoom').value.trim().replace(/\s/g,'');
-  const month = document.getElementById('feeLookupMonth').value;
+  const room   = document.getElementById('feeLookupRoom').value.trim().replace(/\s/g,'');
+  const month  = document.getElementById('feeLookupMonth').value;
   const result = document.getElementById('feeLookupResult');
 
   if(!room || !month){
@@ -810,52 +810,67 @@ async function lookupFee(){
     return;
   }
 
-  result.innerHTML = '<div style="padding:1rem;text-align:center;color:#9c9a94;font-size:14px;">조회 중...</div>';
+  result.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#9c9a94;font-size:14px;">조회 중...</div>';
 
   try {
     const [year, mon] = month.split('-');
     const docId = `${year}${mon}_${room}`;
-    const snap = await getDoc(doc(window._feeDb, 'management_fees', docId));
+    const snap  = await getDoc(doc(window._feeDb, 'management_fees', docId));
 
     if(!snap.exists()){
       result.innerHTML = `
-        <div style="background:#fff8e1;border:1px solid #f5d060;border-radius:8px;padding:1.25rem;text-align:center;">
-          <div style="font-size:24px;margin-bottom:.5rem;">📭</div>
+        <div style="background:#fff8e1;border:1px solid #f0d060;border-radius:8px;padding:1.5rem;text-align:center;">
+          <div style="font-size:28px;margin-bottom:.5rem;">📭</div>
           <div style="font-weight:500;margin-bottom:.25rem;">${year}년 ${parseInt(mon)}월 ${room}호 관리비 내역이 없습니다.</div>
-          <div style="font-size:13px;color:#5c5a54;">아직 업로드되지 않았거나 호실 번호를 확인해 주세요.</div>
+          <div style="font-size:13px;color:#5c5a54;margin-top:.25rem;">업로드 전이거나 호실 번호를 확인해 주세요.</div>
         </div>`;
       return;
     }
 
-    const d = snap.data();
-    const labelMap = {
-      general:'일반관리비', clean:'청소비', disinfect:'소독비',
-      elevator:'승강기유지비', elec:'공용전기료', water:'공용수도료', reserve:'장기수선충당금'
-    };
-    const itemRows = Object.entries(d.items || {}).map(([k,v]) =>
-      `<tr>
-        <td style="padding:8px 4px;border-bottom:1px solid #f0ede6;color:#5c5a54;">${labelMap[k]||k}</td>
-        <td style="padding:8px 4px;border-bottom:1px solid #f0ede6;text-align:right;">${v.toLocaleString()}원</td>
-      </tr>`
-    ).join('');
+    const d   = snap.data();
+    const fmt = n => (n||0).toLocaleString();
+    const items = d.items || {};
+
+    // 납부 상태 배너
+    const paidBanner = d.isPaid
+      ? `<div style="background:#e8f4e8;border:1px solid #a8d8a8;border-radius:6px;padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+           <span style="font-size:18px;">✅</span>
+           <div><strong style="color:#1a5c1a;">납부 완료</strong>
+             <span style="font-size:13px;color:#3a7c3a;margin-left:.5rem;">입금액 ${fmt(d.paid)}원</span>
+           </div>
+         </div>`
+      : `<div style="background:#f5e8e8;border:1px solid #d8a8a8;border-radius:6px;padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+           <span style="font-size:18px;">⚠️</span>
+           <div><strong style="color:#8a2a2a;">미납금 있음</strong>
+             <span style="font-size:13px;color:#8a2a2a;margin-left:.5rem;">${fmt(d.unpaid)}원 미납</span>
+           </div>
+         </div>`;
+
+    // 항목별 명세
+    const itemRows = [
+      items.supply ? `<tr><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;color:#5c5a54;">공급가액</td><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;text-align:right;">${fmt(items.supply)}원</td></tr>` : '',
+      items.vat    ? `<tr><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;color:#5c5a54;">부가세</td><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;text-align:right;">${fmt(items.vat)}원</td></tr>` : '',
+      items.nontax ? `<tr><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;color:#5c5a54;">비과세</td><td style="padding:9px 4px;border-bottom:1px solid #f0ede6;text-align:right;">${fmt(items.nontax)}원</td></tr>` : '',
+    ].filter(Boolean).join('');
 
     result.innerHTML = `
       <div style="background:#fff;border:1px solid #e0ddd6;border-radius:8px;overflow:hidden;">
         <div style="background:#1a3a2a;color:#fff;padding:1rem 1.25rem;">
-          <div style="font-size:13px;opacity:.7;margin-bottom:2px;">${d.period} 관리비 명세</div>
-          <div style="font-size:22px;font-weight:700;">${room}호</div>
+          <div style="font-size:12px;opacity:.6;margin-bottom:3px;">${d.period} 관리비 명세</div>
+          <div style="font-size:20px;font-weight:700;">${room}호 &nbsp;<span style="font-size:14px;font-weight:400;opacity:.8;">${d.biz||''}</span></div>
         </div>
         <div style="padding:1rem 1.25rem;">
+          ${paidBanner}
           <table style="width:100%;border-collapse:collapse;font-size:14px;">
             ${itemRows}
             <tr style="font-weight:700;font-size:15px;">
-              <td style="padding:10px 4px 4px;">합계</td>
-              <td style="padding:10px 4px 4px;text-align:right;color:#1a3a2a;">${(d.total||0).toLocaleString()}원</td>
+              <td style="padding:10px 4px 2px;">당월 부과금액</td>
+              <td style="padding:10px 4px 2px;text-align:right;color:#1a3a2a;">${fmt(d.total)}원</td>
             </tr>
           </table>
         </div>
         <div style="padding:.75rem 1.25rem;background:#f7f5f0;font-size:12px;color:#9c9a94;border-top:1px solid #e0ddd6;">
-          납부 기한: 매월 25일 · 농협은행 302-XXXX-XXXX-XX (어반센터프라자 관리단)
+          납부 기한: 매월 25일 &nbsp;·&nbsp; 농협은행 302-XXXX-XXXX-XX (어반센터프라자 관리단)
         </div>
       </div>`;
   } catch(e) {
