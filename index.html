@@ -391,27 +391,63 @@ footer{background:var(--accent);color:rgba(255,255,255,.5);padding:1.5rem 1.25re
 
   <!-- 관리비 -->
   <section id="fee" class="section">
-    <div class="section-header"><span class="section-title">관리비 납부 안내</span></div>
-    <div class="deadline-box"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 매월 25일까지</h4><p>기한 초과 시 연체이자(월 2%)가 부과됩니다.</p></div></div>
-    <div class="fee-section-title">납부 계좌</div>
-    <div class="account-box"><div class="account-box-label">예금주</div><div class="account-box-value">어반센터프라자 관리단</div><div class="account-box-bank">농협은행 · 302-XXXX-XXXX-XX</div></div>
-    <div class="fee-section-title">납부 방법</div>
-    <div class="method-cards">
-      <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체</div><div class="method-card-desc">호실 번호를 입금자명에 포함해 주세요.<br>예) <em>301호홍길동</em></div></div>
-      <div class="method-card"><div class="method-card-icon">🏢</div><div class="method-card-title">관리사무소 방문</div><div class="method-card-desc">평일 08:30 ~ 17:30 방문 납부 가능합니다. (현금/카드)</div></div>
+    <div class="section-header"><span class="section-title">관리비</span></div>
+
+    <!-- 탭 -->
+    <div class="complaint-tabs" style="margin-bottom:1.25rem;">
+      <button class="complaint-tab active" id="fee-tab-info" onclick="switchFeeTab('info')">납부 안내</button>
+      <button class="complaint-tab" id="fee-tab-lookup" onclick="switchFeeTab('lookup')">내 관리비 조회</button>
     </div>
-    <div class="fee-section-title">관리비 항목</div>
-    <div class="table-card"><table class="fee-table"><thead><tr><th>항목</th><th>내용</th></tr></thead>
-    <tbody>
-      <tr><td>일반관리비</td><td>관리인력, 행정 운영비</td></tr>
-      <tr><td>청소비</td><td>건물 공용 구역 청소</td></tr>
-      <tr><td>소독비</td><td>분기별 방역 및 소독</td></tr>
-      <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지</td></tr>
-      <tr><td>공용 전기료</td><td>공용 조명, 전기설비</td></tr>
-      <tr><td>공용 수도료</td><td>공용 수도 사용료</td></tr>
-      <tr><td>장기수선충당금</td><td>건물 장기 수선 적립</td></tr>
-    </tbody></table></div>
-    <div class="form-note" style="margin-top:0;font-size:12px;">관리비 명세서는 매월 초 각 호실 우편함에 발송됩니다.<br>분실 또는 문의사항은 관리사무소로 연락주시기 바랍니다.</div>
+
+    <!-- 납부 안내 탭 -->
+    <div id="fee-info-wrap">
+      <div class="deadline-box"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 매월 25일까지</h4><p>기한 초과 시 연체이자(월 2%)가 부과됩니다.</p></div></div>
+      <div class="fee-section-title">납부 계좌</div>
+      <div class="account-box"><div class="account-box-label">예금주</div><div class="account-box-value">어반센터프라자 관리단</div><div class="account-box-bank">농협은행 · 302-XXXX-XXXX-XX</div></div>
+      <div class="fee-section-title">납부 방법</div>
+      <div class="method-cards">
+        <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체</div><div class="method-card-desc">호실 번호를 입금자명에 포함해 주세요.<br>예) <em>301호홍길동</em></div></div>
+        <div class="method-card"><div class="method-card-icon">🏢</div><div class="method-card-title">관리사무소 방문</div><div class="method-card-desc">평일 08:30 ~ 17:30 방문 납부 가능합니다. (현금/카드)</div></div>
+      </div>
+      <div class="fee-section-title">관리비 항목</div>
+      <div class="table-card"><table class="fee-table"><thead><tr><th>항목</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>일반관리비</td><td>관리인력, 행정 운영비</td></tr>
+        <tr><td>청소비</td><td>건물 공용 구역 청소</td></tr>
+        <tr><td>소독비</td><td>분기별 방역 및 소독</td></tr>
+        <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지</td></tr>
+        <tr><td>공용 전기료</td><td>공용 조명, 전기설비</td></tr>
+        <tr><td>공용 수도료</td><td>공용 수도 사용료</td></tr>
+        <tr><td>장기수선충당금</td><td>건물 장기 수선 적립</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- 관리비 조회 탭 -->
+    <div id="fee-lookup-wrap" style="display:none;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;">
+        <div style="font-size:14px;font-weight:500;margin-bottom:1rem;color:var(--text);">호실 및 조회 월을 입력하세요</div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem;">
+          <div style="flex:1;min-width:100px;">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">호실 번호 *</label>
+            <input type="text" id="feeLookupRoom" placeholder="예) 101" maxlength="6"
+              style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;font-family:inherit;"
+              oninput="clearFeeResult()">
+          </div>
+          <div style="flex:1;min-width:130px;">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">조회 월 *</label>
+            <input type="month" id="feeLookupMonth"
+              style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;font-family:inherit;">
+          </div>
+        </div>
+        <button onclick="lookupFee()"
+          style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;">
+          조회하기
+        </button>
+      </div>
+
+      <!-- 조회 결과 -->
+      <div id="feeLookupResult"></div>
+    </div>
   </section>
 
   <!-- 비상연락망 -->
@@ -479,7 +515,7 @@ footer{background:var(--accent);color:rgba(255,255,255,.5);padding:1.5rem 1.25re
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDoc, onSnapshot, orderBy, query, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -494,6 +530,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+window._feeDb = db; // 관리비 조회 함수에서 접근용
 const messaging = getMessaging(app);
 
 // ─── PWA 서비스 워커 등록 + FCM 초기화 ──────────────────
@@ -744,6 +781,90 @@ function openNotice(title,date,body){
   document.getElementById('modalMeta').textContent=date+' · 관리사무소';
   document.getElementById('modalBody').textContent=body;
   document.getElementById('modalBackdrop').classList.add('open');
+}
+
+// ── 관리비 탭 전환 ──
+function switchFeeTab(tab){
+  const isInfo = tab === 'info';
+  document.getElementById('fee-info-wrap').style.display   = isInfo ? 'block' : 'none';
+  document.getElementById('fee-lookup-wrap').style.display = isInfo ? 'none'  : 'block';
+  document.getElementById('fee-tab-info').classList.toggle('active', isInfo);
+  document.getElementById('fee-tab-lookup').classList.toggle('active', !isInfo);
+  if(!isInfo){
+    // 조회 탭 열릴 때 이번 달을 기본값으로
+    const now = new Date();
+    const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const el = document.getElementById('feeLookupMonth');
+    if(el && !el.value) el.value = ym;
+  }
+}
+
+// ── 관리비 조회 ──
+async function lookupFee(){
+  const room  = document.getElementById('feeLookupRoom').value.trim().replace(/\s/g,'');
+  const month = document.getElementById('feeLookupMonth').value;
+  const result = document.getElementById('feeLookupResult');
+
+  if(!room || !month){
+    result.innerHTML = '<div style="color:#8a2a2a;padding:.75rem;font-size:14px;">호실 번호와 조회 월을 모두 입력해 주세요.</div>';
+    return;
+  }
+
+  result.innerHTML = '<div style="padding:1rem;text-align:center;color:#9c9a94;font-size:14px;">조회 중...</div>';
+
+  try {
+    const [year, mon] = month.split('-');
+    const docId = `${year}${mon}_${room}`;
+    const snap = await getDoc(doc(window._feeDb, 'management_fees', docId));
+
+    if(!snap.exists()){
+      result.innerHTML = `
+        <div style="background:#fff8e1;border:1px solid #f5d060;border-radius:8px;padding:1.25rem;text-align:center;">
+          <div style="font-size:24px;margin-bottom:.5rem;">📭</div>
+          <div style="font-weight:500;margin-bottom:.25rem;">${year}년 ${parseInt(mon)}월 ${room}호 관리비 내역이 없습니다.</div>
+          <div style="font-size:13px;color:#5c5a54;">아직 업로드되지 않았거나 호실 번호를 확인해 주세요.</div>
+        </div>`;
+      return;
+    }
+
+    const d = snap.data();
+    const labelMap = {
+      general:'일반관리비', clean:'청소비', disinfect:'소독비',
+      elevator:'승강기유지비', elec:'공용전기료', water:'공용수도료', reserve:'장기수선충당금'
+    };
+    const itemRows = Object.entries(d.items || {}).map(([k,v]) =>
+      `<tr>
+        <td style="padding:8px 4px;border-bottom:1px solid #f0ede6;color:#5c5a54;">${labelMap[k]||k}</td>
+        <td style="padding:8px 4px;border-bottom:1px solid #f0ede6;text-align:right;">${v.toLocaleString()}원</td>
+      </tr>`
+    ).join('');
+
+    result.innerHTML = `
+      <div style="background:#fff;border:1px solid #e0ddd6;border-radius:8px;overflow:hidden;">
+        <div style="background:#1a3a2a;color:#fff;padding:1rem 1.25rem;">
+          <div style="font-size:13px;opacity:.7;margin-bottom:2px;">${d.period} 관리비 명세</div>
+          <div style="font-size:22px;font-weight:700;">${room}호</div>
+        </div>
+        <div style="padding:1rem 1.25rem;">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;">
+            ${itemRows}
+            <tr style="font-weight:700;font-size:15px;">
+              <td style="padding:10px 4px 4px;">합계</td>
+              <td style="padding:10px 4px 4px;text-align:right;color:#1a3a2a;">${(d.total||0).toLocaleString()}원</td>
+            </tr>
+          </table>
+        </div>
+        <div style="padding:.75rem 1.25rem;background:#f7f5f0;font-size:12px;color:#9c9a94;border-top:1px solid #e0ddd6;">
+          납부 기한: 매월 25일 · 농협은행 302-XXXX-XXXX-XX (어반센터프라자 관리단)
+        </div>
+      </div>`;
+  } catch(e) {
+    result.innerHTML = '<div style="color:#8a2a2a;padding:.75rem;font-size:14px;">조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</div>';
+  }
+}
+
+function clearFeeResult(){
+  document.getElementById('feeLookupResult').innerHTML = '';
 }
 </script>
 </body>

@@ -553,6 +553,67 @@ table.adm-table tr:hover td{background:var(--surface2);}
       </div>
 
       <!-- 출퇴근 (공통) -->
+      <!-- ── 관리비 관리 ── -->
+      <div class="adm-section" id="sec-fees">
+        <div class="adm-page-title">관리비 관리</div>
+
+        <!-- 업로드 패널 -->
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div class="card-title" style="margin-bottom:1rem;">📂 CSV 파일 업로드</div>
+
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+            <div>
+              <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">부과 년월</label>
+              <input type="month" id="feeMonth" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">CSV 파일 선택</label>
+              <input type="file" id="feeFile" accept=".csv,.xlsx,.xls" style="font-size:13px;">
+            </div>
+            <div style="align-self:flex-end;">
+              <button class="btn btn-primary btn-sm" onclick="loadFeeFile()">불러오기</button>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:var(--text3);line-height:1.8;">
+            💡 필수 컬럼: <strong>호실</strong>(또는 호수·unit), <strong>합계</strong>(또는 total·납부금액) &nbsp;|&nbsp;
+            선택 컬럼: 일반관리비, 청소비, 소독비, 승강기유지비, 공용전기료, 공용수도료, 장기수선충당금 등
+          </div>
+        </div>
+
+        <!-- 미리보기 -->
+        <div class="card" id="feePreviewCard" style="display:none;margin-bottom:1.25rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+            <div class="card-title" style="margin:0;">📋 미리보기</div>
+            <div style="display:flex;gap:.5rem;align-items:center;">
+              <span id="feePreviewCount" style="font-size:13px;color:var(--text2);"></span>
+              <button class="btn btn-sm btn-outline" onclick="cancelFeePreview()">취소</button>
+              <button class="btn btn-sm btn-primary" onclick="importFeeData()">Firebase에 저장</button>
+            </div>
+          </div>
+
+          <!-- 컬럼 매핑 -->
+          <div id="feeColMapping" style="margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);font-size:12px;"></div>
+
+          <!-- 미리보기 테이블 -->
+          <div style="overflow-x:auto;">
+            <table class="table" id="feePreviewTable">
+              <thead id="feePreviewHead"></thead>
+              <tbody id="feePreviewBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 업로드 내역 -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <div class="card-title" style="margin:0;">📅 업로드 내역</div>
+            <button class="btn btn-sm btn-outline btn-danger" id="feeDeleteBtn" style="display:none;" onclick="deleteFeeMonth()">선택 월 삭제</button>
+          </div>
+          <div id="feeHistoryList" style="font-size:13px;color:var(--text3);padding:.5rem 0;">불러오는 중...</div>
+        </div>
+      </div>
+
       <div class="adm-section" id="sec-attendance">
         <div class="adm-page-title">
           출퇴근
@@ -796,7 +857,7 @@ table.adm-table tr:hover td{background:var(--surface2);}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc, getDocs, onSnapshot, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ★ Firebase 설정 (본인 프로젝트 config로 교체하세요)
 const firebaseConfig = {
@@ -1207,6 +1268,225 @@ window.db = db;
 window.today = today;
 
 function today(){ return new Date().toISOString().slice(0,10); }
+
+// ══════════════════════════════════════════════════
+// 관리비 관리 (CSV → Firebase)
+// ══════════════════════════════════════════════════
+
+let feeParsedData = [];    // 파싱된 CSV 행
+let feeColMap = {};        // { room:'호실', total:'합계', ... }
+let feeHistoryUnsub = null;
+
+// 관리비 섹션 초기화
+window.initFeesSection = function() {
+  const now = new Date();
+  const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('feeMonth').value = ym;
+  loadFeeHistory();
+};
+
+// CSV/Excel 파일 불러오기
+window.loadFeeFile = function() {
+  const file = document.getElementById('feeFile').files[0];
+  if (!file) { showToast('파일을 선택해 주세요.', true); return; }
+  const month = document.getElementById('feeMonth').value;
+  if (!month) { showToast('부과 년월을 선택해 주세요.', true); return; }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const text = e.target.result;
+      const { headers, rows } = parseCSVText(text);
+      if (!rows.length) { showToast('데이터 행이 없습니다.', true); return; }
+      feeParsedData = rows;
+      feeColMap = detectColumns(headers);
+      renderFeePreview(headers, rows);
+    } catch(err) {
+      showToast('파일 파싱 오류: ' + err.message, true);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+};
+
+// CSV 파싱 (따옴표 포함 처리)
+function parseCSVText(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n')
+                    .split('\n').filter(l => l.trim());
+  if (lines.length < 2) throw new Error('헤더 + 데이터 행이 최소 2줄 필요합니다.');
+
+  function splitLine(line) {
+    const result = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
+  const headers = splitLine(lines[0]).map(h => h.replace(/^"|"$/g,'').trim());
+  const rows = lines.slice(1).map(line => {
+    const vals = splitLine(line).map(v => v.replace(/^"|"$/g,'').trim());
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = vals[i] ?? ''; });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v !== ''));
+
+  return { headers, rows };
+}
+
+// 컬럼 자동 감지
+function detectColumns(headers) {
+  const map = {};
+  const rules = {
+    room:    ['호실','호수','unit','room','동호','호','번호'],
+    total:   ['합계','총액','total','납부금액','청구금액','부과금액','납부액','관리비합계'],
+    general: ['일반관리비','일반 관리비','관리비'],
+    clean:   ['청소비','청소'],
+    disinfect:['소독비','소독'],
+    elevator:['승강기유지비','승강기','엘리베이터'],
+    elec:    ['공용전기료','공용전기','전기료'],
+    water:   ['공용수도료','공용수도','수도료'],
+    reserve: ['장기수선충당금','장기수선','충당금'],
+    area:    ['면적','전용면적','㎡','m2'],
+  };
+  for (const [key, candidates] of Object.entries(rules)) {
+    const found = headers.find(h => candidates.some(c => h.includes(c)));
+    if (found) map[key] = found;
+  }
+  return map;
+}
+
+// 미리보기 렌더링
+function renderFeePreview(headers, rows) {
+  // 컬럼 매핑 안내
+  const mapLines = Object.entries(feeColMap).map(([k,v]) => {
+    const labels = {room:'호실',total:'합계',general:'일반관리비',clean:'청소비',
+      disinfect:'소독비',elevator:'승강기유지비',elec:'공용전기료',water:'공용수도료',
+      reserve:'장기수선충당금',area:'면적'};
+    return `<span style="background:#fff;border:1px solid var(--border);border-radius:3px;padding:2px 7px;">${labels[k]||k} → <strong>${v}</strong></span>`;
+  }).join(' ');
+
+  const hasRoom  = !!feeColMap.room;
+  const hasTotal = !!feeColMap.total;
+  const warn = (!hasRoom || !hasTotal)
+    ? `<div style="color:var(--danger);margin-top:.5rem;">⚠️ ${!hasRoom?'호실 컬럼':'합계 컬럼'} 미감지 — 컬럼명을 확인하세요.</div>` : '';
+
+  document.getElementById('feeColMapping').innerHTML =
+    `<strong>자동 감지된 컬럼:</strong> ${mapLines || '없음'}${warn}`;
+
+  // 테이블
+  const thead = document.getElementById('feePreviewHead');
+  const tbody = document.getElementById('feePreviewBody');
+  thead.innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  tbody.innerHTML = rows.slice(0,20).map(r =>
+    `<tr>${headers.map(h=>`<td>${r[h]??''}</td>`).join('')}</tr>`
+  ).join('');
+
+  const total = rows.length;
+  document.getElementById('feePreviewCount').textContent =
+    `총 ${total}세대${total > 20 ? ' (20개만 미리보기)' : ''}`;
+
+  document.getElementById('feePreviewCard').style.display = 'block';
+}
+
+window.cancelFeePreview = function() {
+  feeParsedData = [];
+  document.getElementById('feePreviewCard').style.display = 'none';
+  document.getElementById('feeFile').value = '';
+};
+
+// Firebase에 저장
+window.importFeeData = async function() {
+  if (!feeParsedData.length) return;
+  if (!feeColMap.room || !feeColMap.total) {
+    showToast('호실·합계 컬럼을 감지하지 못했습니다. CSV 컬럼명을 확인하세요.', true);
+    return;
+  }
+  const month = document.getElementById('feeMonth').value;
+  if (!month) { showToast('부과 년월을 선택하세요.', true); return; }
+  if (!confirm(`${month} 관리비 ${feeParsedData.length}세대를 저장하시겠습니까?`)) return;
+
+  const btn = document.querySelector('#feePreviewCard .btn-primary');
+  btn.disabled = true; btn.textContent = '저장 중...';
+
+  try {
+    const [year, mon] = month.split('-');
+    const period = `${year}년 ${parseInt(mon)}월`;
+    const colK = { general:'general', clean:'clean', disinfect:'disinfect',
+      elevator:'elevator', elec:'elec', water:'water', reserve:'reserve', area:'area' };
+
+    const writes = feeParsedData.map(row => {
+      const room = String(row[feeColMap.room] || '').trim().replace(/\s/g,'');
+      const total = parseInt(String(row[feeColMap.total]||'0').replace(/,/g,'')) || 0;
+      const items = {};
+      for (const [k, label] of Object.entries(colK)) {
+        if (feeColMap[k]) {
+          const v = parseInt(String(row[feeColMap[k]]||'0').replace(/,/g,''));
+          if (!isNaN(v) && v > 0) items[k] = v;
+        }
+      }
+      const docId = `${year}${mon}_${room}`;
+      return setDoc(doc(db, 'management_fees', docId), {
+        year: parseInt(year), month: parseInt(mon), period,
+        room, total, items, uploadedAt: new Date(), uploadedBy: window.currentUser || ''
+      });
+    });
+
+    await Promise.all(writes);
+
+    // 업로드 이력 기록
+    await setDoc(doc(db, 'fee_uploads', `${year}${mon}`), {
+      year: parseInt(year), month: parseInt(mon), period,
+      count: feeParsedData.length, uploadedAt: new Date(),
+      uploadedBy: window.currentUser || ''
+    });
+
+    showToast(`✅ ${period} 관리비 ${feeParsedData.length}세대 저장 완료`);
+    cancelFeePreview();
+    loadFeeHistory();
+  } catch(e) {
+    showToast('저장 오류: ' + e.message, true);
+    btn.disabled = false; btn.textContent = 'Firebase에 저장';
+  }
+};
+
+// 업로드 내역 로드
+function loadFeeHistory() {
+  const el = document.getElementById('feeHistoryList');
+  if (!el) return;
+  getDocs(query(collection(db,'fee_uploads'), orderBy('uploadedAt','desc')))
+    .then(snap => {
+      if (snap.empty) { el.innerHTML = '<div style="padding:.5rem 0;">업로드 내역이 없습니다.</div>'; return; }
+      el.innerHTML = snap.docs.map(d => {
+        const r = d.data();
+        const date = r.uploadedAt?.toDate?.()?.toLocaleDateString('ko-KR') || '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+          <div>
+            <strong>${r.period}</strong>
+            <span style="margin-left:.75rem;color:var(--text3);font-size:12px;">${r.count}세대 · ${date} 업로드</span>
+          </div>
+          <button class="btn btn-sm btn-outline btn-danger" onclick="confirmDeleteFeeMonth('${d.id}','${r.period}')">삭제</button>
+        </div>`;
+      }).join('');
+    });
+}
+
+// 월 데이터 삭제
+window.confirmDeleteFeeMonth = async function(uploadId, period) {
+  if (!confirm(`${period} 관리비 데이터를 삭제하시겠습니까?\n입주자 조회에서도 사라집니다.`)) return;
+  const [y, m] = uploadId.match(/(\d{4})(\d{2})/).slice(1);
+  // fee_uploads 문서 삭제
+  await deleteDoc(doc(db, 'fee_uploads', uploadId));
+  // management_fees 문서 일괄 삭제
+  const snap = await getDocs(query(collection(db,'management_fees'),
+    where('year','==',parseInt(y)), where('month','==',parseInt(m))));
+  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+  showToast(`${period} 관리비 데이터가 삭제되었습니다.`);
+  loadFeeHistory();
+};
 </script>
 
 <script>
@@ -1292,6 +1572,7 @@ function buildSidebar(){
       <div class="sidebar-item" id="sb-tasks" onclick="gotoSection('tasks')">📌 업무 지시</div>
       <div class="sidebar-section">설정</div>
       <div class="sidebar-item" id="sb-units" onclick="gotoSection('units')">🏢 호실 관리</div>
+      <div class="sidebar-item" id="sb-fees" onclick="gotoSection('fees')">💰 관리비 관리</div>
       <div class="sidebar-item" id="sb-logs" onclick="gotoSection('logs')">📝 업무 로그</div>
       <div class="sidebar-item" id="sb-notices" onclick="gotoSection('notices')">📢 공지 관리</div>
       <div class="sidebar-item" id="sb-users" onclick="gotoSection('users')">👤 계정 목록</div>
@@ -1366,6 +1647,7 @@ function gotoSection(id){
   if(id==='notices') renderNoticeAdmin();
   if(id==='users') renderUsers();
   if(id==='units') renderUnits();
+  if(id==='fees') window.initFeesSection && window.initFeesSection();
   if(id==='logs') renderLogs();
   if(id==='mycomplaints') renderMyComplaints();
   if(id==='mytasks') renderMyTasks();
