@@ -12,6 +12,7 @@ firebase.initializeApp({
   authDomain: "urbancenterplaza.firebaseapp.com",
   projectId: "urbancenterplaza",
   storageBucket: "urbancenterplaza.firebasestorage.app",
+  messagingSenderId: "171692889997",
   appId: "1:171692889997:web:333e87256d026387674fc4"
 });
 
