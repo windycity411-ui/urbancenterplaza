@@ -18,7 +18,6 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--text:#1a1a18;--text2:#5c5a54;--text3:#9c9a94;--accent:#1a3a2a;--accent2:#2d5c3e;--accent-light:#e8f0eb;--gold:#8a6c2a;--gold-light:#f5f0e0;--border:#e0ddd6;--danger:#8a2a2a;--danger-light:#f5e8e8;--info:#1a3a6a;--info-light:#e8eef8;--green:#1a5c1a;--green-light:#e8f4e8;--radius:4px;--radius-lg:8px;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -558,28 +557,27 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <div class="adm-section" id="sec-fees">
         <div class="adm-page-title">관리비 관리</div>
 
-        <!-- 업로드 패널 -->
+        <!-- 붙여넣기 입력 패널 -->
         <div class="card" style="margin-bottom:1.25rem;">
-          <div class="card-title" style="margin-bottom:1rem;">📂 CSV 파일 업로드</div>
+          <div class="card-title" style="margin-bottom:.5rem;">📋 엑셀 데이터 붙여넣기</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
+            ① 엑셀 파일에서 <strong>헤더 행 포함 전체 데이터</strong>를 선택(Ctrl+A 또는 드래그)<br>
+            ② 복사(Ctrl+C) 후 아래 입력창에 붙여넣기(Ctrl+V)<br>
+            ③ 년월 확인 후 <strong>불러오기</strong> 클릭
+          </div>
 
-          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+          <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.75rem;">
             <div>
               <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">부과 년월</label>
-              <input type="month" id="feeMonth" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
+              <input type="month" id="feeMonth" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
             </div>
-            <div style="flex:1;min-width:200px;">
-              <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">CSV 파일 선택</label>
-              <input type="file" id="feeFile" accept=".csv,.xlsx,.xls" style="font-size:13px;">
-            </div>
-            <div style="align-self:flex-end;">
-              <button class="btn btn-primary btn-sm" onclick="loadFeeFile()">불러오기</button>
-            </div>
+            <button class="btn btn-primary" onclick="loadFeeFile()" style="height:36px;">불러오기</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('feePasteArea').value=''" style="height:36px;align-self:flex-end;">지우기</button>
           </div>
 
-          <div style="font-size:12px;color:var(--text3);line-height:1.8;">
-            💡 필수 컬럼: <strong>호실</strong>(또는 호수·unit), <strong>합계</strong>(또는 total·납부금액) &nbsp;|&nbsp;
-            선택 컬럼: 일반관리비, 청소비, 소독비, 승강기유지비, 공용전기료, 공용수도료, 장기수선충당금 등
-          </div>
+          <textarea id="feePasteArea" rows="8"
+            placeholder="엑셀에서 복사한 데이터를 여기에 붙여넣으세요 (Ctrl+V)&#10;&#10;예시:&#10;호 수	상 호	관리비	...&#10;101	롯데리아	1493950	..."
+            style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Noto Sans KR',monospace;resize:vertical;line-height:1.6;background:#fafaf8;"></textarea>
         </div>
 
         <!-- 미리보기 -->
@@ -1295,80 +1293,74 @@ window.initFeesSection = function() {
   loadFeeHistory();
 };
 
-// ── 파일 불러오기 (xlsx / csv 모두 지원) ──────────
+// ── 붙여넣기 데이터 파싱 ──────────────────────────
 window.loadFeeFile = function() {
-  const file  = document.getElementById('feeFile').files[0];
+  const text  = (document.getElementById('feePasteArea').value || '').trim();
   const month = document.getElementById('feeMonth').value;
-  if (!file)  { showToast('파일을 선택해 주세요.', true); return; }
+
+  if (!text)  { showToast('먼저 엑셀 데이터를 붙여넣으세요.', true); return; }
   if (!month) { showToast('부과 년월을 선택해 주세요.', true); return; }
-  if (typeof XLSX === 'undefined') { showToast('XLSX 라이브러리 로딩 중입니다. 잠시 후 다시 시도하세요.', true); return; }
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const wb   = XLSX.read(data, { type: 'array', cellDates: false });
-      const ws   = wb.Sheets[wb.SheetNames[0]];
+  try {
+    // 탭 구분 행 분리 (엑셀 복사 형식)
+    const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n')
+                      .split('\n').map(l => l.split('\t'));
 
-      // 전체를 2차원 배열로 변환
-      const allRows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
-
-      // 헤더 행 자동 감지: '호'와 '관리비'(또는 '상호') 포함 행
-      let headerIdx = -1;
-      for (let i = 0; i < Math.min(allRows.length, 8); i++) {
-        const s = allRows[i].map(c => String(c ?? '')).join('');
-        if ((s.includes('호') || s.includes('호수')) && s.includes('관리비')) {
-          headerIdx = i; break;
-        }
+    // 헤더 행 자동 감지: '호'와 '관리비' 모두 포함하는 행
+    let headerIdx = -1;
+    for (let i = 0; i < Math.min(lines.length, 8); i++) {
+      const s = lines[i].join('');
+      if ((s.includes('호수') || s.includes('호 수') || s.includes('호')) && s.includes('관리비')) {
+        headerIdx = i; break;
       }
-      if (headerIdx === -1) { showToast('헤더 행을 찾을 수 없습니다.\n행에 "호수"와 "관리비" 컬럼이 있는지 확인하세요.', true); return; }
-
-      const headers  = allRows[headerIdx].map(h => String(h ?? '').trim());
-      const dataRows = allRows.slice(headerIdx + 1).filter(row => {
-        const roomVal = row[0];
-        // 호실 값이 숫자이고 0 초과인 행만 (합계행·빈행 제외)
-        return roomVal != null && !isNaN(Number(roomVal)) && Number(roomVal) > 0;
-      });
-
-      if (!dataRows.length) { showToast('데이터 행이 없습니다.', true); return; }
-
-      // 컬럼 인덱스 매핑
-      const CI = buildColIdx(headers);
-
-      // 같은 호실 여러 행 → 합산 (예: 105호 + 105호 퇴실관리비)
-      const merged = {};
-      dataRows.forEach(row => {
-        const room = String(row[CI.room] ?? '').trim();
-        if (!room) return;
-        const biz    = String(row[CI.biz] ?? '').trim();
-        const total  = toNum(row[CI.total]);
-        const paid   = toNum(row[CI.paid]);
-        const unpaid = toNum(row[CI.unpaid]);
-        const supply = toNum(row[CI.supply]);
-        const vat    = toNum(row[CI.vat]);
-        const nontax = toNum(row[CI.nontax]);
-
-        if (merged[room]) {
-          // 같은 호실 두 번째 행: 금액 합산, 상호는 첫 행 우선
-          merged[room].total  += total;
-          merged[room].paid   += paid;
-          merged[room].unpaid  = toNum(row[CI.unpaid]); // 마지막 행의 미납금 사용
-          merged[room].supply += supply;
-          merged[room].vat    += vat;
-          merged[room].nontax += nontax;
-        } else {
-          merged[room] = { room, biz, total, paid, unpaid, supply, vat, nontax };
-        }
-      });
-
-      feeParsedData  = Object.values(merged);
-      feeRawHeaders  = headers;
-      renderFeePreview(feeParsedData);
-    } catch(err) {
-      showToast('파일 파싱 오류: ' + err.message, true);
     }
-  };
-  reader.readAsArrayBuffer(file);
+    if (headerIdx === -1) {
+      showToast('헤더 행을 찾을 수 없습니다.\n"호수"와 "관리비" 컬럼이 포함된 행부터 복사해 주세요.', true);
+      return;
+    }
+
+    const headers  = lines[headerIdx].map(h => h.trim());
+    const dataRows = lines.slice(headerIdx + 1).filter(row => {
+      const roomVal = row[0]?.trim();
+      // 호실 값이 숫자이고 0 초과인 행만 (합계행·빈행 제외)
+      return roomVal && !isNaN(Number(roomVal)) && Number(roomVal) > 0;
+    });
+
+    if (!dataRows.length) { showToast('유효한 데이터 행이 없습니다.', true); return; }
+
+    const CI = buildColIdx(headers);
+
+    // 같은 호실 여러 행 → 합산 (예: 105호 + 105호 퇴실관리비)
+    const merged = {};
+    dataRows.forEach(row => {
+      const room = (row[CI.room] ?? '').trim();
+      if (!room) return;
+      const biz    = (row[CI.biz] ?? '').trim();
+      const total  = toNum(row[CI.total]);
+      const paid   = toNum(row[CI.paid]);
+      const unpaid = toNum(row[CI.unpaid]);
+      const supply = toNum(row[CI.supply]);
+      const vat    = toNum(row[CI.vat]);
+      const nontax = toNum(row[CI.nontax]);
+
+      if (merged[room]) {
+        merged[room].total  += total;
+        merged[room].paid   += paid;
+        merged[room].unpaid  = toNum(row[CI.unpaid]);
+        merged[room].supply += supply;
+        merged[room].vat    += vat;
+        merged[room].nontax += nontax;
+      } else {
+        merged[room] = { room, biz, total, paid, unpaid, supply, vat, nontax };
+      }
+    });
+
+    feeParsedData = Object.values(merged);
+    feeRawHeaders = headers;
+    renderFeePreview(feeParsedData);
+  } catch(err) {
+    showToast('파싱 오류: ' + err.message, true);
+  }
 };
 
 // 컬럼 인덱스 빌더
@@ -1425,7 +1417,7 @@ function renderFeePreview(rows) {
 window.cancelFeePreview = function() {
   feeParsedData = [];
   document.getElementById('feePreviewCard').style.display = 'none';
-  document.getElementById('feeFile').value = '';
+  document.getElementById('feePasteArea').value = '';
 };
 
 // ── Firebase에 저장 ────────────────────────────────
