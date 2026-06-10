@@ -531,7 +531,7 @@ function showFcmToast(title, body) {
 // 알림 권한 요청 및 FCM 토큰 저장
 // ※ VAPID 키 발급 방법: Firebase Console → 프로젝트 설정 → 클라우드 메시징
 //   → 웹 푸시 인증서 → 키 쌍 생성 → 공개 키 복사 후 아래에 붙여넣기
-const VAPID_KEY = ''; // ← 여기에 VAPID 공개 키 입력
+const VAPID_KEY = 'BCmE1uY5ESJwZhKCZj4brvyv_nCMqBh4hGNbzDaLVLLP8sHBdhU5R0gC2PYfiRt_PbXN0V2EKVV1zaNETQaxGJk';
 
 async function requestPushPermission() {
   if (!VAPID_KEY) return; // VAPID 키 미설정 시 건너뜀
