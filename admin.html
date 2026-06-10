@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>어반센터프라자 관리자</title>
+
+<!-- PWA 설정 (관리자 전용) -->
+<link rel="manifest" href="admin-manifest.json">
+<meta name="theme-color" content="#1a3a2a">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS PWA 설정 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UCP 관리자">
+<link rel="apple-touch-icon" href="admin-icon-192.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -120,17 +132,6 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .log-badge.task{background:var(--gold-light);color:var(--gold);}
 .log-badge.resolve{background:var(--green-light);color:var(--green);}
 .log-badge.unresolve{background:var(--danger-light);color:var(--danger);}
-
-/* ── 연간 업무 계획 ── */
-#annualTable th{background:var(--accent);color:rgba(255,255,255,.9);padding:8px 10px;font-size:12px;font-weight:500;text-align:center;white-space:nowrap;border:1px solid rgba(255,255,255,.15);}
-#annualTable td{padding:7px 10px;font-size:12px;color:var(--text);border:1px solid var(--border);vertical-align:top;line-height:1.5;}
-#annualTable td.cat-cell{font-weight:600;background:var(--surface2);color:var(--accent);text-align:center;}
-#annualTable td.week-cell{background:var(--surface2);color:var(--text2);text-align:center;white-space:nowrap;}
-#annualTable td.task-cell{cursor:pointer;min-width:80px;}
-#annualTable td.task-cell:hover{background:var(--accent-light);}
-#annualTable td.task-cell.has-content{background:var(--gold-light);}
-#annualTable tr:hover td{background:var(--accent-light);}
-#annualTable tr:hover td.cat-cell,#annualTable tr:hover td.week-cell{background:var(--surface2);}
 
 /* ── 호실 관리 ── */
 .unit-floor-tabs{display:flex;gap:4px;margin-bottom:1rem;flex-wrap:wrap;}
@@ -435,25 +436,8 @@ table.adm-table tr:hover td{background:var(--surface2);}
         <div class="adm-page-title">공지 관리<button class="btn btn-primary btn-sm" onclick="openNewNotice()">+ 공지 등록</button></div>
         <div id="noticeAdminList"></div>
       </div>
-      <!-- 연간 업무 계획 -->
-      <div class="adm-section" id="sec-annualplan">
-        <div class="adm-page-title">
-          연간 업무 계획
-          <div style="display:flex;gap:.5rem;">
-            <button class="btn btn-outline btn-sm" onclick="exportAnnualCSV()">📥 CSV</button>
-            <button class="btn btn-primary btn-sm" onclick="openAnnualAddRow()">+ 항목 추가</button>
-          </div>
-        </div>
-        <!-- 분야 탭 -->
-        <div class="unit-floor-tabs" id="annualTabs"></div>
-        <!-- 테이블 -->
-        <div class="table-card" style="overflow-x:auto;">
-          <table id="annualTable" style="width:100%;border-collapse:collapse;min-width:900px;">
-            <thead id="annualHead"></thead>
-            <tbody id="annualBody"></tbody>
-          </table>
-        </div>
-      </div>
+
+      <!-- 호실 관리 (관리소장) -->
       <div class="adm-section" id="sec-units">
         <div class="adm-page-title">
           호실 관리
@@ -701,50 +685,6 @@ table.adm-table tr:hover td{background:var(--surface2);}
     </div>
   </div>
 </div>
-<!-- 연간 업무 계획 편집 모달 -->
-<div class="modal-backdrop" id="annualEditModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-header-title" id="annualEditTitle">업무 계획 편집</span>
-      <button class="modal-close" onclick="closeModal('annualEditModal')">×</button>
-    </div>
-    <div class="modal-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div><label class="modal-form-label">구분</label>
-          <select class="modal-form-select" id="ae-category">
-            <option>소방</option><option>전기</option><option>승강기</option>
-            <option>기계실</option><option>미화/경비</option><option>하자보수/유지보수</option>
-          </select>
-        </div>
-        <div><label class="modal-form-label">주간</label>
-          <select class="modal-form-select" id="ae-week">
-            <option>첫째주</option><option>둘째주</option><option>셋째주</option><option>넷째주</option>
-          </select>
-        </div>
-      </div>
-      <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:.75rem;">월별 내용</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-        <div><label class="modal-form-label" style="font-size:11px;">1월</label><input type="text" class="modal-form-input" id="ae-m1" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">2월</label><input type="text" class="modal-form-input" id="ae-m2" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">3월</label><input type="text" class="modal-form-input" id="ae-m3" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">4월</label><input type="text" class="modal-form-input" id="ae-m4" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">5월</label><input type="text" class="modal-form-input" id="ae-m5" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">6월</label><input type="text" class="modal-form-input" id="ae-m6" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">7월</label><input type="text" class="modal-form-input" id="ae-m7" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">8월</label><input type="text" class="modal-form-input" id="ae-m8" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">9월</label><input type="text" class="modal-form-input" id="ae-m9" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">10월</label><input type="text" class="modal-form-input" id="ae-m10" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">11월</label><input type="text" class="modal-form-input" id="ae-m11" style="margin-bottom:0;font-size:13px;"></div>
-        <div><label class="modal-form-label" style="font-size:11px;">12월</label><input type="text" class="modal-form-input" id="ae-m12" style="margin-bottom:0;font-size:13px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" id="ae-deleteBtn" onclick="deleteAnnualRow()" style="margin-right:auto;">삭제</button>
-      <button class="btn btn-outline" onclick="closeModal('annualEditModal')">취소</button>
-      <button class="btn btn-primary" onclick="saveAnnualRow()">저장</button>
-    </div>
-  </div>
-</div>
 
 <!-- 출근 기준시간 설정 모달 -->
 <div class="modal-backdrop" id="attSettingsModal">
@@ -949,9 +889,9 @@ window.saveCalMemoToDb = async function(dateStr, memo){
 // ── 캘린더 메모 Firebase 저장/로드 ──
 onSnapshot(collection(db,'calendar_memos'), snap => {
   snap.docs.forEach(d => {
-    calMemos[d.id] = d.data().memo || '';
+    window.calMemos = window.calMemos || {};
+    window.calMemos[d.id] = d.data().memo || '';
   });
-  window.calMemos = calMemos;
   if(window.calView) window.renderCalendar && window.renderCalendar();
 });
 
@@ -1350,7 +1290,6 @@ function buildSidebar(){
       <div class="sidebar-section">업무</div>
       <div class="sidebar-item" id="sb-complaints" onclick="gotoSection('complaints')">📋 민원 관리 <span class="sidebar-badge" id="sidebarBadge">0</span></div>
       <div class="sidebar-item" id="sb-tasks" onclick="gotoSection('tasks')">📌 업무 지시</div>
-      <div class="sidebar-item" id="sb-annualplan" onclick="gotoSection('annualplan')">📋 연간 업무 계획</div>
       <div class="sidebar-section">설정</div>
       <div class="sidebar-item" id="sb-units" onclick="gotoSection('units')">🏢 호실 관리</div>
       <div class="sidebar-item" id="sb-logs" onclick="gotoSection('logs')">📝 업무 로그</div>
@@ -1402,9 +1341,7 @@ function initSelects(){
   ['cd-assignee','tm-assignee','taskUserFilter'].forEach(sid => {
     const el = document.getElementById(sid); if(!el) return;
     el.innerHTML = sid==='taskUserFilter' ? '<option value="all">전체 담당자</option>' : '<option value="">미배정</option>';
-    // 활성 계정(STAFF_VISIBLE)만 표시
-    const activeUids = [MANAGER, ...STAFF_VISIBLE];
-    activeUids.forEach(uid => {
+    Object.keys(USERS).forEach(uid => {
       const o = document.createElement('option');
       o.value=uid; o.textContent=uid+' ('+USERS[uid].role+')';
       el.appendChild(o);
@@ -1422,7 +1359,6 @@ function gotoSection(id){
   const mbn = document.getElementById('mbn-'+id);
   if(mbn) mbn.classList.add('active');
   if(id==='dashboard') renderDashboard();
-  if(id==='annualplan'){ loadAnnualPlan(); renderAnnualPlan(); }
   if(id==='attendance') setTimeout(()=>renderAttSection(), 50);
   if(id==='staffstatus'){ renderStaffStatus(); renderTodayAttendance(); }
   if(id==='complaints') renderComplaintTable();
@@ -1839,13 +1775,7 @@ function renderCalendar(){
   (window.complaints||[]).forEach(c => {
     if(c.status !== '신규') addEvent(c.date, 'complaint', `[민원] ${c.room} ${c.subject}`, c.status);
   });
-  // 메모: 여러 줄이면 첫 번째 줄만 dot에 표시
-  Object.entries(calMemos).forEach(([d,m]) => {
-    if(m){
-      const firstLine = m.split('\n')[0];
-      addEvent(d, 'memo', firstLine, '');
-    }
-  });
+  Object.entries(calMemos).forEach(([d,m]) => { if(m) addEvent(d, 'memo', m, ''); });
 
   let html = '';
   let dayCount = 0;
@@ -1896,26 +1826,22 @@ function selectCalDate(dateStr){
   document.getElementById('calDetailTitle').textContent = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
   document.getElementById('calMemoInput').value = calMemos[dateStr] || '';
 
+  // 해당 날짜 이벤트 목록
   const dayTasks = (window.tasks||[]).filter(t => t.date === dateStr);
   const dayComplaints = (window.complaints||[]).filter(c => c.date === dateStr && c.status !== '신규');
   const memo = calMemos[dateStr];
 
   let html = '';
   if(memo){
-    // 줄바꿈 분리해서 항목별로 표시
-    memo.split('\n').forEach(line => {
-      if(!line.trim()) return;
-      html += `<div class="cal-event-item memo-event">
-        <div class="cal-event-title">📝 ${line}</div>
-        <div class="cal-event-meta">메모</div>
-      </div>`;
-    });
+    html += `<div class="cal-event-item memo-event">
+      <div class="cal-event-title">📝 ${memo}</div>
+      <div class="cal-event-meta">메모</div>
+    </div>`;
   }
   dayTasks.forEach(t => {
-    const users = window.USERS || {};
     html += `<div class="cal-event-item task-event">
       <div class="cal-event-title">${t.title}</div>
-      <div class="cal-event-meta">업무 · ${t.assignee}(${users[t.assignee]?.role||''}) · ${taskBadge(t.status,t.priority)}</div>
+      <div class="cal-event-meta">업무 · ${t.assignee}(${USERS[t.assignee]?.role||''}) · ${taskBadge(t.status,t.priority)}</div>
     </div>`;
   });
   dayComplaints.forEach(c => {
@@ -2057,7 +1983,6 @@ function renderUnits(){
           <span class="unit-status ${statusCls}">${statusLabel}</span>
           <div class="unit-num">${displayNum}</div>
           <div class="unit-name">${d.business||'<span style="color:var(--text3);font-weight:400;font-size:13px;">미등록</span>'}</div>
-          ${d.phone?`<a href="tel:${d.phone}" onclick="event.stopPropagation()" style="font-size:11px;color:var(--accent2);text-decoration:none;">📞 ${d.phone}</a>`:''}
         </div>`;
       }).join('');
 
@@ -2419,164 +2344,6 @@ function avgTime(times){
   const total = times.reduce((s,t)=>{ const [h,m]=t.split(':').map(Number); return s+h*60+m; }, 0);
   const avg = Math.round(total/times.length);
   return `${String(Math.floor(avg/60)).padStart(2,'0')}:${String(avg%60).padStart(2,'0')}`;
-}
-
-// ── 연간 업무 계획 ──
-const ANNUAL_INITIAL = [
-  {id:'r1', cat:'소방', week:'첫째주', m:[null,null,null,null,null,'하절기 감지기 오작동 대비 점검',null,null,null,null,null,'동절기 감지기 오작동 대비 점검']},
-  {id:'r2', cat:'소방', week:'둘째주', m:[null,null,null,'직원 소방 교육\n수신기 작동법',null,'작동기능점검',null,null,'직원 소방 교육\n소화기 사용법',null,null,'종합 정밀 점검']},
-  {id:'r3', cat:'소방', week:'셋째주', m:['소방 정기 점검','소방 정기 점검','소방 정기 점검','소방 정기 점검','소방 정기 점검','결과지 수령 및 배포','소방 정기 점검','소방 정기 점검','소방 정기 점검','소방 정기 점검','소방 정기 점검','결과지 수령 및 배포']},
-  {id:'r4', cat:'소방', week:'넷째주', m:[null,null,null,null,null,'이행계획서 제출',null,null,null,null,null,'이행계획서 제출']},
-  {id:'r5', cat:'전기', week:'첫째주', m:['주간 점검(수)','수변전실점검',null,'주간 점검(수)\n전기실 보수','수변전실점검','수변전실점검','주간 점검(수)','수변전실점검','수변전실점검','주간 점검(수)','수변전실점검','수변전실점검']},
-  {id:'r6', cat:'전기', week:'둘째주', m:['주간 점검(수)','층별 EPS실 점검','주간 점검(수)','주간 점검(수)','층별 EPS실 점검','층별 EPS실 점검','주간 점검(수)','층별 EPS실 점검','층별 EPS실 점검','주간 점검(수)','층별 EPS실 점검','층별 EPS실 점검']},
-  {id:'r7', cat:'전기', week:'셋째주', m:['발전기 주유 및 기동 테스트','발전기 점검','주간 점검(수)',null,'발전기 점검','발전기 점검','발전기 주유 및 기동 테스트','발전기 점검','발전기 점검','발전기 기동 테스트','발전기 점검','발전기 점검']},
-  {id:'r8', cat:'전기', week:'넷째주', m:['주간 점검(수)','기계실 점검','주간 점검(수)','주간 점검(수)','기계실 점검','기계실 점검','주간 점검(수)','기계실 점검','기계실 점검','주간 점검(수)','기계실 점검','기계실 점검']},
-  {id:'r9', cat:'승강기', week:'셋째주', m:['청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','청명엘리베이터 정기 점검','E/V 안전점검']},
-  {id:'r10', cat:'기계실', week:'첫째주', m:['일간 점검',null,'주차장 램프등 시간조절','기계설비 성능점검 결과지 수령 및 보수 계획 수립',null,'세대별 계량기 검침 정확도 점검',null,null,null,null,'주차장 램프등 시간조절','동절기 주차장 휀 시간 조절']},
-  {id:'r11', cat:'기계실', week:'둘째주', m:['지하 집수정 상태 확인 및 청소',null,'지하 집수정 상태 확인 및 청소',null,'지하 집수정 상태 확인 및 청소','세대별 계량기 검침 정확도 점검',null,'지하 집수정 상태 확인 및 청소',null,'지하 집수정 상태 확인 및 청소',null,'지하 집수정 상태 확인 및 청소']},
-  {id:'r12', cat:'기계실', week:'셋째주', m:[null,'건물 소독','물탱크 청소','건물 소독',null,'건물 소독',null,'건물 소독',null,'건물 소독','물탱크 청소','소독 / 온수 공급']},
-  {id:'r13', cat:'기계실', week:'넷째주', m:[null,'B1F 배관 열선 Off','기계설비 성능점검','기계설비 부분 보수',null,'하절기 주차장 휀 시간 조절',null,null,null,null,null,'B1F 배관 열선 on']},
-  {id:'r14', cat:'미화/경비', week:'첫째주', m:['위생설비점검','위생설비점검','위생설비점검','봄맞이 대청소','위생설비점검','위생설비점검','위생설비점검','위생설비점검','위생설비점검','위생설비점검','동절기 대비 각 층 배관 정비','위생설비점검']},
-  {id:'r15', cat:'미화/경비', week:'둘째주', m:['주차장 트랩청소','주차장 트랩청소','주차장 트랩청소',null,'주차장 트랩청소','주차장 트랩청소','주차장 트랩청소','주차장 트랩청소','주차장 트랩청소','주차장 트랩청소','주차장 트랩청소','주차장 트랩청소']},
-  {id:'r16', cat:'미화/경비', week:'셋째주', m:[null,null,'봄맞이 대청소',null,null,'장마대비 일괄 정비',null,null,'미화/경비 교육','동계 근무복 구매','동절기 대비 대청소',null]},
-  {id:'r17', cat:'미화/경비', week:'넷째주', m:['월간 점검','월간 점검',null,'춘/하 근무복 구매','월간 점검','미화/경비 교육','월간 점검','월간 점검','월간 점검','월간 점검','월간 점검','미화/경비 교육']},
-  {id:'r18', cat:'하자보수/유지보수', week:'첫째주', m:[null,null,null,null,'지하주차장 배수판 보수공사',null,null,null,null,'B1 주차장 바닥 보수 공사',null,null]},
-  {id:'r19', cat:'하자보수/유지보수', week:'둘째주', m:[null,null,null,'고소작업대 구매',null,'7·8F 여자화장실 타일교체',null,null,'B1 공용배관 청소 (외부용역)','수변전실 그늘막 철거',null,null]},
-  {id:'r20', cat:'하자보수/유지보수', week:'셋째주', m:[null,null,'RF·4F·B1 도장방수 견적 수령','관리단집회 (04/23)','도장/방수 하자보수\n(RF·4F·B1)','수변전실 그늘막 설치','주차 차단기 교체','공용시설 전등 교체','수변전실 배터리 교체',null,null,null]},
-  {id:'r21', cat:'하자보수/유지보수', week:'넷째주', m:[null,null,'P&G 하자보수 담당 방문 및 실사','건물 POP 정비',null,null,null,null,null,null,null,null]},
-];
-
-let annualPlan = [];
-let annualEditId = null;
-const MONTHS_LABEL = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-const CATS = ['소방','전기','승강기','기계실','미화/경비','하자보수/유지보수'];
-let annualFilterCat = 'all';
-
-function renderAnnualPlan(){
-  // 탭 생성
-  const tabs = document.getElementById('annualTabs');
-  if(tabs){
-    tabs.innerHTML = `<div class="unit-floor-tab ${annualFilterCat==='all'?'active':''}" onclick="setAnnualCat('all')">전체</div>`
-      + CATS.map(c=>`<div class="unit-floor-tab ${annualFilterCat===c?'active':''}" onclick="setAnnualCat('${c}')">${c}</div>`).join('');
-  }
-
-  const data = annualPlan.length ? annualPlan : ANNUAL_INITIAL;
-  const filtered = annualFilterCat==='all' ? data : data.filter(r=>r.cat===annualFilterCat);
-
-  // 헤더
-  document.getElementById('annualHead').innerHTML = `<tr>
-    <th>구분</th><th>주간</th>
-    ${MONTHS_LABEL.map(m=>`<th>${m}</th>`).join('')}
-  </tr>`;
-
-  // 바디 - 구분별 rowspan 계산
-  let html = '';
-  let prevCat = null;
-  filtered.forEach((row,i) => {
-    const catCount = filtered.filter(r=>r.cat===row.cat).length;
-    const catFirst = filtered.findIndex(r=>r.cat===row.cat) === i;
-    html += '<tr>';
-    if(catFirst){
-      html += `<td class="cat-cell" rowspan="${catCount}">${row.cat}</td>`;
-    }
-    html += `<td class="week-cell">${row.week}</td>`;
-    for(let mi=0; mi<12; mi++){
-      const val = row.m[mi] || '';
-      const hasCls = val ? ' has-content' : '';
-      const display = val.replace(/\n/g,'<br>');
-      html += `<td class="task-cell${hasCls}" onclick="openAnnualEdit('${row.id}',${mi})" title="${val}">${display}</td>`;
-    }
-    html += '</tr>';
-  });
-  document.getElementById('annualBody').innerHTML = html || '<tr><td colspan="14" style="text-align:center;padding:2rem;color:var(--text3);">데이터 없음</td></tr>';
-}
-
-function setAnnualCat(cat){
-  annualFilterCat = cat;
-  renderAnnualPlan();
-}
-
-function openAnnualEdit(id, focusMonth){
-  const data = annualPlan.length ? annualPlan : ANNUAL_INITIAL;
-  const row = data.find(r=>r.id===id);
-  if(!row) return;
-  annualEditId = id;
-  document.getElementById('annualEditTitle').textContent = `${row.cat} · ${row.week} 편집`;
-  document.getElementById('ae-category').value = row.cat;
-  document.getElementById('ae-week').value = row.week;
-  for(let i=1;i<=12;i++){
-    const el = document.getElementById('ae-m'+i);
-    if(el) el.value = row.m[i-1]||'';
-  }
-  document.getElementById('ae-deleteBtn').style.display = 'inline-block';
-  openModal('annualEditModal');
-  // 포커스
-  setTimeout(()=>{ const el=document.getElementById('ae-m'+(focusMonth+1)); if(el) el.focus(); },300);
-}
-
-function openAnnualAddRow(){
-  annualEditId = null;
-  document.getElementById('annualEditTitle').textContent = '새 항목 추가';
-  document.getElementById('ae-category').value = '소방';
-  document.getElementById('ae-week').value = '첫째주';
-  for(let i=1;i<=12;i++){
-    const el = document.getElementById('ae-m'+i);
-    if(el) el.value = '';
-  }
-  document.getElementById('ae-deleteBtn').style.display = 'none';
-  openModal('annualEditModal');
-}
-
-function saveAnnualRow(){
-  const cat = document.getElementById('ae-category').value;
-  const week = document.getElementById('ae-week').value;
-  const m = [];
-  for(let i=1;i<=12;i++){
-    m.push(document.getElementById('ae-m'+i)?.value.trim()||null);
-  }
-  if(annualPlan.length === 0) annualPlan = JSON.parse(JSON.stringify(ANNUAL_INITIAL));
-  if(annualEditId){
-    const idx = annualPlan.findIndex(r=>r.id===annualEditId);
-    if(idx>=0){ annualPlan[idx].cat=cat; annualPlan[idx].week=week; annualPlan[idx].m=m; }
-  } else {
-    annualPlan.push({id:'r'+Date.now(), cat, week, m});
-  }
-  // localStorage에 저장
-  try{ localStorage.setItem('ucp_annual_plan', JSON.stringify(annualPlan)); }catch(e){}
-  closeModal('annualEditModal');
-  renderAnnualPlan();
-  showToast('저장되었습니다.');
-}
-
-function deleteAnnualRow(){
-  if(!annualEditId || !confirm('이 항목을 삭제하시겠습니까?')) return;
-  if(annualPlan.length === 0) annualPlan = JSON.parse(JSON.stringify(ANNUAL_INITIAL));
-  annualPlan = annualPlan.filter(r=>r.id!==annualEditId);
-  try{ localStorage.setItem('ucp_annual_plan', JSON.stringify(annualPlan)); }catch(e){}
-  closeModal('annualEditModal');
-  renderAnnualPlan();
-  showToast('삭제되었습니다.');
-}
-
-function loadAnnualPlan(){
-  try{
-    const saved = localStorage.getItem('ucp_annual_plan');
-    if(saved) annualPlan = JSON.parse(saved);
-  }catch(e){}
-}
-
-function exportAnnualCSV(){
-  const data = annualPlan.length ? annualPlan : ANNUAL_INITIAL;
-  const rows = [['구분','주간',...MONTHS_LABEL]];
-  data.forEach(r=>{
-    rows.push([r.cat, r.week, ...r.m.map(v=>v||'')]);
-  });
-  const csv = rows.map(r=>r.map(c=>`"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '2026년_주요업무계획.csv';
-  a.click();
 }
 
 // ── 계정 목록 (관리소장) ──
