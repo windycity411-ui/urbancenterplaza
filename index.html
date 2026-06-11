@@ -472,24 +472,45 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 
     <!-- 납부 안내 탭 -->
     <div id="fee-info-wrap">
-      <div class="deadline-box"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 매월 25일까지</h4><p>기한 초과 시 연체이자(월 2%)가 부과됩니다.</p></div></div>
+      <div class="deadline-box"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 고지서 교부일로부터 14일 이내</h4><p>관리비 고지서는 매월 말일 교부됩니다. 납부기한 마지막 날이 공휴일이면 익일까지 납부 가능합니다.</p></div></div>
       <div class="fee-section-title">납부 계좌</div>
-      <div class="account-box"><div class="account-box-label">예금주</div><div class="account-box-value">어반센터프라자 관리단</div><div class="account-box-bank">농협은행 · 302-XXXX-XXXX-XX</div></div>
+      <div class="account-box" style="margin-bottom:.625rem;">
+        <div class="account-box-label">관리비</div>
+        <div class="account-box-value">㈜제일개발 (봉담어반센터프라자)</div>
+        <div class="account-box-bank">신한은행 · 100-035-734833</div>
+      </div>
+      <div class="account-box">
+        <div class="account-box-label">주차관리비</div>
+        <div class="account-box-value">㈜제일개발 (봉담어반센터프라자 주차)</div>
+        <div class="account-box-bank">신한은행 · 100-035-789001</div>
+      </div>
       <div class="fee-section-title">납부 방법</div>
-      <div class="method-cards">
-        <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체</div><div class="method-card-desc">호실 번호를 입금자명에 포함해 주세요.<br>예) <em>301호홍길동</em></div></div>
-        <div class="method-card"><div class="method-card-icon">🏢</div><div class="method-card-title">관리사무소 방문</div><div class="method-card-desc">평일 08:30 ~ 17:30 방문 납부 가능합니다. (현금/카드)</div></div>
+      <div class="method-cards" style="grid-template-columns:1fr;">
+        <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체 (유일한 납부 방법)</div><div class="method-card-desc">관리비와 주차관리비는 <strong>계좌이체로만</strong> 납부 가능합니다.<br>입금자명에 호실 번호를 반드시 포함해 주세요.<br>예) <em>221호홍길동</em></div></div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);background:var(--surface2);border-radius:var(--radius);padding:.625rem .875rem;margin-bottom:1rem;">
+        ※ 관리사무소에서는 관리비를 직접 수납하지 않습니다. 반드시 위 계좌로 이체해 주세요.
       </div>
       <div class="fee-section-title">관리비 항목</div>
-      <div class="table-card"><table class="fee-table"><thead><tr><th>항목</th><th>내용</th></tr></thead>
+      <div class="table-card"><table class="fee-table"><thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">공용 관리비</th></tr></thead>
       <tbody>
-        <tr><td>일반관리비</td><td>관리인력, 행정 운영비</td></tr>
-        <tr><td>청소비</td><td>건물 공용 구역 청소</td></tr>
-        <tr><td>소독비</td><td>분기별 방역 및 소독</td></tr>
-        <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지</td></tr>
-        <tr><td>공용 전기료</td><td>공용 조명, 전기설비</td></tr>
-        <tr><td>공용 수도료</td><td>공용 수도 사용료</td></tr>
-        <tr><td>장기수선충당금</td><td>건물 장기 수선 적립</td></tr>
+        <tr><td>소화전 관리비</td><td>소화설비 유지·점검 비용</td></tr>
+        <tr><td>공용 전기요금</td><td>복도·주차장 등 공용부분 전기료</td></tr>
+        <tr><td>수도료</td><td>공용 수도 사용료</td></tr>
+        <tr><td>수선유지비</td><td>건물 공용시설 수선·유지 비용</td></tr>
+        <tr><td>위탁관리비</td><td>전문 관리업체 위탁 운영비</td></tr>
+        <tr><td>통신비</td><td>공용 통신설비 유지비</td></tr>
+        <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지 비용</td></tr>
+        <tr><td>청소용역비</td><td>공용구역 청소용역 비용</td></tr>
+        <tr><td>소독방역비</td><td>건물 방역·소독 비용</td></tr>
+        <tr><td>가스 공용부분</td><td>공용 가스설비 유지비</td></tr>
+        <tr><td>기타 관리항목</td><td>기타 공용관리 비용</td></tr>
+      </tbody>
+      <thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">개별 부과 항목</th></tr></thead>
+      <tbody>
+        <tr><td>전기요금 (단독계량)</td><td>전용 구역 전기 사용량 기반 부과</td></tr>
+        <tr><td>난방비</td><td>전용 구역 난방 사용량 기반 부과</td></tr>
+        <tr><td>주차장 관리비</td><td>주차 구획 사용에 따른 관리비 (별도 계좌)</td></tr>
       </tbody></table></div>
     </div>
 
@@ -1004,9 +1025,12 @@ window.lookupFee = async function(){
   try {
     const [year, mon] = month.split('-');
     const docId = `${year}${mon}_${room}`;
-    const snap  = await getDoc(doc(db, 'management_fees', docId));
+    const [feeSnap, parkSnap] = await Promise.all([
+      getDoc(doc(db, 'management_fees', docId)),
+      getDoc(doc(db, 'parking_fees',    docId))
+    ]);
 
-    if(!snap.exists()){
+    if(!feeSnap.exists() && !parkSnap.exists()){
       result.innerHTML = `
         <div style="background:var(--gold-light);border:1px solid #f0d898;border-radius:var(--radius-lg);padding:1.5rem;text-align:center;">
           <div style="font-size:28px;margin-bottom:.5rem;">📭</div>
@@ -1016,50 +1040,80 @@ window.lookupFee = async function(){
       return;
     }
 
-    const d   = snap.data();
     const fmt = n => (n||0).toLocaleString();
-    const items = d.items || {};
 
-    const paidBanner = d.isPaid
-      ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
-           <span style="font-size:18px;">✅</span>
-           <div><strong style="color:var(--accent2);">납부 완료</strong>
-             <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금액 ${fmt(d.paid)}원</span>
-           </div>
-         </div>`
-      : `<div style="background:var(--danger-light);border:1px solid rgba(224,92,92,.3);border-radius:var(--radius);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
-           <span style="font-size:18px;">⚠️</span>
-           <div><strong style="color:var(--danger);">미납금 있음</strong>
-             <span style="font-size:13px;color:var(--danger);margin-left:.5rem;">${fmt(d.unpaid)}원 미납</span>
-           </div>
-         </div>`;
+    // ── 관리비 카드 ──
+    let feeCard = '';
+    if(feeSnap.exists()){
+      const d = feeSnap.data();
+      const items = d.items || {};
+      const paidBanner = d.isPaid
+        ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem;">
+             <span>✅</span><div><strong style="color:var(--accent2);">납부 완료</strong>
+               <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금 ${fmt(d.paid)}원</span>
+             </div></div>`
+        : `<div style="background:var(--danger-light);border:1px solid rgba(224,92,92,.3);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem;">
+             <span>⚠️</span><div><strong style="color:var(--danger);">미납</strong>
+               <span style="font-size:13px;color:var(--danger);margin-left:.5rem;">${fmt(d.unpaid)}원 미납</span>
+             </div></div>`;
+      const itemRows = [
+        items.supply ? `<tr><td style="padding:7px 4px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13px;">공급가액</td><td style="padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;">${fmt(items.supply)}원</td></tr>` : '',
+        items.vat    ? `<tr><td style="padding:7px 4px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13px;">부가세</td><td style="padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;">${fmt(items.vat)}원</td></tr>` : '',
+        items.nontax ? `<tr><td style="padding:7px 4px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13px;">비과세</td><td style="padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;">${fmt(items.nontax)}원</td></tr>` : '',
+      ].filter(Boolean).join('');
+      feeCard = `
+        <div style="background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:.875rem;">
+          <div style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;padding:.875rem 1.25rem;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:11px;opacity:.65;margin-bottom:2px;">${d.period} 관리비</div>
+              <div style="font-size:18px;font-weight:700;">${room}호 <span style="font-size:13px;font-weight:400;opacity:.8;">${d.biz||''}</span></div>
+            </div>
+            <div style="font-size:19px;font-weight:700;">${fmt(d.total)}원</div>
+          </div>
+          <div style="padding:.875rem 1.25rem;">
+            ${paidBanner}
+            <table style="width:100%;border-collapse:collapse;">
+              ${itemRows}
+            </table>
+          </div>
+          <div style="padding:.625rem 1.25rem;background:var(--surface2);font-size:11px;color:var(--text3);border-top:1px solid var(--border);">
+            신한은행 100-035-734833 (㈜제일개발)
+          </div>
+        </div>`;
+    }
 
-    const itemRows = [
-      items.supply ? `<tr><td style="padding:9px 4px;border-bottom:1px solid var(--border);color:var(--text2);">공급가액</td><td style="padding:9px 4px;border-bottom:1px solid var(--border);text-align:right;">${fmt(items.supply)}원</td></tr>` : '',
-      items.vat    ? `<tr><td style="padding:9px 4px;border-bottom:1px solid var(--border);color:var(--text2);">부가세</td><td style="padding:9px 4px;border-bottom:1px solid var(--border);text-align:right;">${fmt(items.vat)}원</td></tr>` : '',
-      items.nontax ? `<tr><td style="padding:9px 4px;border-bottom:1px solid var(--border);color:var(--text2);">비과세</td><td style="padding:9px 4px;border-bottom:1px solid var(--border);text-align:right;">${fmt(items.nontax)}원</td></tr>` : '',
-    ].filter(Boolean).join('');
+    // ── 주차관리비 카드 ──
+    let parkCard = '';
+    if(parkSnap.exists()){
+      const p = parkSnap.data();
+      const parkPaidBanner = p.isPaid
+        ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;">
+             <span>✅</span><div><strong style="color:var(--accent2);">납부 완료</strong>
+               <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금 ${fmt(p.paid)}원</span>
+             </div></div>`
+        : `<div style="background:var(--danger-light);border:1px solid rgba(224,92,92,.3);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;">
+             <span>⚠️</span><div><strong style="color:var(--danger);">미납</strong>
+               <span style="font-size:13px;color:var(--danger);margin-left:.5rem;">${fmt(p.unpaid)}원 미납</span>
+             </div></div>`;
+      parkCard = `
+        <div style="background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);">
+          <div style="background:linear-gradient(135deg,#1e4a6e,#0d2a44);color:#fff;padding:.875rem 1.25rem;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:11px;opacity:.65;margin-bottom:2px;">${p.period||''} 주차관리비</div>
+              <div style="font-size:18px;font-weight:700;">${room}호 🚗</div>
+            </div>
+            <div style="font-size:19px;font-weight:700;">${fmt(p.amount)}원</div>
+          </div>
+          <div style="padding:.875rem 1.25rem;">
+            ${parkPaidBanner}
+          </div>
+          <div style="padding:.625rem 1.25rem;background:var(--surface2);font-size:11px;color:var(--text3);border-top:1px solid var(--border);">
+            신한은행 100-035-789001 (㈜제일개발)
+          </div>
+        </div>`;
+    }
 
-    result.innerHTML = `
-      <div style="background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);">
-        <div style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;padding:1rem 1.25rem;">
-          <div style="font-size:12px;opacity:.65;margin-bottom:3px;">${d.period} 관리비 명세</div>
-          <div style="font-size:20px;font-weight:700;">${room}호 &nbsp;<span style="font-size:14px;font-weight:400;opacity:.8;">${d.biz||''}</span></div>
-        </div>
-        <div style="padding:1rem 1.25rem;">
-          ${paidBanner}
-          <table style="width:100%;border-collapse:collapse;font-size:14px;">
-            ${itemRows}
-            <tr style="font-weight:700;font-size:15px;">
-              <td style="padding:10px 4px 2px;">당월 부과금액</td>
-              <td style="padding:10px 4px 2px;text-align:right;color:var(--accent2);">${fmt(d.total)}원</td>
-            </tr>
-          </table>
-        </div>
-        <div style="padding:.75rem 1.25rem;background:var(--surface2);font-size:12px;color:var(--text3);border-top:1px solid var(--border);">
-          납부 기한: 매월 25일 &nbsp;·&nbsp; 농협은행 302-XXXX-XXXX-XX (어반센터프라자 관리단)
-        </div>
-      </div>`;
+    result.innerHTML = feeCard + parkCard;
   } catch(e) {
     console.error('lookupFee error:', e);
     result.innerHTML = '<div style="color:var(--danger);padding:.75rem;font-size:14px;">조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</div>';

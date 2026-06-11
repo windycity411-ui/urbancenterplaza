@@ -606,59 +606,119 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <div class="adm-section" id="sec-fees">
         <div class="adm-page-title">관리비 관리</div>
 
-        <!-- 붙여넣기 입력 패널 -->
-        <div class="card" style="margin-bottom:1.25rem;">
-          <div class="card-title" style="margin-bottom:.5rem;">📋 엑셀 데이터 붙여넣기</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
-            ① 엑셀 파일에서 <strong>헤더 행 포함 전체 데이터</strong>를 선택(Ctrl+A 또는 드래그)<br>
-            ② 복사(Ctrl+C) 후 아래 입력창에 붙여넣기(Ctrl+V)<br>
-            ③ 년월 확인 후 <strong>불러오기</strong> 클릭
-          </div>
-
-          <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.75rem;">
-            <div>
-              <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">부과 년월</label>
-              <input type="month" id="feeMonth" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
-            </div>
-            <button class="btn btn-primary" onclick="loadFeeFile()" style="height:36px;">불러오기</button>
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('feePasteArea').value=''" style="height:36px;align-self:flex-end;">지우기</button>
-          </div>
-
-          <textarea id="feePasteArea" rows="8"
-            placeholder="엑셀에서 복사한 데이터를 여기에 붙여넣으세요 (Ctrl+V)&#10;&#10;예시:&#10;호 수	상 호	관리비	...&#10;101	롯데리아	1493950	..."
-            style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Noto Sans KR',monospace;resize:vertical;line-height:1.6;background:#fafaf8;"></textarea>
+        <!-- 탭 -->
+        <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;border-bottom:2px solid var(--border);padding-bottom:0;">
+          <button id="fee-admin-tab-mgmt" onclick="switchFeeAdminTab('mgmt')"
+            style="padding:.5rem 1.25rem;border:none;border-radius:var(--radius) var(--radius) 0 0;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;">관리비</button>
+          <button id="fee-admin-tab-park" onclick="switchFeeAdminTab('park')"
+            style="padding:.5rem 1.25rem;border:none;border-radius:var(--radius) var(--radius) 0 0;background:var(--surface2);color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;">주차관리비</button>
         </div>
 
-        <!-- 미리보기 -->
-        <div class="card" id="feePreviewCard" style="display:none;margin-bottom:1.25rem;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
-            <div class="card-title" style="margin:0;">📋 미리보기</div>
-            <div style="display:flex;gap:.5rem;align-items:center;">
-              <span id="feePreviewCount" style="font-size:13px;color:var(--text2);"></span>
-              <button class="btn btn-sm btn-outline" onclick="cancelFeePreview()">취소</button>
-              <button class="btn btn-sm btn-primary" onclick="importFeeData()">Firebase에 저장</button>
+        <!-- ── 관리비 탭 ── -->
+        <div id="fee-admin-panel-mgmt">
+          <!-- 붙여넣기 입력 패널 -->
+          <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-title" style="margin-bottom:.5rem;">📋 엑셀 데이터 붙여넣기</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
+              ① 엑셀 파일에서 <strong>헤더 행 포함 전체 데이터</strong>를 선택(Ctrl+A 또는 드래그)<br>
+              ② 복사(Ctrl+C) 후 아래 입력창에 붙여넣기(Ctrl+V)<br>
+              ③ 년월 확인 후 <strong>불러오기</strong> 클릭
+            </div>
+
+            <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.75rem;">
+              <div>
+                <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">부과 년월</label>
+                <input type="month" id="feeMonth" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
+              </div>
+              <button class="btn btn-primary" onclick="loadFeeFile()" style="height:36px;">불러오기</button>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('feePasteArea').value=''" style="height:36px;align-self:flex-end;">지우기</button>
+            </div>
+
+            <textarea id="feePasteArea" rows="8"
+              placeholder="엑셀에서 복사한 데이터를 여기에 붙여넣으세요 (Ctrl+V)&#10;&#10;예시:&#10;호 수	상 호	관리비	...&#10;101	롯데리아	1493950	..."
+              style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Noto Sans KR',monospace;resize:vertical;line-height:1.6;background:#fafaf8;"></textarea>
+          </div>
+
+          <!-- 미리보기 -->
+          <div class="card" id="feePreviewCard" style="display:none;margin-bottom:1.25rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+              <div class="card-title" style="margin:0;">📋 미리보기</div>
+              <div style="display:flex;gap:.5rem;align-items:center;">
+                <span id="feePreviewCount" style="font-size:13px;color:var(--text2);"></span>
+                <button class="btn btn-sm btn-outline" onclick="cancelFeePreview()">취소</button>
+                <button class="btn btn-sm btn-primary" onclick="importFeeData()">Firebase에 저장</button>
+              </div>
+            </div>
+            <div id="feeColMapping" style="margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);font-size:12px;"></div>
+            <div style="overflow-x:auto;">
+              <table class="table" id="feePreviewTable">
+                <thead id="feePreviewHead"></thead>
+                <tbody id="feePreviewBody"></tbody>
+              </table>
             </div>
           </div>
 
-          <!-- 컬럼 매핑 -->
-          <div id="feeColMapping" style="margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);font-size:12px;"></div>
-
-          <!-- 미리보기 테이블 -->
-          <div style="overflow-x:auto;">
-            <table class="table" id="feePreviewTable">
-              <thead id="feePreviewHead"></thead>
-              <tbody id="feePreviewBody"></tbody>
-            </table>
+          <!-- 업로드 내역 -->
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+              <div class="card-title" style="margin:0;">📅 업로드 내역</div>
+              <button class="btn btn-sm btn-outline btn-danger" id="feeDeleteBtn" style="display:none;" onclick="deleteFeeMonth()">선택 월 삭제</button>
+            </div>
+            <div id="feeHistoryList" style="font-size:13px;color:var(--text3);padding:.5rem 0;">불러오는 중...</div>
           </div>
         </div>
 
-        <!-- 업로드 내역 -->
-        <div class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-            <div class="card-title" style="margin:0;">📅 업로드 내역</div>
-            <button class="btn btn-sm btn-outline btn-danger" id="feeDeleteBtn" style="display:none;" onclick="deleteFeeMonth()">선택 월 삭제</button>
+        <!-- ── 주차관리비 탭 ── -->
+        <div id="fee-admin-panel-park" style="display:none;">
+          <!-- 붙여넣기 입력 패널 -->
+          <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-title" style="margin-bottom:.5rem;">🚗 주차관리비 엑셀 붙여넣기</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
+              ① 주차관리비 엑셀에서 <strong>헤더 행 포함 전체 데이터</strong> 선택<br>
+              ② 복사(Ctrl+C) 후 아래에 붙여넣기(Ctrl+V)<br>
+              ③ 열 구성: <code>호 수 / 상 호 / 부과금액 / 입금일 / 입금자명 / 입금액 / 잔액 / 비 고</code>
+            </div>
+
+            <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.75rem;">
+              <div>
+                <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px;">부과 년월</label>
+                <input type="month" id="parkMonth" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;">
+              </div>
+              <button class="btn btn-primary" onclick="loadParkFile()" style="height:36px;">불러오기</button>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('parkPasteArea').value=''" style="height:36px;align-self:flex-end;">지우기</button>
+            </div>
+
+            <textarea id="parkPasteArea" rows="8"
+              placeholder="주차관리비 엑셀에서 복사한 데이터를 여기에 붙여넣으세요&#10;&#10;예시:&#10;호 수	상 호	부과금액	입금일	입금자명	입금액	잔액	비 고&#10;101	롯데리아	68600	2026.05.29	롯데리아	68600	0	"
+              style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Noto Sans KR',monospace;resize:vertical;line-height:1.6;background:#fafaf8;"></textarea>
           </div>
-          <div id="feeHistoryList" style="font-size:13px;color:var(--text3);padding:.5rem 0;">불러오는 중...</div>
+
+          <!-- 미리보기 -->
+          <div class="card" id="parkPreviewCard" style="display:none;margin-bottom:1.25rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+              <div class="card-title" style="margin:0;">🚗 미리보기</div>
+              <div style="display:flex;gap:.5rem;align-items:center;">
+                <span id="parkPreviewCount" style="font-size:13px;color:var(--text2);"></span>
+                <button class="btn btn-sm btn-outline" onclick="cancelParkPreview()">취소</button>
+                <button class="btn btn-sm btn-primary" onclick="importParkData()">Firebase에 저장</button>
+              </div>
+            </div>
+            <div id="parkColMapping" style="margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--radius);font-size:12px;"></div>
+            <div style="overflow-x:auto;">
+              <table class="table" id="parkPreviewTable">
+                <thead id="parkPreviewHead"></thead>
+                <tbody id="parkPreviewBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 업로드 내역 -->
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+              <div class="card-title" style="margin:0;">📅 주차관리비 업로드 내역</div>
+            </div>
+            <div id="parkHistoryList" style="font-size:13px;color:var(--text3);padding:.5rem 0;">불러오는 중...</div>
+          </div>
         </div>
       </div>
 
@@ -1752,6 +1812,168 @@ window.confirmDeleteFeeMonth = async function(uploadId, period) {
   await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
   showToast(`${period} 관리비 데이터가 삭제되었습니다.`);
   loadFeeHistory();
+};
+
+// ══════════════════════════════════════════
+// 관리비 탭 전환
+// ══════════════════════════════════════════
+window.switchFeeAdminTab = function(tab){
+  const tabs = ['mgmt','park'];
+  tabs.forEach(t => {
+    const btn = document.getElementById('fee-admin-tab-'+t);
+    const panel = document.getElementById('fee-admin-panel-'+t);
+    if(btn) btn.style.cssText = `padding:.5rem 1.25rem;border:none;border-radius:var(--radius) var(--radius) 0 0;font-size:13px;font-weight:500;cursor:pointer;background:${t===tab?'var(--accent)':'var(--surface2)'};color:${t===tab?'#fff':'var(--text2)'}`;
+    if(panel) panel.style.display = t===tab ? '' : 'none';
+  });
+  if(tab==='park') loadParkHistory();
+};
+
+// ══════════════════════════════════════════
+// 주차관리비 업로드
+// ══════════════════════════════════════════
+let parkParsedData = [];
+
+window.loadParkFile = function(){
+  const now = new Date();
+  const defMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  if(!document.getElementById('parkMonth').value)
+    document.getElementById('parkMonth').value = defMonth;
+
+  const text  = (document.getElementById('parkPasteArea').value || '').trim();
+  const month = document.getElementById('parkMonth').value;
+  if(!text){ showToast('데이터를 먼저 붙여넣어 주세요.', true); return; }
+  if(!month){ showToast('부과 년월을 선택하세요.', true); return; }
+
+  const lines = text.split('\n').map(l => l.split('\t'));
+  // 헤더 찾기
+  const hIdx = lines.findIndex(r => r.some(c => /호.?수|호수/.test(c)));
+  if(hIdx === -1){ showToast('헤더 행(호 수)을 찾을 수 없습니다.', true); return; }
+  const headers = lines[hIdx].map(h => h.trim());
+
+  // 컬럼 인덱스 찾기
+  const iRoom   = headers.findIndex(h => /호.?수/.test(h));
+  const iBiz    = headers.findIndex(h => /상.?호/.test(h));
+  const iAmt    = headers.findIndex(h => /부과/.test(h));
+  const iPaid   = headers.findIndex(h => /입금액/.test(h));
+  const iRemark = headers.findIndex(h => /비.?고/.test(h));
+
+  const toNum = v => parseInt((v||'').toString().replace(/[^0-9-]/g,'')) || 0;
+  parkParsedData = [];
+
+  for(let i = hIdx+1; i < lines.length; i++){
+    const row = lines[i];
+    const room = (row[iRoom]||'').toString().trim().replace(/호$/,'');
+    if(!room || room === '합계' || /^\s*$/.test(room)) continue;
+    const biz    = iBiz >= 0 ? (row[iBiz]||'').trim() : '';
+    const amount = iAmt >= 0 ? toNum(row[iAmt]) : 0;
+    const paid   = iPaid >= 0 ? toNum(row[iPaid]) : 0;
+    const remark = iRemark >= 0 ? (row[iRemark]||'').trim() : '';
+    const unpaid = amount - paid;
+    parkParsedData.push({ room, biz, amount, paid, unpaid, isPaid: unpaid <= 0, remark });
+  }
+
+  if(!parkParsedData.length){ showToast('유효한 데이터가 없습니다.', true); return; }
+
+  const thead = document.getElementById('parkPreviewHead');
+  const tbody = document.getElementById('parkPreviewBody');
+  const fmt = n => (n||0).toLocaleString();
+  const badge = r => r.isPaid
+    ? `<span style="background:#e8f0e8;color:#2d6a2d;border-radius:4px;padding:2px 8px;font-size:11px;">납부완료</span>`
+    : `<span style="background:#fdeaea;color:#8a2a2a;border-radius:4px;padding:2px 8px;font-size:11px;">미납 ${fmt(r.unpaid)}</span>`;
+
+  thead.innerHTML = '<tr><th>호실</th><th>상호명</th><th>부과금액</th><th>입금액</th><th>납부상태</th><th>비고</th></tr>';
+  tbody.innerHTML = parkParsedData.slice(0,30).map(r => `<tr>
+    <td>${r.room}</td>
+    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.biz}</td>
+    <td style="text-align:right;">${fmt(r.amount)}</td>
+    <td style="text-align:right;">${fmt(r.paid)}</td>
+    <td>${badge(r)}</td>
+    <td style="font-size:12px;color:var(--text3);">${r.remark}</td>
+  </tr>`).join('');
+
+  document.getElementById('parkPreviewCount').textContent =
+    `총 ${parkParsedData.length}세대${parkParsedData.length > 30 ? ' (30개만 표시)' : ''}`;
+  document.getElementById('parkColMapping').innerHTML =
+    `<span style="color:var(--text2);">${parkParsedData.length}세대 데이터를 읽었습니다. 미리보기를 확인 후 저장하세요.</span>`;
+  document.getElementById('parkPreviewCard').style.display = 'block';
+};
+
+window.cancelParkPreview = function(){
+  parkParsedData = [];
+  document.getElementById('parkPreviewCard').style.display = 'none';
+  document.getElementById('parkPasteArea').value = '';
+};
+
+window.importParkData = async function(){
+  if(!parkParsedData.length) return;
+  const month = document.getElementById('parkMonth').value;
+  if(!month){ showToast('부과 년월을 선택하세요.', true); return; }
+  if(!confirm(`${month} 주차관리비 ${parkParsedData.length}세대를 저장하시겠습니까?`)) return;
+
+  const btn = document.querySelector('#parkPreviewCard .btn-primary');
+  btn.disabled = true; btn.textContent = '저장 중...';
+
+  try {
+    const [year, mon] = month.split('-');
+    const period = `${year}년 ${parseInt(mon)}월`;
+
+    const writes = parkParsedData.map(r => {
+      const docId = `${year}${mon}_${r.room}`;
+      return setDoc(doc(db, 'parking_fees', docId), {
+        year: parseInt(year), month: parseInt(mon), period,
+        room: r.room, biz: r.biz,
+        amount: r.amount, paid: r.paid, unpaid: r.unpaid,
+        isPaid: r.isPaid, remark: r.remark,
+        uploadedAt: new Date(), uploadedBy: window.currentUser || ''
+      });
+    });
+    await Promise.all(writes);
+
+    await setDoc(doc(db, 'park_uploads', `${year}${mon}`), {
+      year: parseInt(year), month: parseInt(mon), period,
+      count: parkParsedData.length, uploadedAt: new Date(),
+      uploadedBy: window.currentUser || ''
+    });
+
+    showToast(`✅ ${period} 주차관리비 ${parkParsedData.length}세대 저장 완료`);
+    cancelParkPreview();
+    loadParkHistory();
+  } catch(e) {
+    showToast('저장 오류: ' + e.message, true);
+    btn.disabled = false; btn.textContent = 'Firebase에 저장';
+  }
+};
+
+function loadParkHistory(){
+  const el = document.getElementById('parkHistoryList');
+  if(!el) return;
+  getDocs(query(collection(db,'park_uploads'), orderBy('uploadedAt','desc')))
+    .then(snap => {
+      if(snap.empty){ el.innerHTML = '<div style="padding:.5rem 0;">업로드 내역이 없습니다.</div>'; return; }
+      el.innerHTML = snap.docs.map(d => {
+        const r = d.data();
+        const date = r.uploadedAt?.toDate?.()?.toLocaleDateString('ko-KR') || '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--border);">
+          <div><strong>${r.period}</strong>
+            <span style="margin-left:.75rem;color:var(--text3);font-size:12px;">${r.count}세대 · ${date} 업로드</span>
+          </div>
+          <button class="btn btn-sm btn-outline btn-danger" onclick="confirmDeleteParkMonth('${d.id}','${r.period}')">삭제</button>
+        </div>`;
+      }).join('');
+    });
+}
+
+window.confirmDeleteParkMonth = async function(uploadId, period){
+  if(!confirm(`${period} 주차관리비 데이터를 삭제하시겠습니까?`)) return;
+  const m = uploadId.match(/^(\d{4})(\d{2})$/);
+  if(!m) return;
+  const [,y,mo] = m;
+  await deleteDoc(doc(db,'park_uploads',uploadId));
+  const snap = await getDocs(query(collection(db,'parking_fees'),
+    where('year','==',parseInt(y)), where('month','==',parseInt(mo))));
+  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+  showToast(`${period} 주차관리비 데이터가 삭제되었습니다.`);
+  loadParkHistory();
 };
 </script>
 
