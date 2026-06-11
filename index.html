@@ -929,4 +929,8 @@ function switchFeeTab(tab){
   document.getElementById('fee-info-wrap').style.display   = isInfo ? 'block' : 'none';
   document.getElementById('fee-lookup-wrap').style.display = isInfo ? 'none'  : 'block';
   document.getElementById('fee-tab-info').classList.toggle('active', isInfo);
-  document.getElementById('fee-tab-lookup').classList.
+  document.getElementById('fee-tab-lookup').classList.toggle('active', !isInfo);
+}
+</script>
+</body>
+</html>
