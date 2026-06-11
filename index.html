@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="어반센터프라자">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" href="2.jpg" type="image/jpeg">
+<link rel="icon" href="ci-mark.jpg" type="image/jpeg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -281,7 +281,7 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 <header>
   <div class="header-inner">
     <div class="logo">
-      <img src="봉담어반PNG로고.png" alt="어반센터프라자" style="height:36px;display:block;">
+      <img src="logo.png" alt="어반센터프라자" style="height:36px;display:block;">
     </div>
     <nav class="desktop-nav">
       <a href="#" class="active" onclick="showSection('notice',this)">공지사항</a>
@@ -331,7 +331,7 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
       <div class="hero-meta-item"><span class="hero-meta-label">운영시간</span><span class="hero-meta-value">08:30 – 17:30</span></div>
     </div>
   </div>
-  <img src="2.jpg" aria-hidden="true" alt="" style="position:absolute;right:-30px;top:-24px;width:230px;height:230px;object-fit:contain;opacity:.28;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
+  <img src="ci-mark.jpg" aria-hidden="true" alt="" style="position:absolute;right:-30px;top:-24px;width:230px;height:230px;object-fit:contain;opacity:.28;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
   <div class="hero-wave">
     <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#f4f6fb"/>
@@ -545,7 +545,7 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 <footer>
   <div class="footer-inner">
     <div>
-      <img src="봉담어반PNG로고.png" alt="어반센터프라자" style="height:26px;display:block;margin-bottom:6px;filter:brightness(0) invert(1);opacity:.7;">
+      <img src="logo.png" alt="어반센터프라자" style="height:26px;display:block;margin-bottom:6px;filter:brightness(0) invert(1);opacity:.7;">
       경기도 화성시 효행구 봉담읍 상리2길 55<br>평일 08:30 – 17:30
     </div>
     <div style="color:rgba(255,255,255,.35);font-size:11px;line-height:1.8;text-align:right;">
@@ -929,16 +929,4 @@ function switchFeeTab(tab){
   document.getElementById('fee-info-wrap').style.display   = isInfo ? 'block' : 'none';
   document.getElementById('fee-lookup-wrap').style.display = isInfo ? 'none'  : 'block';
   document.getElementById('fee-tab-info').classList.toggle('active', isInfo);
-  document.getElementById('fee-tab-lookup').classList.toggle('active', !isInfo);
-  if(!isInfo){
-    // 조회 탭 열릴 때 이번 달을 기본값으로
-    const now = new Date();
-    const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const el = document.getElementById('feeLookupMonth');
-    if(el && !el.value) el.value = ym;
-  }
-}
-
-</script>
-</body>
-</html>
+  document.getElementById('fee-tab-lookup').classList.
