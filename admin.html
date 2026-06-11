@@ -964,6 +964,19 @@ let editingComplaintId = null;
 const CLOUD_NAME = 'duuhuh22p';
 const UPLOAD_PRESET = 'urbancenter';
 
+
+// ── Cloudinary URL 리사이징 헬퍼 ──
+// 원본 URL에 변환 파라미터 삽입: /upload/ → /upload/{transform}/
+function thumbUrl(url, w=600, h=600, mode='fill'){
+  if(!url || !url.includes('res.cloudinary.com')) return url;
+  // 이미 변환 파라미터가 있으면 교체하지 않음
+  return url.replace('/upload/', `/upload/w_${w},h_${h},c_${mode},q_auto,f_auto/`);
+}
+// 목록용 썸네일 (정사각형 작게)
+function tn(url){ return thumbUrl(url, 320, 320, 'fill'); }
+// 모달/상세용 (가로 제한, 비율 유지)
+function tnLg(url){ return thumbUrl(url, 1200, 1200, 'limit'); }
+
 async function uploadToCloudinary(file, folder='complaints'){
   const fd = new FormData();
   fd.append('file', file);
@@ -1322,7 +1335,7 @@ window.openResultPhotoModal = function(type, id){
   const existWrap=document.getElementById('rpm-existing');
   const existPhotos=document.getElementById('rpm-existing-photos');
   if(item.resultPhotos&&item.resultPhotos.length){
-    existPhotos.innerHTML=item.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img src="${url}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('');
+    existPhotos.innerHTML=item.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img src="${tn(url)}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('');
     existWrap.style.display='block';
   } else {
     existWrap.style.display='none';
@@ -2042,7 +2055,7 @@ function openComplaint(id){
     photosWrap.style.display = 'block';
     photosArea.innerHTML = c.photos.map(url=>`
       <a href="${url}" target="_blank" style="display:block;width:80px;height:80px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;">
-        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <img src="${tn(url)}" style="width:100%;height:100%;object-fit:cover;">
       </a>`).join('');
   } else {
     photosWrap.style.display = 'none';
@@ -2055,7 +2068,7 @@ function openComplaint(id){
     resultPhotosWrap.style.display = 'block';
     resultPhotosArea.innerHTML = c.resultPhotos.map(url=>`
       <a href="${url}" target="_blank" style="display:block;width:80px;height:80px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;">
-        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <img src="${tn(url)}" style="width:100%;height:100%;object-fit:cover;">
       </a>`).join('');
   } else {
     resultPhotosWrap.style.display = 'none';
@@ -2117,7 +2130,7 @@ function renderMyComplaints(){
         <div class="mci-meta">${x.room} · ${x.category} · ${x.date}</div>
         <div class="mci-body">${x.body}</div>
         ${x.memo?`<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text2);">📝 ${x.memo}</div>`:''}
-        ${x.resultPhotos&&x.resultPhotos.length?`<div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${url}"></a>`).join('')}</div>`:''}
+        ${x.resultPhotos&&x.resultPhotos.length?`<div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
       </div>
       <div class="mci-right">
         ${statusBadge(x.status)}
@@ -2142,8 +2155,8 @@ function renderTaskList(){
         <div class="task-item-title">${x.title} ${x.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
         <div class="task-item-meta">담당: ${x.assignee} (${USERS[x.assignee]?.role||''}) · ${x.date}</div>
         <div class="task-item-body">${x.body}</div>
-        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${url}" style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
-        ${x.resultPhotos&&x.resultPhotos.length?`<div style="margin-top:6px;"><span style="font-size:11px;font-weight:500;color:var(--accent2);">📷 처리 결과</span><div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${url}"></a>`).join('')}</div></div>`:''}
+        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${tn(url)}" style="width:72px;height:72px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
+        ${x.resultPhotos&&x.resultPhotos.length?`<div style="margin-top:6px;"><span style="font-size:11px;font-weight:500;color:var(--accent2);">📷 처리 결과</span><div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div></div>`:''}
       </div>
       <div class="task-item-right">
         ${taskBadge(x.status,'')}
@@ -2163,8 +2176,8 @@ function renderMyTasks(){
         <div class="task-item-title">${x.title} ${x.priority==='긴급'?'<span class="badge badge-urgent">긴급</span>':''}</div>
         <div class="task-item-meta">지시일: ${x.date}</div>
         <div class="task-item-body">${x.body}</div>
-        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${url}" style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
-        ${x.resultPhotos&&x.resultPhotos.length?`<div style="margin-top:6px;"><span style="font-size:11px;color:var(--text3);">처리 결과 사진</span><div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${url}"></a>`).join('')}</div></div>`:''}
+        ${x.photos&&x.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;">${x.photos.map(url=>`<a href="${url}" target="_blank"><img src="${tn(url)}" style="width:72px;height:72px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);"></a>`).join('')}</div>`:''}
+        ${x.resultPhotos&&x.resultPhotos.length?`<div style="margin-top:6px;"><span style="font-size:11px;color:var(--text3);">처리 결과 사진</span><div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div></div>`:''}
       </div>
       <div class="task-item-right">
         ${taskBadge(x.status,'')}
@@ -2198,7 +2211,7 @@ function renderReports(){
         <span class="report-item-meta">${r.author} (${r.authorRole}) · ${r.date}</span>
       </div>
       <div class="report-item-body">${r.body}</div>
-      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${url}"></a>`).join('')}</div>`:''}
+      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
       ${isUnread?`<div style="font-size:11px;color:var(--accent2);margin-top:.375rem;">탭하여 확인 처리</div>`:'<div style="font-size:11px;color:var(--text3);margin-top:.375rem;">✓ 확인됨</div>'}
     </div>`;
   }).join('');
@@ -2224,7 +2237,7 @@ function renderMyReport(){
         <span class="report-item-meta">${r.date}</span>
       </div>
       <div class="report-item-body">${r.body}</div>
-      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${url}"></a>`).join('')}</div>`:''}
+      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
       <div style="font-size:11px;color:var(--text3);margin-top:.375rem;">${r.readBy&&Object.keys(r.readBy).length>0?'✓ 관리소장 확인':'⏳ 미확인'}</div>
     </div>`).join('');
 }
