@@ -976,6 +976,8 @@ function thumbUrl(url, w=600, h=600, mode='fill'){
 function tn(url){ return thumbUrl(url, 320, 320, 'fill'); }
 // 모달/상세용 (가로 제한, 비율 유지)
 function tnLg(url){ return thumbUrl(url, 1200, 1200, 'limit'); }
+window.tn = tn;
+window.tnLg = tnLg;
 
 async function uploadToCloudinary(file, folder='complaints'){
   const fd = new FormData();
@@ -1038,6 +1040,8 @@ window.setDoc = setDoc;
 window.doc = doc;
 window.db = db;
 window.deleteDoc = deleteDoc;
+window.updateDoc = updateDoc;
+window.addDoc = addDoc;
 // renderAttSection은 일반 스크립트에서 직접 접근 가능
 window.saveCalMemoToDb = async function(dateStr, memo){
   await setDoc(doc(db,'calendar_memos', dateStr), { memo });
@@ -1248,8 +1252,8 @@ onSnapshot(query(collection(db,'work_reports'), orderBy('createdAt','desc')), sn
   }
   if(prevReportIds === null) prevReportIds = new Set();
   workReports.forEach(r => prevReportIds.add(r._id));
-  if(document.getElementById('sec-reports').classList.contains('active')) renderReports();
-  if(document.getElementById('sec-myreport').classList.contains('active')) renderMyReport();
+  if(document.getElementById('sec-reports').classList.contains('active')){ window.renderReports && window.renderReports(); }
+  if(document.getElementById('sec-myreport').classList.contains('active')){ window.renderMyReport && window.renderMyReport(); }
   updateReportBadge();
 });
 
@@ -2130,7 +2134,7 @@ function renderMyComplaints(){
         <div class="mci-meta">${x.room} · ${x.category} · ${x.date}</div>
         <div class="mci-body">${x.body}</div>
         ${x.memo?`<div style="margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text2);">📝 ${x.memo}</div>`:''}
-        ${x.resultPhotos&&x.resultPhotos.length?`<div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
+        ${x.resultPhotos&&x.resultPhotos.length?`<div class="result-photos">${x.resultPhotos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${(window.tn||function(u){return u;})(url)}"></a>`).join('')}</div>`:''}
       </div>
       <div class="mci-right">
         ${statusBadge(x.status)}
@@ -2211,7 +2215,7 @@ function renderReports(){
         <span class="report-item-meta">${r.author} (${r.authorRole}) · ${r.date}</span>
       </div>
       <div class="report-item-body">${r.body}</div>
-      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
+      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${(window.tn||function(u){return u;})(url)}"></a>`).join('')}</div>`:''}
       ${isUnread?`<div style="font-size:11px;color:var(--accent2);margin-top:.375rem;">탭하여 확인 처리</div>`:'<div style="font-size:11px;color:var(--text3);margin-top:.375rem;">✓ 확인됨</div>'}
     </div>`;
   }).join('');
@@ -2222,7 +2226,7 @@ window.renderReports = renderReports;
 window.markReportRead = async function(id){
   const r=(window.workReports||[]).find(x=>x._id===id); if(!r) return;
   if(r.readBy&&r.readBy[currentUser]) return;
-  await updateDoc(doc(db,'work_reports',id),{[`readBy.${currentUser}`]:new Date()});
+  await window.updateDoc(window.doc(window.db,'work_reports',id),{[`readBy.${currentUser}`]:new Date()});
 };
 
 // 직원 보고 목록
@@ -2237,7 +2241,7 @@ function renderMyReport(){
         <span class="report-item-meta">${r.date}</span>
       </div>
       <div class="report-item-body">${r.body}</div>
-      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${tn(url)}"></a>`).join('')}</div>`:''}
+      ${r.photos&&r.photos.length?`<div class="report-photos">${r.photos.map(url=>`<a href="${url}" target="_blank"><img class="result-photo-thumb" src="${(window.tn||function(u){return u;})(url)}"></a>`).join('')}</div>`:''}
       <div style="font-size:11px;color:var(--text3);margin-top:.375rem;">${r.readBy&&Object.keys(r.readBy).length>0?'✓ 관리소장 확인':'⏳ 미확인'}</div>
     </div>`).join('');
 }
