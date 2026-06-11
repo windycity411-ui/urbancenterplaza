@@ -7,7 +7,7 @@
 
 <!-- PWA 설정 -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2d4a7a">
+<meta name="theme-color" content="#D98A3D">
 <meta name="mobile-web-app-capable" content="yes">
 
 <!-- iOS PWA 설정 -->
@@ -17,330 +17,672 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="ci-mark.jpg" type="image/jpeg">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<!-- Pretendard 폰트 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<!-- Phosphor 아이콘 -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+
 <style>
-:root{
-  --bg:#f4f6fb;--surface:#fff;--surface2:#e8eef8;
-  --text:#1a2234;--text2:#4a5a7a;--text3:#8a9ab8;
-  --accent:#2d4a7a;--accent2:#1e3561;--accent-dark:#0f1e3d;--accent-light:#e8eef8;
-  --navy-mid:#b0c4d8;
-  --gold:#f4a261;--gold-light:#fef3ea;
-  --border:#c8d4e8;--danger:#e05c5c;--danger-light:#fdeaea;
-  --radius:12px;--radius-lg:18px;--radius-xl:28px;
-  --shadow:0 4px 20px rgba(45,74,122,.1);--shadow-md:0 8px 28px rgba(45,74,122,.18);
+:root {
+  --bg: #FBF6ED;
+  --surface: #fff;
+  --surface2: #F5EFE2;
+  --text: #3A3228;
+  --text2: #6B6356;
+  --text3: #A99A82;
+  --accent: #D98A3D;
+  --accent2: #C07F2E;
+  --accent-dark: #3A3228;
+  --accent-light: #FDEEDB;
+  --navy-mid: #C5B49C;
+  --navy-dark: #4A3E2F;
+  --gold: #D98A3D;
+  --gold-light: #FDEEDB;
+  --border: #EFE6D6;
+  --danger: #C56A57;
+  --danger-light: #F6E4E0;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --shadow: 0 4px 20px rgba(58,50,40,.08);
+  --shadow-md: 0 8px 28px rgba(58,50,40,.15);
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { height: 6px; width: 6px; }
+::-webkit-scrollbar-thumb { background: #E5D9C4; border-radius: 99px; }
 
 /* ── 헤더 ── */
-header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;z-index:100;
-  box-shadow:0 1px 0 var(--border),0 4px 16px rgba(45,74,122,.07);}
-.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;}
-.logo{display:flex;flex-direction:column;gap:1px;}
-.logo-main{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:600;letter-spacing:.04em;color:var(--accent-dark);}
-.logo-sub{font-size:9px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;}
-.desktop-nav{display:flex;gap:0;}
-.desktop-nav a{color:var(--text2);text-decoration:none;font-size:13px;padding:0 14px;height:58px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:all .18s;}
-.desktop-nav a:hover,.desktop-nav a.active{color:var(--accent);border-bottom-color:var(--accent);}
-.admin-link{color:var(--text3);text-decoration:none;font-size:10px;letter-spacing:.06em;padding:4px 12px;border:1.5px solid var(--navy-mid);border-radius:20px;margin-left:10px;transition:all .15s;white-space:nowrap;}
-.admin-link:hover{background:var(--accent-light);color:var(--accent2);}
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(251,246,237,.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #EEE2CF;
+}
+.header-inner {
+  max-width: 1000px; margin: 0 auto;
+  padding: 12px clamp(14px,4vw,28px);
+  display: flex; align-items: center; gap: 16px;
+}
+.logo-mark {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg,#E8A85A,#D98A3D);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 19px; font-weight: 800;
+  box-shadow: 0 6px 16px -6px rgba(217,138,61,.75);
+}
+.logo-text { line-height: 1.2; }
+.logo-text .main { font-size: 15.5px; font-weight: 800; color: var(--text); white-space: nowrap; }
+.logo-text .sub { font-size: 10.5px; color: var(--text3); font-weight: 600; letter-spacing: .02em; }
+.desktop-nav {
+  margin-left: auto; display: flex; align-items: center; gap: 1px;
+  overflow-x: auto; max-width: 520px;
+}
+.desktop-nav a {
+  text-decoration: none; color: var(--text2); font-size: 14px; font-weight: 600;
+  padding: 8px 13px; border-radius: 10px; white-space: nowrap;
+  transition: background .15s, color .15s; border-bottom: none;
+}
+.desktop-nav a:hover, .desktop-nav a.active {
+  background: var(--accent-light); color: var(--accent);
+}
+.admin-link {
+  color: var(--text3) !important; font-size: 11px !important; font-weight: 600 !important;
+  border: 1.5px solid var(--border) !important; border-radius: 20px !important;
+  padding: 5px 12px !important; margin-left: 6px;
+}
+.admin-link:hover { border-color: var(--accent) !important; color: var(--accent) !important; background: transparent !important; }
+.header-login-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.logged-in-badge {
+  font-size: 12px; font-weight: 700; color: var(--accent2);
+  background: var(--accent-light); padding: 5px 11px; border-radius: 999px;
+}
+.btn-logout {
+  background: none; border: 1.5px solid var(--border); color: var(--text2);
+  font-family: Pretendard, sans-serif; font-size: 13px; font-weight: 600;
+  padding: 6px 13px; border-radius: 10px; cursor: pointer; transition: all .15s;
+}
+.btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+.btn-login {
+  background: var(--accent-dark); color: #fff !important;
+  font-size: 13.5px !important; font-weight: 700 !important;
+  padding: 8px 15px !important; border-radius: 10px !important;
+  display: inline-flex !important; align-items: center; gap: 6px;
+  border: none !important; margin-left: 0 !important;
+}
+.btn-login:hover { background: var(--accent) !important; }
 
-/* 모바일 하단 탭바 */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#fff;
-  border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);
-  box-shadow:0 -4px 16px rgba(45,74,122,.1);}
-.mobile-nav-inner{display:grid;grid-template-columns:repeat(5,1fr);}
-.mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;gap:3px;cursor:pointer;border:none;background:none;color:var(--text3);font-family:'Noto Sans KR',sans-serif;font-size:10px;transition:color .15s;}
-.mobile-nav-item.active{color:var(--accent);}
-.mobile-nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.mobile-nav-spacer{height:60px;}
+/* ── 모바일 하단 탭바 ── */
+.mobile-nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 18px rgba(58,50,40,.08);
+}
+.mobile-nav-inner { display: grid; grid-template-columns: repeat(5,1fr); }
+.mobile-nav-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 9px 4px 7px; gap: 3px; cursor: pointer;
+  border: none; background: none; color: var(--text3);
+  font-family: Pretendard, sans-serif; font-size: 10px; font-weight: 600;
+  transition: color .15s;
+}
+.mobile-nav-item.active { color: var(--accent); }
+.mobile-nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-nav-spacer { height: 64px; }
 
 /* ── 히어로 ── */
-.hero{background:linear-gradient(135deg,#3d5f9a 0%,#2d4a7a 60%,var(--accent-dark) 100%);
-  color:#fff;padding:2.5rem 1.5rem 4.5rem;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;
-  border-radius:50%;background:rgba(255,255,255,.07);}
-.hero::after{content:'';position:absolute;left:-50px;bottom:20px;width:180px;height:180px;
-  border-radius:50%;background:rgba(255,255,255,.05);}
-.hero-wave{position:absolute;bottom:-1px;left:0;right:0;line-height:0;z-index:2;}
-.hero-wave svg{width:100%;display:block;}
-.hero-inner{max-width:960px;margin:0 auto;position:relative;z-index:3;}
-.hero-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.28);font-size:10px;letter-spacing:.08em;
-  padding:4px 12px;border-radius:20px;margin-bottom:.875rem;color:rgba(255,255,255,.9);}
-.hero h1{font-family:'Noto Serif KR',serif;font-size:26px;font-weight:600;line-height:1.35;margin-bottom:.5rem;}
-.hero p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.8;}
-.hero-meta{margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap;}
-.hero-meta-item{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);
-  border-radius:var(--radius);padding:.625rem 1rem;display:flex;flex-direction:column;gap:3px;min-width:80px;}
-.hero-meta-label{font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.6);text-transform:uppercase;}
-.hero-meta-value{font-size:16px;font-weight:600;color:#fff;}
+.hero {
+  background: var(--bg);
+  padding: clamp(20px,4vw,40px) clamp(14px,4vw,28px) 0;
+  max-width: 1000px; margin: 0 auto;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 20px; align-items: center;
+  padding-bottom: 20px;
+}
+.hero-text { display: flex; flex-direction: column; justify-content: center; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-light); color: var(--accent2);
+  font-size: 12.5px; font-weight: 700; padding: 6px 13px;
+  border-radius: 999px; width: fit-content; margin-bottom: 16px;
+}
+.hero h1 {
+  font-size: clamp(26px,4vw,38px); font-weight: 800;
+  line-height: 1.25; letter-spacing: -.02em; margin-bottom: 12px;
+}
+.hero p { font-size: clamp(14px,1.5vw,15.5px); color: var(--text2); line-height: 1.7; margin-bottom: 20px; max-width: 400px; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-img {
+  position: relative; min-height: 220px; border-radius: 22px; overflow: hidden;
+  background: repeating-linear-gradient(135deg,#F1E7D6,#F1E7D6 14px,#EDE1CD 14px,#EDE1CD 28px);
+  border: 1px solid #E9DDC8;
+  display: flex; align-items: flex-end; padding: 16px;
+}
+.hero-img-placeholder {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: #B9A988; font-family: ui-monospace,monospace; font-size: 13px; letter-spacing: .04em;
+}
+.hero-img-badge {
+  position: relative;
+  background: rgba(255,255,255,.86); backdrop-filter: blur(4px);
+  color: var(--text2); font-size: 12px; font-weight: 600;
+  padding: 7px 12px; border-radius: 999px;
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── 스탯 스트립 ── */
+.stats-strip {
+  max-width: 1000px; margin: 0 auto;
+  padding: 0 clamp(14px,4vw,28px) 24px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px;
+}
+.stat-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px;
+  padding: 15px 18px; display: flex; align-items: center; gap: 12px;
+}
+.stat-icon {
+  width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 21px;
+}
+.stat-value { font-size: 22px; font-weight: 800; line-height: 1; white-space: nowrap; }
+.stat-value span { font-size: 13px; color: var(--text3); font-weight: 600; margin-left: 2px; }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+/* ── 섹션 탭 ── */
+.section-tabs-wrap {
+  max-width: 1000px; margin: 0 auto;
+  padding: 0 clamp(14px,4vw,28px);
+  border-bottom: 1px solid var(--border);
+}
+.section-tabs {
+  display: flex; gap: 2px; overflow-x: auto; padding-bottom: 0;
+}
+.section-tab {
+  background: none; border: none; border-bottom: 2.5px solid transparent;
+  font-family: Pretendard, sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--text3); padding: 12px 16px; cursor: pointer; white-space: nowrap;
+  transition: color .15s, border-color .15s; margin-bottom: -1px;
+}
+.section-tab:hover { color: var(--text2); }
+.section-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ── 메인 ── */
-.main{max-width:960px;margin:0 auto;padding:1.5rem 1rem;}
-.section{display:none;}.section.active{display:block;}
-.section-header{margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:2px solid var(--accent-light);
-  display:flex;align-items:baseline;justify-content:space-between;}
-.section-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:600;color:var(--accent-dark);}
-.section-count{font-size:12px;color:var(--text3);}
+.main { max-width: 1000px; margin: 0 auto; padding: 24px clamp(14px,4vw,28px) 20px; }
+.section { display: none; }
+.section.active { display: block; }
+.section-header {
+  margin-bottom: 18px; display: flex; align-items: baseline; justify-content: space-between;
+}
+.section-title { font-size: clamp(20px,3vw,24px); font-weight: 800; color: var(--text); }
+.section-title-label {
+  font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent2); font-weight: 700; margin-right: 10px;
+}
+.section-count { font-size: 12.5px; color: var(--text3); }
 
 /* ── 공지 ── */
-.notice-list{display:flex;flex-direction:column;gap:.5rem;}
-.notice-item{background:var(--surface);border-radius:var(--radius-lg);padding:1rem 1.125rem;
-  display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:all .18s;
-  box-shadow:var(--shadow);}
-.notice-item:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
-.notice-badge{flex-shrink:0;font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;margin-top:3px;}
-.badge-urgent{background:#fdeaea;color:#e05c5c;}
-.badge-general{background:var(--accent-light);color:var(--accent2);}
-.badge-facility{background:var(--gold-light);color:var(--gold);}
-.notice-content{flex:1;min-width:0;}
-.notice-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.notice-meta{font-size:11px;color:var(--text3);}
-.notice-arrow{font-size:14px;color:var(--navy-mid);margin-top:2px;flex-shrink:0;}
+.notice-list { display: flex; flex-direction: column; gap: 10px; }
+.notice-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer;
+  transition: transform .18s, box-shadow .18s; box-shadow: var(--shadow);
+}
+.notice-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.notice-badge {
+  flex-shrink: 0; font-size: 11px; font-weight: 700;
+  padding: 3px 9px; border-radius: 6px; margin-top: 3px;
+}
+.badge-urgent { background: var(--danger-light); color: var(--danger); }
+.badge-general { background: var(--accent-light); color: var(--accent2); }
+.badge-facility { background: #E7EFE4; color: #5E8A5A; }
+.notice-content { flex: 1; min-width: 0; }
+.notice-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notice-meta { font-size: 12px; color: var(--text3); }
+.notice-arrow { font-size: 18px; color: var(--text3); margin-top: 1px; flex-shrink: 0; }
 
 /* ── 모달 ── */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,30,28,.5);z-index:300;align-items:flex-end;justify-content:center;padding:0;}
-.modal-backdrop.open{display:flex;}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-height:85vh;overflow-y:auto;
-  box-shadow:0 -8px 40px rgba(45,74,122,.18);}
-.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;}
-.modal-header{padding:1rem 1.25rem .75rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
-.modal-title{font-size:15px;font-weight:500;line-height:1.5;flex:1;}
-.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);flex-shrink:0;line-height:1;padding:0;}
-.modal-body{padding:.5rem 1.25rem 2rem;}
-.modal-meta{font-size:11px;color:var(--text3);margin-bottom:.875rem;}
-.modal-text{font-size:14px;line-height:1.9;color:var(--text2);white-space:pre-wrap;}
+.modal-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,30,28,.45); z-index: 300;
+  align-items: flex-end; justify-content: center; padding: 0;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 24px 24px 0 0;
+  width: 100%; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 -8px 40px rgba(58,50,40,.18);
+}
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 14px auto 0; }
+.modal-header { padding: 16px 20px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.modal-title { font-size: 15.5px; font-weight: 700; line-height: 1.5; flex: 1; }
+.modal-close { background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text3); flex-shrink: 0; line-height: 1; padding: 0; }
+.modal-body { padding: 6px 20px 2rem; }
+.modal-meta { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+.modal-text { font-size: 14px; line-height: 1.9; color: var(--text2); white-space: pre-wrap; }
 
-/* ── 탭 공통 ── */
-.complaint-tabs{display:flex;gap:.4rem;margin-bottom:1.25rem;background:var(--surface2);
-  border-radius:var(--radius-xl);padding:4px;}
-.complaint-tab{background:none;border:none;padding:.625rem 1.25rem;font-family:'Noto Sans KR',sans-serif;
-  font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:var(--radius-xl);
-  transition:all .18s;flex:1;}
-.complaint-tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(45,74,122,.18);}
-.complaint-tab:hover:not(.active){color:var(--accent);}
-.btn-view-board{margin-top:1rem;background:var(--accent);color:#fff;border:none;
-  border-radius:var(--radius-xl);padding:10px 24px;font-family:'Noto Sans KR',sans-serif;
-  font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;
-  box-shadow:0 4px 14px rgba(45,74,122,.3);}
-.btn-view-board:hover{background:var(--accent2);}
+/* ── 민원 탭 공통 ── */
+.complaint-tabs {
+  display: flex; gap: 4px; margin-bottom: 18px;
+  background: var(--surface2); border-radius: var(--radius-xl); padding: 4px;
+}
+.complaint-tab {
+  background: none; border: none; padding: 10px 18px;
+  font-family: Pretendard, sans-serif; font-size: 13.5px; font-weight: 600;
+  color: var(--text2); cursor: pointer; border-radius: var(--radius-xl);
+  transition: all .18s; flex: 1;
+}
+.complaint-tab.active { background: #fff; color: var(--accent); box-shadow: 0 2px 10px rgba(58,50,40,.12); }
+.complaint-tab:hover:not(.active) { color: var(--accent); }
+.btn-view-board {
+  margin-top: 14px; background: var(--accent); color: #fff; border: none;
+  border-radius: var(--radius-xl); padding: 11px 24px;
+  font-family: Pretendard, sans-serif; font-size: 13.5px; font-weight: 700;
+  cursor: pointer; transition: all .18s; box-shadow: 0 4px 14px rgba(217,138,61,.35);
+}
+.btn-view-board:hover { background: var(--accent2); }
 
 /* ── 민원 게시판 ── */
-.board-filter-row{display:flex;align-items:center;gap:.625rem;margin-bottom:1rem;flex-wrap:wrap;}
-.board-filter{border:1.5px solid var(--border);border-radius:var(--radius);padding:7px 10px;
-  font-size:12px;font-family:'Noto Sans KR',sans-serif;color:var(--text2);background:var(--surface);outline:none;}
-.board-filter:focus{border-color:var(--accent);}
-.board-count{font-size:12px;color:var(--text3);margin-left:auto;}
-.board-list{display:flex;flex-direction:column;gap:.5rem;}
-.board-item{background:var(--surface);border-radius:var(--radius-lg);padding:.875rem 1rem;
-  display:flex;align-items:center;gap:.875rem;box-shadow:var(--shadow);}
-.board-num{font-size:11px;color:var(--text3);width:28px;text-align:center;flex-shrink:0;}
-.board-content{flex:1;min-width:0;}
-.board-title{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
-.board-meta{font-size:11px;color:var(--text3);}
-.board-status{flex-shrink:0;}
-.board-badge{display:inline-block;font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;}
-.board-badge.new{background:#e4ecff;color:#2a4a9e;}
-.board-badge.inprog{background:var(--gold-light);color:var(--gold);}
-.board-badge.done{background:var(--accent-light);color:var(--accent2);}
-.board-empty{padding:3rem 1rem;text-align:center;color:var(--text3);font-size:14px;
-  background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+.board-filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.board-filter {
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 7px 10px; font-size: 12.5px; font-family: Pretendard, sans-serif;
+  color: var(--text2); background: var(--surface); outline: none;
+}
+.board-filter:focus { border-color: var(--accent); }
+.board-count { font-size: 12.5px; color: var(--text3); margin-left: auto; }
+.board-list { display: flex; flex-direction: column; gap: 8px; }
+.board-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow);
+}
+.board-num { font-size: 12px; color: var(--text3); width: 28px; text-align: center; flex-shrink: 0; }
+.board-content { flex: 1; min-width: 0; }
+.board-title { font-size: 13.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+.board-meta { font-size: 11.5px; color: var(--text3); }
+.board-status { flex-shrink: 0; }
+.board-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+.board-badge.new { background: #E6EBF4; color: #5B72A8; }
+.board-badge.inprog { background: var(--gold-light); color: var(--accent2); }
+.board-badge.done { background: #E7EFE4; color: #5E8A5A; }
+.board-empty {
+  padding: 3rem 1rem; text-align: center; color: var(--text3); font-size: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow);
+}
 
 /* ── 폼 ── */
-.form-card{background:var(--surface);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow);}
-.form-note{background:var(--accent-light);border-left:3px solid var(--accent);
-  border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;
-  font-size:13px;color:var(--accent2);margin-bottom:1.25rem;line-height:1.6;}
-.form-group{margin-bottom:1rem;}
-.form-label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:5px;}
-.form-label span{color:var(--danger);margin-left:2px;}
-.form-input,.form-select,.form-textarea{width:100%;border:1.5px solid var(--border);
-  border-radius:var(--radius);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;
-  font-size:16px;color:var(--text);background:#fafffe;outline:none;transition:all .15s;-webkit-appearance:none;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{
-  border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(45,74,122,.1);}
-.form-textarea{resize:vertical;min-height:110px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
-.form-submit{width:100%;background:var(--accent);color:#fff;border:none;
-  border-radius:var(--radius-xl);padding:13px;font-family:'Noto Sans KR',sans-serif;
-  font-size:15px;font-weight:500;cursor:pointer;transition:all .18s;
-  letter-spacing:.03em;margin-top:.25rem;box-shadow:0 4px 16px rgba(45,74,122,.3);}
-.form-submit:hover{background:var(--accent2);box-shadow:0 6px 20px rgba(45,74,122,.4);}
-.form-submit:disabled{background:var(--text3);cursor:not-allowed;box-shadow:none;}
-.photo-upload-area{border:2px dashed var(--navy-mid);border-radius:var(--radius-lg);
-  padding:1.25rem;text-align:center;cursor:pointer;transition:all .15s;
-  display:flex;flex-direction:column;align-items:center;}
-.photo-upload-area:hover{border-color:var(--accent);background:var(--accent-light);}
-.photo-preview{position:relative;width:80px;height:80px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
-.photo-preview img{width:100%;height:100%;object-fit:cover;}
-.photo-preview-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;
-  border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;line-height:1;}
-.form-success{display:none;background:var(--accent-light);border:1.5px solid var(--navy-mid);
-  border-radius:var(--radius-lg);padding:2rem;text-align:center;}
-.form-success.show{display:block;}
-.form-success-icon{font-size:40px;margin-bottom:.75rem;}
-.form-success h3{font-size:16px;font-weight:500;color:var(--accent-dark);margin-bottom:.5rem;}
-.form-success p{font-size:13px;color:var(--text2);}
+.form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); }
+.form-note {
+  background: var(--accent-light); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 14px;
+  font-size: 13px; color: var(--accent2); margin-bottom: 18px; line-height: 1.65;
+}
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
+.form-label span { color: var(--danger); margin-left: 2px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 10px 12px;
+  font-family: Pretendard, sans-serif; font-size: 16px;
+  color: var(--text); background: #FFFDF8; outline: none;
+  transition: all .15s; -webkit-appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(217,138,61,.12);
+}
+.form-textarea { resize: vertical; min-height: 110px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-submit {
+  width: 100%; background: linear-gradient(135deg,#E8A85A,#D98A3D); color: #fff;
+  border: none; border-radius: var(--radius-xl); padding: 14px;
+  font-family: Pretendard, sans-serif; font-size: 15.5px; font-weight: 700;
+  cursor: pointer; transition: all .18s; letter-spacing: .02em; margin-top: 4px;
+  box-shadow: 0 8px 22px -10px rgba(217,138,61,.75);
+}
+.form-submit:hover { filter: brightness(1.04); }
+.form-submit:active { transform: scale(.985); }
+.form-submit:disabled { background: var(--text3); cursor: not-allowed; box-shadow: none; filter: none; }
+.consent-group { display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; color: var(--text2); margin-bottom: 10px; line-height: 1.55; }
+.consent-group input { margin-top: 3px; accent-color: var(--accent); }
+.consent-group a { color: var(--accent2); }
+.photo-upload-area {
+  border: 2px dashed var(--border); border-radius: var(--radius-lg);
+  padding: 20px; text-align: center; cursor: pointer; transition: all .15s;
+  display: flex; flex-direction: column; align-items: center;
+}
+.photo-upload-area:hover { border-color: var(--accent); background: var(--accent-light); }
+.photo-preview { position: relative; width: 80px; height: 80px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+.photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.photo-preview-del {
+  position: absolute; top: 2px; right: 2px;
+  background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 50%;
+  width: 18px; height: 18px; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; line-height: 1;
+}
+.form-success {
+  display: none; background: var(--accent-light); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 2rem; text-align: center;
+}
+.form-success.show { display: block; }
+.form-success-icon { font-size: 40px; margin-bottom: 12px; }
+.form-success h3 { font-size: 17px; font-weight: 700; color: var(--accent-dark); margin-bottom: 8px; }
+.form-success p { font-size: 13.5px; color: var(--text2); }
+
+/* ── 관리비 로그인 게이트 ── */
+.fee-login-gate {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 3rem 1rem; text-align: center; box-shadow: var(--shadow);
+}
+.fee-login-gate-icon { font-size: 36px; margin-bottom: 12px; }
+.fee-login-gate h3 { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.fee-login-gate p { font-size: 13.5px; color: var(--text2); margin-bottom: 20px; line-height: 1.7; }
 
 /* ── 주차 / 정보 카드 ── */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:1.25rem;}
-.info-card{background:var(--surface);border-radius:var(--radius-lg);padding:1.125rem;box-shadow:var(--shadow);}
-.info-card-label{font-size:10px;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:5px;}
-.info-card-value{font-size:22px;font-weight:600;color:var(--accent);}
-.info-card-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-.table-card{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;box-shadow:var(--shadow);}
-.table-head{background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:rgba(255,255,255,.95);padding:.75rem 1rem;font-size:13px;font-weight:500;}
-table.fee-table{width:100%;border-collapse:collapse;}
-table.fee-table th{background:var(--surface2);font-size:11px;font-weight:500;color:var(--text2);
-  padding:9px 1rem;text-align:left;border-bottom:1px solid var(--border);}
-table.fee-table td{padding:9px 1rem;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);}
-table.fee-table tr:last-child td{border-bottom:none;}
-.highlight-row td{font-weight:500;color:var(--accent2);}
-.parking-note{background:var(--gold-light);border-left:3px solid var(--gold);
-  border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;font-size:12px;color:var(--gold);line-height:1.8;}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.info-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px; box-shadow: var(--shadow);
+}
+.info-card-label { font-size: 11px; letter-spacing: .08em; color: var(--text3); text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
+.info-card-value { font-size: 24px; font-weight: 800; color: var(--accent); }
+.info-card-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.table-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 18px; box-shadow: var(--shadow);
+}
+.table-head {
+  background: linear-gradient(135deg,#E8A85A,#D98A3D);
+  color: #fff; padding: 12px 16px; font-size: 13.5px; font-weight: 700;
+}
+table.fee-table { width: 100%; border-collapse: collapse; }
+table.fee-table th {
+  background: var(--surface2); font-size: 11.5px; font-weight: 700; color: var(--text2);
+  padding: 9px 16px; text-align: left; border-bottom: 1px solid var(--border);
+}
+table.fee-table td { padding: 9px 16px; font-size: 13.5px; color: var(--text); border-bottom: 1px solid var(--border); }
+table.fee-table tr:last-child td { border-bottom: none; }
+.highlight-row td { font-weight: 700; color: var(--accent2); }
+.parking-note {
+  background: #FBF1E4; border: 1px solid #F2E2CC; border-radius: var(--radius-lg);
+  padding: 14px 16px; font-size: 13px; color: #9C6A3C; line-height: 1.8;
+}
 
 /* ── 관리비 ── */
-.fee-section-title{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.05em;
-  margin:1.25rem 0 .625rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
-.method-cards{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:1.25rem;}
-.method-card{background:var(--surface);border-radius:var(--radius-lg);padding:1rem;box-shadow:var(--shadow);}
-.method-card-icon{font-size:22px;margin-bottom:.375rem;}
-.method-card-title{font-size:13px;font-weight:500;color:var(--accent2);margin-bottom:.375rem;}
-.method-card-desc{font-size:12px;color:var(--text2);line-height:1.7;}
-.account-box{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
-  color:#fff;border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;
-  box-shadow:0 4px 18px rgba(45,74,122,.3);}
-.account-box-label{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:5px;}
-.account-box-value{font-size:17px;font-weight:600;margin-bottom:3px;}
-.account-box-bank{font-size:12px;color:rgba(255,255,255,.7);}
-.deadline-box{background:var(--danger-light);border:1.5px solid rgba(224,92,92,.2);
-  border-radius:var(--radius-lg);padding:1rem;display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem;}
-.deadline-icon{font-size:26px;flex-shrink:0;}
-.deadline-text h4{font-size:13px;font-weight:500;color:var(--danger);}
-.deadline-text p{font-size:12px;color:var(--text2);}
+.fee-section-title {
+  font-size: 12.5px; font-weight: 700; color: var(--text2); letter-spacing: .04em;
+  margin: 18px 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.method-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.method-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow); }
+.method-card-icon { font-size: 22px; margin-bottom: 6px; }
+.method-card-title { font-size: 13.5px; font-weight: 700; color: var(--accent2); margin-bottom: 6px; }
+.method-card-desc { font-size: 12.5px; color: var(--text2); line-height: 1.7; }
+.account-box {
+  background: linear-gradient(135deg,#E8A85A,#D98A3D);
+  color: #fff; border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 10px;
+  box-shadow: 0 6px 20px -8px rgba(217,138,61,.55);
+}
+.account-box-label { font-size: 11px; letter-spacing: .1em; color: rgba(255,255,255,.65); margin-bottom: 5px; font-weight: 600; }
+.account-box-value { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+.account-box-bank { font-size: 12.5px; color: rgba(255,255,255,.75); }
+.deadline-box {
+  background: var(--danger-light); border: 1.5px solid rgba(197,106,87,.2);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.deadline-icon { font-size: 26px; flex-shrink: 0; }
+.deadline-text h4 { font-size: 13.5px; font-weight: 700; color: var(--danger); }
+.deadline-text p { font-size: 12.5px; color: var(--text2); }
 
 /* ── 비상연락 ── */
-.emergency-banner{background:linear-gradient(135deg,#e85c5c,#c94040);color:#fff;
-  border-radius:var(--radius-lg);padding:.875rem 1rem;margin-bottom:1.25rem;
-  display:flex;align-items:flex-start;gap:.75rem;box-shadow:0 4px 16px rgba(224,92,92,.25);}
-.emergency-banner-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
-.emergency-banner-text{font-size:12px;line-height:1.7;}
-.emergency-banner strong{font-size:14px;display:block;margin-bottom:2px;}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
-.contact-card{background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
-.contact-card-header{padding:.625rem .875rem;font-size:11px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.9);text-transform:uppercase;}
-.contact-card-header.green{background:var(--accent2);}
-.contact-card-header.gold{background:var(--gold);}
-.contact-card-header.red{background:var(--danger);}
-.contact-card-header.gray{background:var(--text2);}
-.contact-item{padding:.625rem .875rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:.5rem;}
-.contact-item:last-child{border-bottom:none;}
-.contact-name{font-size:12px;color:var(--text);flex:1;min-width:0;}
-.contact-number{font-size:13px;font-weight:500;color:var(--accent2);text-decoration:none;white-space:nowrap;}
-.contact-number:hover{color:var(--accent);}
+.emergency-banner {
+  background: var(--accent-dark); color: #EDE4D4; border-radius: var(--radius-lg);
+  padding: 14px 16px; margin-bottom: 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.emergency-banner-icon { font-size: 22px; flex-shrink: 0; color: #E88A6A; margin-top: 2px; }
+.emergency-banner-text { font-size: 13px; line-height: 1.65; }
+.emergency-banner strong { color: #fff; font-size: 14px; display: block; margin-bottom: 2px; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.contact-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow);
+}
+.contact-card-header { padding: 10px 14px; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: rgba(255,255,255,.95); text-transform: uppercase; }
+.contact-card-header.green { background: linear-gradient(135deg,#E8A85A,#D98A3D); }
+.contact-card-header.gold { background: #5E8A5A; }
+.contact-card-header.red { background: var(--danger); }
+.contact-card-header.gray { background: #5B72A8; }
+.contact-item {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  transition: background .15s;
+}
+.contact-item:last-child { border-bottom: none; }
+.contact-item:hover { background: var(--bg); }
+.contact-name { font-size: 12.5px; color: var(--text); flex: 1; min-width: 0; font-weight: 600; }
+.contact-number { font-size: 13.5px; font-weight: 700; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.contact-number:hover { color: var(--accent2); }
+
+/* ── 버튼 공통 ── */
+.btn-primary {
+  text-decoration: none; background: linear-gradient(135deg,#E8A85A,#D98A3D);
+  color: #fff; font-size: 14.5px; font-weight: 700; padding: 12px 20px;
+  border-radius: 13px; display: inline-flex; align-items: center; gap: 7px;
+  border: none; cursor: pointer; transition: filter .15s, transform .12s;
+  box-shadow: 0 10px 22px -10px rgba(217,138,61,.75);
+}
+.btn-primary:hover { filter: brightness(1.04); }
+.btn-primary:active { transform: scale(.985); }
+.btn-secondary {
+  text-decoration: none; background: #fff; color: var(--text);
+  font-size: 14.5px; font-weight: 700; padding: 12px 20px; border-radius: 13px;
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1.5px solid var(--border); cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.btn-secondary:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(217,138,61,.15); }
 
 /* ── 푸터 ── */
-footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 1.25rem;margin-top:2rem;font-size:12px;line-height:1.8;}
-.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;}
-.footer-name{font-family:'Noto Serif KR',serif;font-size:14px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:3px;}
+footer { background: var(--accent-dark); color: #C2B49C; padding: clamp(28px,5vw,44px) clamp(14px,4vw,28px); margin-top: 2rem; }
+.footer-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: space-between; }
+.footer-logo { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+.footer-logo-mark { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg,#E8A85A,#D98A3D); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 800; }
+.footer-brand { font-size: 15px; font-weight: 800; color: #fff; }
+.footer-info { font-size: 13px; line-height: 1.8; }
+.footer-info i { margin-right: 6px; color: var(--accent); }
+.footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
+.footer-col-title { font-size: 11px; color: #6E6054; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+.footer-col a { display: block; color: #C2B49C; text-decoration: none; font-size: 13px; margin-bottom: 8px; }
+.footer-col a:hover { color: var(--accent); }
+.footer-copy { max-width: 1000px; margin: 24px auto 0; padding-top: 18px; border-top: 1px solid #4D4436; font-size: 12px; color: #6E6054; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.privacy-link { background: none; border: none; cursor: pointer; color: #6E6054; font-family: Pretendard,sans-serif; font-size: 12px; transition: color .15s; }
+.privacy-link:hover { color: var(--accent); }
+
+/* 개인정보방침 모달 스타일 */
+.privacy-modal-body h4 { font-size: 14px; font-weight: 700; margin: 18px 0 6px; color: var(--text); }
+.privacy-modal-body p, .privacy-modal-body li { font-size: 13px; color: var(--text2); line-height: 1.8; }
+.privacy-modal-body ul { padding-left: 18px; margin-bottom: 8px; }
 
 /* ── 반응형 ── */
-@media(min-width:641px){
-  .desktop-nav{display:flex;}
-  .mobile-nav{display:none;}
-  .mobile-nav-spacer{display:none;}
-  .modal-backdrop{align-items:center;padding:1.5rem;}
-  .modal{border-radius:var(--radius-lg);max-width:560px;max-height:80vh;}
-  .modal-handle{display:none;}
-  .main{padding:2rem 1.5rem;}
-  .hero{padding:3rem 1.5rem 5rem;}
-  .hero h1{font-size:30px;}
-  .form-input,.form-select,.form-textarea{font-size:14px;}
+@media (min-width: 641px) {
+  .desktop-nav { display: flex; }
+  .mobile-nav { display: none; }
+  .mobile-nav-spacer { display: none; }
+  .modal-backdrop { align-items: center; padding: 1.5rem; }
+  .modal { border-radius: var(--radius-lg); max-width: 560px; max-height: 80vh; }
+  .modal-handle { display: none; }
+  .form-input, .form-select, .form-textarea { font-size: 14px; }
 }
-@media(max-width:640px){
-  .desktop-nav{display:none;}
-  .mobile-nav{display:block;}
-  .form-row{grid-template-columns:1fr;}
-  .contact-grid{grid-template-columns:1fr;}
-  .method-cards{grid-template-columns:1fr;}
-  .footer-inner{flex-direction:column;}
+@media (max-width: 640px) {
+  .desktop-nav { display: none; }
+  .mobile-nav { display: block; }
+  .form-row { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .method-cards { grid-template-columns: 1fr; }
+  .footer-inner { flex-direction: column; }
+  .section-tab { font-size: 13px; padding: 11px 12px; }
+  .hero-actions .btn-secondary { display: none; }
 }
-@media(max-width:380px){
-  .info-grid{grid-template-columns:1fr;}
-  .hero-meta{gap:.625rem;}
+@media (max-width: 380px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .stats-strip { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
 <body>
 
+<!-- ── 헤더 ── -->
 <header>
   <div class="header-inner">
-    <div class="logo">
-      <img src="logo.png" alt="어반센터프라자" style="height:36px;display:block;">
-    </div>
+    <a href="#" onclick="showSection('notice',document.querySelector('.desktop-nav a'));return false;" style="display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0">
+      <div class="logo-mark">U</div>
+      <div class="logo-text">
+        <div class="main">어반센터프라자</div>
+        <div class="sub">입주자 관리 포털</div>
+      </div>
+    </a>
     <nav class="desktop-nav">
-      <a href="#" class="active" onclick="showSection('notice',this)">공지사항</a>
-      <a href="#" onclick="showSection('complaint',this)">민원접수</a>
-      <a href="#" onclick="showSection('parking',this)">주차안내</a>
-      <a href="#" onclick="showSection('fee',this)">관리비</a>
-      <a href="#" onclick="showSection('emergency',this)">비상연락</a>
+      <a href="#" class="active" onclick="showSection('notice',this);return false;">공지사항</a>
+      <a href="#" onclick="showSection('complaint',this);return false;">민원접수</a>
+      <a href="#" onclick="showSection('parking',this);return false;">주차안내</a>
+      <a href="#" onclick="showSection('fee',this);return false;">관리비</a>
+      <a href="#" onclick="showSection('emergency',this);return false;">비상연락</a>
       <a href="admin.html" class="admin-link">관리자</a>
     </nav>
     <div class="header-login-area">
       <span class="logged-in-badge" id="headerRoom" style="display:none;"></span>
       <button class="btn-logout" id="btnLogout" style="display:none;" onclick="doLogout()">로그아웃</button>
-      <a href="login.html" class="btn-login" id="btnLogin" style="text-decoration:none;display:inline-block;padding:6px 16px;">로그인</a>
+      <a href="login.html" class="btn-login" id="btnLogin" style="text-decoration:none;">
+        <i class="ph-bold ph-sign-in" style="font-size:14px;"></i>로그인
+      </a>
     </div>
   </div>
 </header>
 
-<!-- 모바일 하단 탭바 -->
+<!-- ── 모바일 하단 탭바 ── -->
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
     <button class="mobile-nav-item active" id="mnav-notice" onclick="showSection('notice',this,'mnav-notice')">
       <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       공지
     </button>
-    <button class="mobile-nav-item" id="mnav-complaint" onclick="showSection('complaint',this,'mav-complaint')">
+    <button class="mobile-nav-item" id="mnav-complaint" onclick="showSection('complaint',this,'mnav-complaint')">
       <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       민원접수
     </button>
-    <button class="mobile-nav-item" id="mav-parking" onclick="showSection('parking',this,'mav-parking')">
+    <button class="mobile-nav-item" id="mnav-parking" onclick="showSection('parking',this,'mnav-parking')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>
       주차
     </button>
-    <button class="mobile-nav-item" id="mav-fee" onclick="showSection('fee',this,'mav-fee')">
+    <button class="mobile-nav-item" id="mnav-fee" onclick="showSection('fee',this,'mnav-fee')">
       <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       관리비
     </button>
-    <button class="mobile-nav-item" id="mav-emergency" onclick="showSection('emergency',this,'mav-emergency')">
+    <button class="mobile-nav-item" id="mnav-emergency" onclick="showSection('emergency',this,'mnav-emergency')">
       <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       비상연락
     </button>
   </div>
 </nav>
 
+<!-- ── 히어로 ── -->
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag">경기도 화성시 효행구 봉담읍 상리2길 55</div>
-    <h1>어반센터프라자<br>관리사무소</h1>
-    <p>불편사항은 아래 민원접수를 이용해 주세요.</p>
-    <div class="hero-meta">
-      <div class="hero-meta-item"><span class="hero-meta-label">총 호실</span><span class="hero-meta-value">122세대</span></div>
-      <div class="hero-meta-item"><span class="hero-meta-label">주차면수</span><span class="hero-meta-value">115면</span></div>
-      <div class="hero-meta-item"><span class="hero-meta-label">운영시간</span><span class="hero-meta-value">08:30 – 17:30</span></div>
+    <div class="hero-text">
+      <div class="hero-tag">
+        <i class="ph-fill ph-hand-waving" style="font-size:14px;"></i>
+        입주자 여러분, 환영합니다
+      </div>
+      <h1>건물의 모든 정보를<br>한 곳에서 간편하게</h1>
+      <p>공지 확인부터 관리비 조회, 민원 접수, 주차 안내까지. 어반센터프라자 관리사무소가 입주자 여러분의 편의를 돕습니다.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#" onclick="showSection('fee',null);return false;">
+          <i class="ph-bold ph-receipt"></i>관리비 조회
+        </a>
+        <a class="btn-secondary" href="#" onclick="showSection('complaint',null);return false;">
+          <i class="ph-bold ph-pencil-simple-line"></i>민원 접수
+        </a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <div class="hero-img-placeholder">건물 외관 이미지</div>
+      <img src="ci-mark.jpg" alt="" style="position:absolute;right:-20px;top:-20px;width:200px;height:200px;object-fit:contain;opacity:.18;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
+      <div class="hero-img-badge">
+        <i class="ph-fill ph-map-pin" style="color:var(--accent);"></i>
+        경기도 화성시 봉담읍 상리2길 55
+      </div>
     </div>
   </div>
-  <img src="ci-mark.jpg" aria-hidden="true" alt="" style="position:absolute;right:-30px;top:-24px;width:230px;height:230px;object-fit:contain;opacity:.28;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
-  <div class="hero-wave">
-    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-      <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#f4f6fb"/>
-    </svg>
+</div>
+
+<!-- ── 스탯 스트립 ── -->
+<div class="stats-strip">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#FDEEDB;"><i class="ph-fill ph-buildings" style="color:#D98A3D;"></i></div>
+    <div>
+      <div class="stat-value">122<span>세대</span></div>
+      <div class="stat-label">총 호실</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#E7EFE4;"><i class="ph-fill ph-car-simple" style="color:#5E8A5A;"></i></div>
+    <div>
+      <div class="stat-value">115<span>면</span></div>
+      <div class="stat-label">주차 면수 · 24h</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#E6EBF4;"><i class="ph-fill ph-clock" style="color:#5B72A8;"></i></div>
+    <div>
+      <div class="stat-value" style="font-size:17px;">08:30<span>–17:30</span></div>
+      <div class="stat-label">관리사무소 운영</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#F6E4E0;"><i class="ph-fill ph-phone-call" style="color:#C56A57;"></i></div>
+    <div>
+      <div class="stat-value" style="font-size:15px;">031-298-9086</div>
+      <div class="stat-label">대표 전화</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 섹션 탭 ── -->
+<div class="section-tabs-wrap">
+  <div class="section-tabs">
+    <button class="section-tab active" id="stab-notice" onclick="showSection('notice',null,'stab-notice')">
+      <i class="ph-fill ph-megaphone" style="margin-right:5px;"></i>공지사항
+    </button>
+    <button class="section-tab" id="stab-complaint" onclick="showSection('complaint',null,'stab-complaint')">
+      <i class="ph-fill ph-chat-circle-text" style="margin-right:5px;"></i>민원접수
+    </button>
+    <button class="section-tab" id="stab-parking" onclick="showSection('parking',null,'stab-parking')">
+      <i class="ph-fill ph-parking" style="margin-right:5px;"></i>주차안내
+    </button>
+    <button class="section-tab" id="stab-fee" onclick="showSection('fee',null,'stab-fee')">
+      <i class="ph-fill ph-receipt" style="margin-right:5px;"></i>관리비
+    </button>
+    <button class="section-tab" id="stab-emergency" onclick="showSection('emergency',null,'stab-emergency')">
+      <i class="ph-fill ph-phone-call" style="margin-right:5px;"></i>비상연락
+    </button>
   </div>
 </div>
 
@@ -349,7 +691,10 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
   <!-- 공지사항 -->
   <section id="notice" class="section active">
     <div class="section-header">
-      <span class="section-title">공지사항</span>
+      <div>
+        <span class="section-title-label">Notice</span>
+        <span class="section-title">공지사항</span>
+      </div>
       <span class="section-count" id="noticeCount">불러오는 중...</span>
     </div>
     <div class="notice-list" id="noticeList">
@@ -360,7 +705,10 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
   <!-- 민원접수 -->
   <section id="complaint" class="section">
     <div class="section-header">
-      <span class="section-title">민원 / 건의</span>
+      <div>
+        <span class="section-title-label">Request</span>
+        <span class="section-title">민원 · 건의 접수</span>
+      </div>
     </div>
     <!-- 탭 -->
     <div class="complaint-tabs">
@@ -389,9 +737,9 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
         <div class="form-group">
           <label class="form-label">사진 첨부 <span style="color:var(--text3);font-weight:400;">(최대 3장)</span></label>
           <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('photoInput').click()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px;color:var(--text3);margin-bottom:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <i class="ph-regular ph-image" style="font-size:28px;color:var(--text3);margin-bottom:6px;"></i>
             <div style="font-size:13px;color:var(--text3);">사진을 탭하여 추가</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px;">JPG, PNG, GIF · 최대 10MB</div>
+            <div style="font-size:11.5px;color:var(--text3);margin-top:2px;">JPG, PNG, GIF · 최대 10MB</div>
           </div>
           <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(event)">
           <div id="photoPreviewArea" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
@@ -400,7 +748,9 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
           <input type="checkbox" id="consentCheck">
           <label for="consentCheck">[필수] 개인정보(호실·연락처)를 민원 처리 목적으로 수집·이용함에 동의합니다. <a href="#" onclick="openPrivacyModal();return false;">처리방침 보기</a></label>
         </div>
-        <button class="form-submit" id="submitBtn" onclick="submitForm()">접수하기</button>
+        <button class="form-submit" id="submitBtn" onclick="submitForm()">
+          <i class="ph-bold ph-paper-plane-right" style="margin-right:6px;"></i>접수하기
+        </button>
       </div>
       <div class="form-success" id="formSuccess">
         <div class="form-success-icon">✓</div>
@@ -434,37 +784,59 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 
   <!-- 주차안내 -->
   <section id="parking" class="section">
-    <div class="section-header"><span class="section-title">주차 안내 및 요금표</span></div>
+    <div class="section-header">
+      <div>
+        <span class="section-title-label">Parking</span>
+        <span class="section-title">주차 안내 및 요금</span>
+      </div>
+    </div>
     <div class="info-grid">
-      <div class="info-card"><div class="info-card-label">총 주차면수</div><div class="info-card-value">115면</div><div class="info-card-sub">지하 1~2층 + 지상</div></div>
-      <div class="info-card"><div class="info-card-label">주차장 운영</div><div class="info-card-value">24시간</div><div class="info-card-sub">연중 무휴</div></div>
+      <div class="info-card">
+        <div class="info-card-label">총 주차면수</div>
+        <div class="info-card-value">115면</div>
+        <div class="info-card-sub">지하 1~2층 + 지상</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">주차장 운영</div>
+        <div class="info-card-value">24시간</div>
+        <div class="info-card-sub">연중 무휴</div>
+      </div>
     </div>
     <div class="table-card">
       <div class="table-head">방문객 주차 요금표</div>
       <table class="fee-table"><thead><tr><th>구분</th><th>요금</th><th>비고</th></tr></thead>
       <tbody>
-        <tr><td>최초 20분</td><td>무료</td><td>-</td></tr>
+        <tr><td>최초 20분</td><td style="color:#5E8A5A;font-weight:700;">무료</td><td>-</td></tr>
         <tr><td>20분 초과 ~ 30분</td><td>2,000원</td><td>30분당</td></tr>
         <tr><td>30분 초과 ~ 1시간</td><td>4,000원</td><td>1시간당</td></tr>
         <tr class="highlight-row"><td>일 최대</td><td>50,000원</td><td>24시간 기준</td></tr>
       </tbody></table>
     </div>
     <div class="table-card">
-      <div class="table-head">입주자 정기권 요금표</div>
+      <div class="table-head" style="background:linear-gradient(135deg,#5E8A5A,#4A7548);">입주자 정기권 요금표</div>
       <table class="fee-table"><thead><tr><th>종류</th><th>월 요금</th><th>차량 수</th></tr></thead>
       <tbody>
-        <tr><td>정기권</td><td>30,000원</td><td>1대</td></tr>
+        <tr><td>정기권</td><td style="color:var(--accent);font-weight:700;">30,000원</td><td>1대</td></tr>
       </tbody></table>
     </div>
-    <div class="parking-note">⚠ 정기권 신청 및 해지는 관리사무소 방문 또는 비상연락망으로 문의 바랍니다.<br>⚠ 이중주차, 소화전 주변, 장애인 구역 불법 주차 시 즉시 견인 조치됩니다.<br>⚠ 차량 내 귀중품 도난 피해에 대해 관리사무소는 책임지지 않습니다.</div>
+    <div class="parking-note">
+      <i class="ph-fill ph-warning" style="margin-right:7px;"></i>정기권 신청 및 해지는 관리사무소 방문 또는 비상연락망으로 문의 바랍니다.<br>
+      <i class="ph-fill ph-warning" style="margin-right:7px;"></i>이중주차, 소화전 주변, 장애인 구역 불법 주차 시 즉시 견인 조치됩니다.<br>
+      <i class="ph-fill ph-warning" style="margin-right:7px;"></i>차량 내 귀중품 도난 피해에 대해 관리사무소는 책임지지 않습니다.
+    </div>
   </section>
 
   <!-- 관리비 -->
   <section id="fee" class="section">
-    <div class="section-header"><span class="section-title">관리비</span></div>
+    <div class="section-header">
+      <div>
+        <span class="section-title-label">Fee</span>
+        <span class="section-title">관리비</span>
+      </div>
+    </div>
 
     <!-- 탭 -->
-    <div class="complaint-tabs" style="margin-bottom:1.25rem;">
+    <div class="complaint-tabs" style="margin-bottom:18px;">
       <button class="complaint-tab active" id="fee-tab-info" onclick="switchFeeTab('info')">납부 안내</button>
       <button class="complaint-tab" id="fee-tab-lookup" onclick="switchFeeTab('lookup')">내 관리비 조회</button>
       <button class="complaint-tab" id="fee-tab-pw" onclick="switchFeeTab('pw')" style="display:none;">🔐 내 정보</button>
@@ -472,9 +844,15 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 
     <!-- 납부 안내 탭 -->
     <div id="fee-info-wrap">
-      <div class="deadline-box"><div class="deadline-icon">📅</div><div class="deadline-text"><h4>납부 기한: 고지서 교부일로부터 14일 이내</h4><p>관리비 고지서는 매월 말일 교부됩니다. 납부기한 마지막 날이 공휴일이면 익일까지 납부 가능합니다.</p></div></div>
+      <div class="deadline-box">
+        <div class="deadline-icon">📅</div>
+        <div class="deadline-text">
+          <h4>납부 기한: 고지서 교부일로부터 14일 이내</h4>
+          <p>관리비 고지서는 매월 말일 교부됩니다. 납부기한 마지막 날이 공휴일이면 익일까지 납부 가능합니다.</p>
+        </div>
+      </div>
       <div class="fee-section-title">납부 계좌</div>
-      <div class="account-box" style="margin-bottom:.625rem;">
+      <div class="account-box" style="margin-bottom:10px;">
         <div class="account-box-label">관리비</div>
         <div class="account-box-value">㈜제일개발 (봉담어반센터프라자)</div>
         <div class="account-box-bank">신한은행 · 100-035-734833</div>
@@ -486,32 +864,43 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
       </div>
       <div class="fee-section-title">납부 방법</div>
       <div class="method-cards" style="grid-template-columns:1fr;">
-        <div class="method-card"><div class="method-card-icon">🏦</div><div class="method-card-title">계좌이체 (유일한 납부 방법)</div><div class="method-card-desc">관리비와 주차관리비는 <strong>계좌이체로만</strong> 납부 가능합니다.<br>입금자명에 호실 번호를 반드시 포함해 주세요.<br>예) <em>221호홍길동</em></div></div>
+        <div class="method-card">
+          <div class="method-card-icon">🏦</div>
+          <div class="method-card-title">계좌이체 (유일한 납부 방법)</div>
+          <div class="method-card-desc">관리비와 주차관리비는 <strong>계좌이체로만</strong> 납부 가능합니다.<br>입금자명에 호실 번호를 반드시 포함해 주세요.<br>예) <em>221호홍길동</em></div>
+        </div>
       </div>
-      <div style="font-size:12px;color:var(--text3);background:var(--surface2);border-radius:var(--radius);padding:.625rem .875rem;margin-bottom:1rem;">
-        ※ 관리사무소에서는 관리비를 직접 수납하지 않습니다. 반드시 위 계좌로 이체해 주세요.
+      <div style="font-size:12.5px;color:var(--text3);background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);">
+        <i class="ph-fill ph-info" style="color:var(--accent);margin-right:6px;"></i>관리사무소에서는 관리비를 직접 수납하지 않습니다. 반드시 위 계좌로 이체해 주세요.
       </div>
       <div class="fee-section-title">관리비 항목</div>
-      <div class="table-card"><table class="fee-table"><thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">공용 관리비</th></tr></thead>
-      <tbody>
-        <tr><td>소화전 관리비</td><td>소화설비 유지·점검 비용</td></tr>
-        <tr><td>공용 전기요금</td><td>복도·주차장 등 공용부분 전기료</td></tr>
-        <tr><td>수도료</td><td>공용 수도 사용료</td></tr>
-        <tr><td>수선유지비</td><td>건물 공용시설 수선·유지 비용</td></tr>
-        <tr><td>위탁관리비</td><td>전문 관리업체 위탁 운영비</td></tr>
-        <tr><td>통신비</td><td>공용 통신설비 유지비</td></tr>
-        <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지 비용</td></tr>
-        <tr><td>청소용역비</td><td>공용구역 청소용역 비용</td></tr>
-        <tr><td>소독방역비</td><td>건물 방역·소독 비용</td></tr>
-        <tr><td>가스 공용부분</td><td>공용 가스설비 유지비</td></tr>
-        <tr><td>기타 관리항목</td><td>기타 공용관리 비용</td></tr>
-      </tbody>
-      <thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">개별 부과 항목</th></tr></thead>
-      <tbody>
-        <tr><td>전기요금 (단독계량)</td><td>전용 구역 전기 사용량 기반 부과</td></tr>
-        <tr><td>난방비</td><td>전용 구역 난방 사용량 기반 부과</td></tr>
-        <tr><td>주차장 관리비</td><td>주차 구획 사용에 따른 관리비 (별도 계좌)</td></tr>
-      </tbody></table></div>
+      <div class="table-card">
+        <table class="fee-table">
+          <thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">공용 관리비</th></tr></thead>
+          <tbody>
+            <tr><td>소화전 관리비</td><td>소화설비 유지·점검 비용</td></tr>
+            <tr><td>공용 전기요금</td><td>복도·주차장 등 공용부분 전기료</td></tr>
+            <tr><td>수도료</td><td>공용 수도 사용료</td></tr>
+            <tr><td>수선유지비</td><td>건물 공용시설 수선·유지 비용</td></tr>
+            <tr><td>위탁관리비</td><td>전문 관리업체 위탁 운영비</td></tr>
+            <tr><td>통신비</td><td>공용 통신설비 유지비</td></tr>
+            <tr><td>승강기 유지비</td><td>엘리베이터 점검·유지 비용</td></tr>
+            <tr><td>청소용역비</td><td>공용구역 청소용역 비용</td></tr>
+            <tr><td>소독방역비</td><td>건물 방역·소독 비용</td></tr>
+            <tr><td>가스 공용부분</td><td>공용 가스설비 유지비</td></tr>
+            <tr><td>기타 관리항목</td><td>기타 공용관리 비용</td></tr>
+          </tbody>
+          <thead><tr><th colspan="2" style="background:var(--navy-dark);color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.06em;">개별 부과 항목</th></tr></thead>
+          <tbody>
+            <tr><td>전기요금 (단독계량)</td><td>전용 구역 전기 사용량 기반 부과</td></tr>
+            <tr><td>난방비</td><td>전용 구역 난방 사용량 기반 부과</td></tr>
+            <tr><td>주차장 관리비</td><td>주차 구획 사용에 따른 관리비 (별도 계좌)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12.5px;color:var(--text3);background:var(--surface2);border-radius:var(--radius);padding:10px 14px;border:1px solid var(--border);">
+        <i class="ph-fill ph-calendar-dots" style="color:var(--accent);margin-right:6px;"></i>고지서는 매월 말일 교부, 납부 기한은 교부일로부터 14일 이내입니다.
+      </div>
     </div>
 
     <!-- 관리비 조회 탭 -->
@@ -521,13 +910,15 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
         <div class="fee-login-gate-icon">🔐</div>
         <h3>로그인이 필요합니다</h3>
         <p>관리비 조회는 개인정보 보호를 위해<br>입주자 로그인 후 이용하실 수 있습니다.</p>
-        <a href="login.html" class="btn-login" style="display:inline-block;text-decoration:none;width:auto;padding:10px 28px;">로그인하기</a>
+        <a href="login.html" class="btn-primary" style="display:inline-flex;width:auto;padding:11px 24px;">
+          <i class="ph-bold ph-sign-in"></i>로그인하기
+        </a>
       </div>
       <!-- 조회 폼 (로그인 후) -->
       <div id="fee-form-wrap">
-        <div class="form-card" style="margin-bottom:1rem;">
-          <div style="font-size:13px;color:var(--text3);margin-bottom:.75rem;" id="feeLoggedInInfo"></div>
-          <div class="form-row" style="margin-bottom:.75rem;">
+        <div class="form-card" style="margin-bottom:14px;">
+          <div style="font-size:13px;color:var(--text3);margin-bottom:12px;" id="feeLoggedInInfo"></div>
+          <div class="form-row" style="margin-bottom:12px;">
             <div class="form-group" style="margin-bottom:0;">
               <label class="form-label">호실 번호</label>
               <input type="text" id="feeLookupRoom" maxlength="6" class="form-input" readonly style="background:var(--surface2);color:var(--text2);">
@@ -546,7 +937,7 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
     <!-- 내 정보 탭 (비밀번호 변경) -->
     <div id="fee-pw-wrap" style="display:none;">
       <div class="form-card" style="max-width:400px;">
-        <div style="font-size:14px;font-weight:500;margin-bottom:1.25rem;color:var(--text);">비밀번호 변경</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:var(--text);">비밀번호 변경</div>
         <div class="form-group">
           <label class="form-label">현재 비밀번호 *</label>
           <input type="password" class="form-input" id="pwCurrent" placeholder="현재 비밀번호">
@@ -566,10 +957,37 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 
   <!-- 비상연락망 -->
   <section id="emergency" class="section">
-    <div class="section-header"><span class="section-title">비상연락망</span></div>
+    <div class="section-header">
+      <div>
+        <span class="section-title-label">Emergency</span>
+        <span class="section-title">비상 연락망</span>
+      </div>
+    </div>
     <div class="emergency-banner">
-      <div class="emergency-banner-icon">🚨</div>
-      <div class="emergency-banner-text"><strong>생명·재산 위협 시 즉시 119 / 112 신고</strong>아래 연락처는 건물 내 시설 문제 등 비응급 상황에 이용해 주세요.</div>
+      <div class="emergency-banner-icon"><i class="ph-fill ph-warning-octagon"></i></div>
+      <div class="emergency-banner-text">
+        <strong>생명·재산 위협 시 즉시 119 / 112로 신고하세요.</strong>
+        아래 연락처는 건물 시설 등 비응급 상황용입니다.
+      </div>
+    </div>
+    <!-- 긴급 버튼 -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;">
+      <a href="tel:119" style="text-decoration:none;background:#C56A57;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:12px;color:#fff;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter=''">
+        <i class="ph-fill ph-fire-simple" style="font-size:24px;"></i>
+        <div><div style="font-size:11.5px;opacity:.85;font-weight:600;">화재·응급</div><div style="font-size:22px;font-weight:800;">119</div></div>
+      </a>
+      <a href="tel:112" style="text-decoration:none;background:#5B72A8;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:12px;color:#fff;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter=''">
+        <i class="ph-fill ph-shield-star" style="font-size:24px;"></i>
+        <div><div style="font-size:11.5px;opacity:.85;font-weight:600;">범죄·사고</div><div style="font-size:22px;font-weight:800;">112</div></div>
+      </a>
+      <a href="tel:15444500" style="text-decoration:none;background:#5E8A5A;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:12px;color:#fff;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter=''">
+        <i class="ph-fill ph-flame" style="font-size:24px;"></i>
+        <div><div style="font-size:11.5px;opacity:.85;font-weight:600;">가스 긴급</div><div style="font-size:18px;font-weight:800;">1544-4500</div></div>
+      </a>
+      <a href="tel:123" style="text-decoration:none;background:var(--accent);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:12px;color:#fff;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter=''">
+        <i class="ph-fill ph-lightning" style="font-size:24px;"></i>
+        <div><div style="font-size:11.5px;opacity:.85;font-weight:600;">한국전력 (정전)</div><div style="font-size:22px;font-weight:800;">123</div></div>
+      </a>
     </div>
     <div class="contact-grid">
       <div class="contact-card">
@@ -600,19 +1018,41 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
   <div class="mobile-nav-spacer"></div>
 </main>
 
+<!-- ── 푸터 ── -->
 <footer>
   <div class="footer-inner">
-    <div>
-      <img src="logo.png" alt="어반센터프라자" style="height:26px;display:block;margin-bottom:6px;filter:brightness(0) invert(1);opacity:.7;">
-      경기도 화성시 효행구 봉담읍 상리2길 55<br>평일 08:30 – 17:30
+    <div style="max-width:320px;">
+      <div class="footer-logo">
+        <div class="footer-logo-mark">U</div>
+        <div class="footer-brand">어반센터프라자 관리사무소</div>
+      </div>
+      <div class="footer-info">
+        <div><i class="ph-fill ph-map-pin"></i>경기도 화성시 봉담읍 상리2길 55</div>
+        <div><i class="ph-fill ph-clock"></i>평일 08:30 – 17:30</div>
+        <div><i class="ph-fill ph-phone"></i>031-298-9086</div>
+      </div>
     </div>
-    <div style="color:rgba(255,255,255,.35);font-size:11px;line-height:1.8;text-align:right;">
-      <button class="privacy-link" onclick="openPrivacyModal()">개인정보처리방침</button><br>
-      © 2026 어반센터프라자
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">바로가기</div>
+        <a href="#" onclick="showSection('notice',null);return false;">공지사항</a>
+        <a href="#" onclick="showSection('complaint',null);return false;">민원접수</a>
+        <a href="#" onclick="showSection('parking',null);return false;">주차안내</a>
+        <a href="#" onclick="showSection('fee',null);return false;">관리비</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">안내</div>
+        <a href="#" onclick="showSection('emergency',null);return false;">비상연락망</a>
+        <a href="#" onclick="openPrivacyModal();return false;">개인정보처리방침</a>
+        <a href="admin.html">관리자 페이지</a>
+      </div>
     </div>
   </div>
+  <div class="footer-copy">
+    <span>© 2026 어반센터프라자 관리단. All rights reserved.</span>
+    <button class="privacy-link" onclick="openPrivacyModal()">개인정보처리방침</button>
+  </div>
 </footer>
-
 
 <!-- 개인정보처리방침 모달 -->
 <div class="modal-backdrop" id="privacyModal" onclick="if(event.target===this)this.classList.remove('open')" style="align-items:flex-start;padding-top:2rem;">
@@ -623,7 +1063,6 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
     </div>
     <div class="modal-body privacy-modal-body">
       <p>어반센터프라자 관리단(이하 '관리단')은 개인정보보호법 제30조에 따라 입주자의 개인정보를 보호하고 이와 관련한 고충을 신속하게 처리하기 위해 다음과 같이 개인정보처리방침을 수립·공개합니다.</p>
-
       <h4>1. 수집하는 개인정보 항목 및 수집 목적</h4>
       <ul>
         <li><strong>민원 접수:</strong> 호실 번호, 연락처 — 민원 처리 및 결과 통보</li>
@@ -631,24 +1070,20 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
         <li><strong>입주자 계정:</strong> 호실 번호, 비밀번호(암호화) — 서비스 이용 인증</li>
         <li><strong>사진:</strong> 이용자가 직접 첨부한 이미지 — 민원 처리 증빙</li>
       </ul>
-
       <h4>2. 개인정보 보유 및 이용 기간</h4>
       <ul>
         <li>민원 접수 자료: 처리 완료 후 <strong>1년</strong></li>
         <li>관리비 내역: 해당 연도 종료 후 <strong>5년</strong> (상업장부 보관 의무)</li>
         <li>입주자 계정: 퇴실 확인 후 <strong>즉시 삭제</strong></li>
       </ul>
-
       <h4>3. 제3자 제공</h4>
       <p>관리단은 원칙적으로 입주자의 개인정보를 외부에 제공하지 않습니다. 다만, 법률에 특별한 규정이 있는 경우에는 예외로 합니다.</p>
-
       <h4>4. 개인정보 처리 위탁</h4>
       <p>관리단은 다음 업체에 개인정보 처리를 위탁합니다.</p>
       <ul>
         <li><strong>Google Firebase (Firestore):</strong> 데이터 저장 및 실시간 동기화 — 위탁 기간: 서비스 운영 기간</li>
         <li><strong>Cloudinary:</strong> 첨부 이미지 저장 — 위탁 기간: 서비스 운영 기간</li>
       </ul>
-
       <h4>5. 정보주체의 권리</h4>
       <p>입주자는 언제든지 아래 방법으로 권리를 행사할 수 있습니다.</p>
       <ul>
@@ -656,25 +1091,21 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
         <li>요청 방법: 관리사무소 방문 또는 전화 (031-298-9086)</li>
         <li>처리 기간: 요청일로부터 10일 이내</li>
       </ul>
-
       <h4>6. 개인정보 안전성 확보 조치</h4>
       <ul>
         <li>HTTPS 암호화 전송 (TLS 1.2 이상)</li>
         <li>Firebase 보안 규칙 적용</li>
         <li>접근 권한 최소화 (관리자 계정 분리)</li>
       </ul>
-
       <h4>7. 개인정보 보호책임자</h4>
       <ul>
         <li>성명: 관리소장</li>
         <li>연락처: 031-298-9086</li>
         <li>이메일: (관리사무소 이메일)</li>
       </ul>
-
       <h4>8. 권익침해 구제 방법</h4>
       <p>개인정보 침해로 인한 피해 구제를 위해 개인정보보호위원회(privacy.go.kr, 국번없이 182)에 분쟁조정을 신청할 수 있습니다.</p>
-
-      <p style="margin-top:1.25rem;font-size:11px;color:var(--text3);">시행일: 2026년 6월 1일</p>
+      <p style="margin-top:18px;font-size:11px;color:var(--text3);">시행일: 2026년 6월 1일</p>
     </div>
   </div>
 </div>
@@ -711,7 +1142,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window._feeDb = db; // 관리비 조회 함수에서 접근용
+window._feeDb = db;
 const messaging = getMessaging(app);
 
 // ─── PWA 서비스 워커 등록 + FCM 초기화 ──────────────────
@@ -721,7 +1152,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./firebase-messaging-sw.js')
     .then(reg => {
       swRegistration = reg;
-      // 포그라운드 FCM 메시지 처리 (앱이 열려있을 때)
       onMessage(messaging, (payload) => {
         const title = payload.notification?.title || '어반센터프라자';
         const body  = payload.notification?.body  || '';
@@ -731,15 +1161,14 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.warn('SW 등록 실패:', err));
 }
 
-// FCM 포그라운드 토스트 알림
 function showFcmToast(title, body) {
   const toast = document.createElement('div');
   toast.style.cssText = `
     position:fixed;top:70px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(135deg,#2d4a7a,#1e3561);color:#fff;
+    background:linear-gradient(135deg,#E8A85A,#D98A3D);color:#fff;
     padding:12px 20px;border-radius:28px;
-    box-shadow:0 6px 24px rgba(45,74,122,.35);z-index:9999;max-width:320px;
-    font-size:14px;line-height:1.5;text-align:center;
+    box-shadow:0 6px 24px rgba(217,138,61,.35);z-index:9999;max-width:320px;
+    font-size:14px;line-height:1.5;text-align:center;font-family:Pretendard,sans-serif;
     animation:fadeInDown .3s ease;
   `;
   toast.innerHTML = `<strong>${title}</strong><br><span style="opacity:.85;font-size:13px;">${body}</span>`;
@@ -747,16 +1176,13 @@ function showFcmToast(title, body) {
   setTimeout(() => toast.remove(), 5000);
 }
 
-// 알림 권한 요청 및 FCM 토큰 저장
-// ※ VAPID 키 발급 방법: Firebase Console → 프로젝트 설정 → 클라우드 메시징
-//   → 웹 푸시 인증서 → 키 쌍 생성 → 공개 키 복사 후 아래에 붙여넣기
 const VAPID_KEY = 'BCmE1uY5ESJwZhKCZj4brvyv_nCMqBh4hGNbzDaLVLLP8sHBdhU5R0gC2PYfiRt_PbXN0V2EKVV1zaNETQaxGJk';
 
 async function requestPushPermission() {
   if (!VAPID_KEY) return;
   if (!('Notification' in window)) return;
   if (Notification.permission === 'denied') return;
-  if (!swRegistration) return; // SW 등록 실패 시 FCM 건너뜀 (루트 404 방지)
+  if (!swRegistration) return;
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') return;
@@ -776,7 +1202,6 @@ async function requestPushPermission() {
   }
 }
 
-// 페이지 로드 3초 후 알림 권한 요청 (즉시 요청 시 거부율 높음)
 setTimeout(requestPushPermission, 3000);
 
 // 공지사항 실시간 로드
@@ -791,15 +1216,14 @@ onSnapshot(query(collection(db,'notices'), orderBy('createdAt','desc')), (snap) 
   const typeMap={'긴급':'badge-urgent','시설':'badge-facility','일반':'badge-general'};
   list.innerHTML=snap.docs.map((doc,i)=>{
     const n=doc.data();
-    const isFirst=i===0, isLast=i===snap.size-1;
-    const style=isFirst&&isLast?'border-radius:var(--radius-lg);border-top:1px solid var(--border);'
-      :isFirst?'border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-top:1px solid var(--border);'
-      :isLast?'border-radius:0 0 var(--radius-lg) var(--radius-lg);':'';
     const body=(n.body||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     const title=(n.title||'').replace(/'/g,'&#39;');
-    return `<div class="notice-item" style="${style}" onclick="openNotice('${title}','${n.date||''}','${body}')">
+    return `<div class="notice-item" onclick="openNotice('${title}','${n.date||''}','${body}')">
       <span class="notice-badge ${typeMap[n.type]||'badge-general'}">${n.type||'일반'}</span>
-      <div class="notice-content"><div class="notice-title">${n.title||''}</div><div class="notice-meta">${n.date||''} · 관리사무소</div></div>
+      <div class="notice-content">
+        <div class="notice-title">${n.title||''}</div>
+        <div class="notice-meta">${n.date||''} · 관리사무소</div>
+      </div>
       <span class="notice-arrow">›</span>
     </div>`;
   }).join('');
@@ -809,7 +1233,6 @@ onSnapshot(query(collection(db,'notices'), orderBy('createdAt','desc')), (snap) 
 const CLOUD_NAME = 'duuhuh22p';
 const UPLOAD_PRESET = 'urbancenter';
 
-// 선택된 사진 파일 목록
 let selectedPhotos = [];
 
 window.handlePhotoSelect = function(e){
@@ -837,7 +1260,6 @@ function renderPreviews(){
       <img src="${p.preview}">
       <button class="photo-preview-del" onclick="removePhoto(${i})">×</button>
     </div>`).join('');
-  // 3장 이상이면 업로드 영역 숨김
   document.getElementById('photoUploadArea').style.display = selectedPhotos.length >= 3 ? 'none' : 'flex';
 }
 
@@ -870,7 +1292,6 @@ window.submitForm = async function(){
   btn.disabled=true;
   btn.textContent = selectedPhotos.length > 0 ? '사진 업로드 중...' : '접수 중...';
   try{
-    // 사진 업로드
     let photoUrls = [];
     if(selectedPhotos.length > 0){
       for(let i=0; i<selectedPhotos.length; i++){
@@ -894,10 +1315,10 @@ window.submitForm = async function(){
     btn.disabled=false; btn.textContent='접수하기';
   }
 };
+
 window.allComplaints = [];
 onSnapshot(query(collection(db,'complaints'), orderBy('createdAt','desc')), (snap) => {
   window.allComplaints = snap.docs.map(d => ({...d.data(), _id: d.id}));
-  // 게시판 탭이 열려있을 때만 렌더링
   const boardWrap = document.getElementById('complaint-board-wrap');
   if(boardWrap && boardWrap.style.display !== 'none'){
     window.renderBoard && window.renderBoard();
@@ -936,29 +1357,23 @@ window.renderBoard = function(){
     </div>`).join('');
 };
 
-// ── 관리비 조회 (모듈 스코프 — getDoc, doc 접근 가능) ──
-
-// ── 입주자 계정 (resident_accounts) ──
+// ── 입주자 계정 ──
 const DEFAULT_PW = '1111';
 let residentSession = sessionStorage.getItem('ucp_resident') || null;
 
-// 로그인 페이지에서 돌아왔을 때 최신값 반영
 window.addEventListener('focus', () => {
   residentSession = sessionStorage.getItem('ucp_resident') || null;
   window.updateLoginUI();
 });
 
-// 로그인 상태 UI 업데이트
 window.updateLoginUI = function(){
   const room = residentSession;
   const bLogin = document.getElementById('btnLogin'); if(bLogin) bLogin.style.display = room ? 'none' : '';
   document.getElementById('btnLogout').style.display = room ? '' : 'none';
   document.getElementById('headerRoom').style.display = room ? '' : 'none';
   if(room) document.getElementById('headerRoom').textContent = room + '호';
-  // 관리비 탭 비밀번호 변경 버튼 표시
   const pwTab = document.getElementById('fee-tab-pw');
   if(pwTab) pwTab.style.display = room ? '' : 'none';
-  // 관리비 조회 탭이 열려있으면 게이트 상태 갱신
   const lookupWrap = document.getElementById('fee-lookup-wrap');
   if(lookupWrap && lookupWrap.style.display !== 'none') updateFeeLookupGate();
 };
@@ -984,7 +1399,6 @@ window.doLogout = function(){
   sessionStorage.removeItem('ucp_resident');
   window.updateLoginUI();
   updateFeeLookupGate();
-  // 비밀번호 탭이 열려있으면 납부 안내 탭으로 이동
   const pwWrap = document.getElementById('fee-pw-wrap');
   if(pwWrap && pwWrap.style.display !== 'none') switchFeeTab('info');
 };
@@ -1034,7 +1448,7 @@ window.lookupFee = async function(){
       result.innerHTML = `
         <div style="background:var(--gold-light);border:1px solid #f0d898;border-radius:var(--radius-lg);padding:1.5rem;text-align:center;">
           <div style="font-size:28px;margin-bottom:.5rem;">📭</div>
-          <div style="font-weight:500;margin-bottom:.25rem;">${year}년 ${parseInt(mon)}월 ${room}호 관리비 내역이 없습니다.</div>
+          <div style="font-weight:700;margin-bottom:.25rem;">${year}년 ${parseInt(mon)}월 ${room}호 관리비 내역이 없습니다.</div>
           <div style="font-size:13px;color:var(--text2);margin-top:.25rem;">업로드 전이거나 호실 번호를 확인해 주세요.</div>
         </div>`;
       return;
@@ -1048,13 +1462,13 @@ window.lookupFee = async function(){
       const d = feeSnap.data();
       const items = d.items || {};
       const paidBanner = d.isPaid
-        ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem;">
-             <span>✅</span><div><strong style="color:var(--accent2);">납부 완료</strong>
-               <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금 ${fmt(d.paid)}원</span>
+        ? `<div style="background:#E7EFE4;border:1px solid #C5D9C2;border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+             <span>✅</span><div><strong style="color:#5E8A5A;">납부 완료</strong>
+               <span style="font-size:13px;color:#5E8A5A;margin-left:8px;">입금 ${fmt(d.paid)}원</span>
              </div></div>`
-        : `<div style="background:var(--danger-light);border:1px solid rgba(224,92,92,.3);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem;">
+        : `<div style="background:var(--danger-light);border:1px solid rgba(197,106,87,.3);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px;">
              <span>⚠️</span><div><strong style="color:var(--danger);">미납</strong>
-               <span style="font-size:13px;color:var(--danger);margin-left:.5rem;">${fmt(d.unpaid)}원 미납</span>
+               <span style="font-size:13px;color:var(--danger);margin-left:8px;">${fmt(d.unpaid)}원 미납</span>
              </div></div>`;
       const itemRows = [
         items.supply ? `<tr><td style="padding:7px 4px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13px;">공급가액</td><td style="padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;">${fmt(items.supply)}원</td></tr>` : '',
@@ -1062,21 +1476,21 @@ window.lookupFee = async function(){
         items.nontax ? `<tr><td style="padding:7px 4px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13px;">비과세</td><td style="padding:7px 4px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;">${fmt(items.nontax)}원</td></tr>` : '',
       ].filter(Boolean).join('');
       feeCard = `
-        <div style="background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:.875rem;">
-          <div style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;padding:.875rem 1.25rem;display:flex;justify-content:space-between;align-items:center;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:14px;">
+          <div style="background:linear-gradient(135deg,#E8A85A,#D98A3D);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <div style="font-size:11px;opacity:.65;margin-bottom:2px;">${d.period} 관리비</div>
-              <div style="font-size:18px;font-weight:700;">${room}호 <span style="font-size:13px;font-weight:400;opacity:.8;">${d.biz||''}</span></div>
+              <div style="font-size:11px;opacity:.75;margin-bottom:2px;">${d.period} 관리비</div>
+              <div style="font-size:18px;font-weight:800;">${room}호 <span style="font-size:13px;font-weight:400;opacity:.8;">${d.biz||''}</span></div>
             </div>
-            <div style="font-size:19px;font-weight:700;">${fmt(d.total)}원</div>
+            <div style="font-size:20px;font-weight:800;">${fmt(d.total)}원</div>
           </div>
-          <div style="padding:.875rem 1.25rem;">
+          <div style="padding:14px 20px;">
             ${paidBanner}
             <table style="width:100%;border-collapse:collapse;">
               ${itemRows}
             </table>
           </div>
-          <div style="padding:.625rem 1.25rem;background:var(--surface2);font-size:11px;color:var(--text3);border-top:1px solid var(--border);">
+          <div style="padding:10px 20px;background:var(--surface2);font-size:11.5px;color:var(--text3);border-top:1px solid var(--border);">
             신한은행 100-035-734833 (㈜제일개발)
           </div>
         </div>`;
@@ -1087,27 +1501,27 @@ window.lookupFee = async function(){
     if(parkSnap.exists()){
       const p = parkSnap.data();
       const parkPaidBanner = p.isPaid
-        ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;">
-             <span>✅</span><div><strong style="color:var(--accent2);">납부 완료</strong>
-               <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금 ${fmt(p.paid)}원</span>
+        ? `<div style="background:#E7EFE4;border:1px solid #C5D9C2;border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
+             <span>✅</span><div><strong style="color:#5E8A5A;">납부 완료</strong>
+               <span style="font-size:13px;color:#5E8A5A;margin-left:8px;">입금 ${fmt(p.paid)}원</span>
              </div></div>`
-        : `<div style="background:var(--danger-light);border:1px solid rgba(224,92,92,.3);border-radius:var(--radius);padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;">
+        : `<div style="background:var(--danger-light);border:1px solid rgba(197,106,87,.3);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:8px;">
              <span>⚠️</span><div><strong style="color:var(--danger);">미납</strong>
-               <span style="font-size:13px;color:var(--danger);margin-left:.5rem;">${fmt(p.unpaid)}원 미납</span>
+               <span style="font-size:13px;color:var(--danger);margin-left:8px;">${fmt(p.unpaid)}원 미납</span>
              </div></div>`;
       parkCard = `
-        <div style="background:var(--surface);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);">
-          <div style="background:linear-gradient(135deg,#1e4a6e,#0d2a44);color:#fff;padding:.875rem 1.25rem;display:flex;justify-content:space-between;align-items:center;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);">
+          <div style="background:linear-gradient(135deg,#5E8A5A,#4A7548);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <div style="font-size:11px;opacity:.65;margin-bottom:2px;">${p.period||''} 주차관리비</div>
-              <div style="font-size:18px;font-weight:700;">${room}호 🚗</div>
+              <div style="font-size:11px;opacity:.75;margin-bottom:2px;">${p.period||''} 주차관리비</div>
+              <div style="font-size:18px;font-weight:800;">${room}호 🚗</div>
             </div>
-            <div style="font-size:19px;font-weight:700;">${fmt(p.amount)}원</div>
+            <div style="font-size:20px;font-weight:800;">${fmt(p.amount)}원</div>
           </div>
-          <div style="padding:.875rem 1.25rem;">
+          <div style="padding:14px 20px;">
             ${parkPaidBanner}
           </div>
-          <div style="padding:.625rem 1.25rem;background:var(--surface2);font-size:11px;color:var(--text3);border-top:1px solid var(--border);">
+          <div style="padding:10px 20px;background:var(--surface2);font-size:11.5px;color:var(--text3);border-top:1px solid var(--border);">
             신한은행 100-035-789001 (㈜제일개발)
           </div>
         </div>`;
@@ -1127,20 +1541,33 @@ window.clearFeeResult = function(){
 </script>
 
 <script>
-
 function openPrivacyModal(){
   document.getElementById('privacyModal').classList.add('open');
 }
-function showSection(id, el, mnavId){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.desktop-nav a').forEach(a=>a.classList.remove('active'));
-  if(el && el.tagName==='A') el.classList.add('active');
-  document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
-  if(el && el.tagName==='BUTTON') el.classList.add('active');
-  window.scrollTo(0,0);
+
+function showSection(id, el, stabId){
+  // 섹션 전환
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if(target) target.classList.add('active');
+
+  // 데스크탑 nav 활성화
+  document.querySelectorAll('.desktop-nav a').forEach(a => a.classList.remove('active'));
+  if(el && el.tagName === 'A') el.classList.add('active');
+
+  // 모바일 nav 활성화
+  document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
+  if(el && el.tagName === 'BUTTON') el.classList.add('active');
+
+  // 상단 섹션 탭 활성화
+  document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+  const stab = document.getElementById('stab-' + id) || (stabId ? document.getElementById(stabId) : null);
+  if(stab) stab.classList.add('active');
+
+  window.scrollTo(0, 0);
   return false;
 }
+
 function switchComplaintTab(tab){
   const isForm = tab === 'form';
   document.getElementById('complaint-form-wrap').style.display = isForm ? 'block' : 'none';
@@ -1148,18 +1575,17 @@ function switchComplaintTab(tab){
   document.getElementById('tab-form').classList.toggle('active', isForm);
   document.getElementById('tab-board').classList.toggle('active', !isForm);
   if(!isForm){
-    // 탭 전환 후 DOM이 보이는 상태에서 렌더링
     setTimeout(() => window.renderBoard && window.renderBoard(), 0);
   }
 }
-function openNotice(title,date,body){
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalMeta').textContent=date+' · 관리사무소';
-  document.getElementById('modalBody').textContent=body;
+
+function openNotice(title, date, body){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMeta').textContent = date + ' · 관리사무소';
+  document.getElementById('modalBody').textContent = body;
   document.getElementById('modalBackdrop').classList.add('open');
 }
 
-// ── 관리비 탭 전환 ──
 function switchFeeTab(tab){
   const isInfo   = tab === 'info';
   const isLookup = tab === 'lookup';
