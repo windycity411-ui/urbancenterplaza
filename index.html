@@ -7,7 +7,7 @@
 
 <!-- PWA 설정 -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2ec4b6">
+<meta name="theme-color" content="#2d4a7a">
 <meta name="mobile-web-app-capable" content="yes">
 
 <!-- iOS PWA 설정 -->
@@ -15,27 +15,28 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="어반센터프라자">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="2.jpg" type="image/jpeg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0fbfa;--surface:#fff;--surface2:#e2f6f3;
-  --text:#1a2e2c;--text2:#4d7572;--text3:#94b8b5;
-  --accent:#2ec4b6;--accent2:#1aa89b;--accent-dark:#0d7a72;--accent-light:#dff4f2;
-  --teal-mid:#b2e4e0;
+  --bg:#f4f6fb;--surface:#fff;--surface2:#e8eef8;
+  --text:#1a2234;--text2:#4a5a7a;--text3:#8a9ab8;
+  --accent:#2d4a7a;--accent2:#1e3561;--accent-dark:#0f1e3d;--accent-light:#e8eef8;
+  --navy-mid:#b0c4d8;
   --gold:#f4a261;--gold-light:#fef3ea;
-  --border:#c8e8e5;--danger:#e05c5c;--danger-light:#fdeaea;
+  --border:#c8d4e8;--danger:#e05c5c;--danger-light:#fdeaea;
   --radius:12px;--radius-lg:18px;--radius-xl:28px;
-  --shadow:0 4px 20px rgba(46,196,182,.1);--shadow-md:0 8px 28px rgba(46,196,182,.18);
+  --shadow:0 4px 20px rgba(45,74,122,.1);--shadow-md:0 8px 28px rgba(45,74,122,.18);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
 
 /* ── 헤더 ── */
 header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;z-index:100;
-  box-shadow:0 1px 0 var(--border),0 4px 16px rgba(46,196,182,.07);}
+  box-shadow:0 1px 0 var(--border),0 4px 16px rgba(45,74,122,.07);}
 .header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;}
 .logo{display:flex;flex-direction:column;gap:1px;}
 .logo-main{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:600;letter-spacing:.04em;color:var(--accent-dark);}
@@ -43,13 +44,13 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
 .desktop-nav{display:flex;gap:0;}
 .desktop-nav a{color:var(--text2);text-decoration:none;font-size:13px;padding:0 14px;height:58px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:all .18s;}
 .desktop-nav a:hover,.desktop-nav a.active{color:var(--accent);border-bottom-color:var(--accent);}
-.admin-link{color:var(--text3);text-decoration:none;font-size:10px;letter-spacing:.06em;padding:4px 12px;border:1.5px solid var(--teal-mid);border-radius:20px;margin-left:10px;transition:all .15s;white-space:nowrap;}
+.admin-link{color:var(--text3);text-decoration:none;font-size:10px;letter-spacing:.06em;padding:4px 12px;border:1.5px solid var(--navy-mid);border-radius:20px;margin-left:10px;transition:all .15s;white-space:nowrap;}
 .admin-link:hover{background:var(--accent-light);color:var(--accent2);}
 
 /* 모바일 하단 탭바 */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#fff;
   border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);
-  box-shadow:0 -4px 16px rgba(46,196,182,.1);}
+  box-shadow:0 -4px 16px rgba(45,74,122,.1);}
 .mobile-nav-inner{display:grid;grid-template-columns:repeat(5,1fr);}
 .mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;gap:3px;cursor:pointer;border:none;background:none;color:var(--text3);font-family:'Noto Sans KR',sans-serif;font-size:10px;transition:color .15s;}
 .mobile-nav-item.active{color:var(--accent);}
@@ -57,7 +58,7 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
 .mobile-nav-spacer{height:60px;}
 
 /* ── 히어로 ── */
-.hero{background:linear-gradient(135deg,#34cfc0 0%,#1aa89b 60%,var(--accent-dark) 100%);
+.hero{background:linear-gradient(135deg,#3d5f9a 0%,#2d4a7a 60%,var(--accent-dark) 100%);
   color:#fff;padding:2.5rem 1.5rem 4.5rem;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;
   border-radius:50%;background:rgba(255,255,255,.07);}
@@ -98,13 +99,13 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
 .notice-content{flex:1;min-width:0;}
 .notice-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .notice-meta{font-size:11px;color:var(--text3);}
-.notice-arrow{font-size:14px;color:var(--teal-mid);margin-top:2px;flex-shrink:0;}
+.notice-arrow{font-size:14px;color:var(--navy-mid);margin-top:2px;flex-shrink:0;}
 
 /* ── 모달 ── */
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,30,28,.5);z-index:300;align-items:flex-end;justify-content:center;padding:0;}
 .modal-backdrop.open{display:flex;}
 .modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-height:85vh;overflow-y:auto;
-  box-shadow:0 -8px 40px rgba(46,196,182,.18);}
+  box-shadow:0 -8px 40px rgba(45,74,122,.18);}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;}
 .modal-header{padding:1rem 1.25rem .75rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
 .modal-title{font-size:15px;font-weight:500;line-height:1.5;flex:1;}
@@ -119,12 +120,12 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
 .complaint-tab{background:none;border:none;padding:.625rem 1.25rem;font-family:'Noto Sans KR',sans-serif;
   font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:var(--radius-xl);
   transition:all .18s;flex:1;}
-.complaint-tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(46,196,182,.18);}
+.complaint-tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 10px rgba(45,74,122,.18);}
 .complaint-tab:hover:not(.active){color:var(--accent);}
 .btn-view-board{margin-top:1rem;background:var(--accent);color:#fff;border:none;
   border-radius:var(--radius-xl);padding:10px 24px;font-family:'Noto Sans KR',sans-serif;
   font-size:13px;font-weight:500;cursor:pointer;transition:all .18s;
-  box-shadow:0 4px 14px rgba(46,196,182,.3);}
+  box-shadow:0 4px 14px rgba(45,74,122,.3);}
 .btn-view-board:hover{background:var(--accent2);}
 
 /* ── 민원 게시판 ── */
@@ -160,16 +161,16 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
   border-radius:var(--radius);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;
   font-size:16px;color:var(--text);background:#fafffe;outline:none;transition:all .15s;-webkit-appearance:none;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{
-  border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(46,196,182,.1);}
+  border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(45,74,122,.1);}
 .form-textarea{resize:vertical;min-height:110px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
 .form-submit{width:100%;background:var(--accent);color:#fff;border:none;
   border-radius:var(--radius-xl);padding:13px;font-family:'Noto Sans KR',sans-serif;
   font-size:15px;font-weight:500;cursor:pointer;transition:all .18s;
-  letter-spacing:.03em;margin-top:.25rem;box-shadow:0 4px 16px rgba(46,196,182,.3);}
-.form-submit:hover{background:var(--accent2);box-shadow:0 6px 20px rgba(46,196,182,.4);}
+  letter-spacing:.03em;margin-top:.25rem;box-shadow:0 4px 16px rgba(45,74,122,.3);}
+.form-submit:hover{background:var(--accent2);box-shadow:0 6px 20px rgba(45,74,122,.4);}
 .form-submit:disabled{background:var(--text3);cursor:not-allowed;box-shadow:none;}
-.photo-upload-area{border:2px dashed var(--teal-mid);border-radius:var(--radius-lg);
+.photo-upload-area{border:2px dashed var(--navy-mid);border-radius:var(--radius-lg);
   padding:1.25rem;text-align:center;cursor:pointer;transition:all .15s;
   display:flex;flex-direction:column;align-items:center;}
 .photo-upload-area:hover{border-color:var(--accent);background:var(--accent-light);}
@@ -178,7 +179,7 @@ header{background:#fff;color:var(--text);padding:0 1.5rem;position:sticky;top:0;
 .photo-preview-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;
   border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;line-height:1;}
-.form-success{display:none;background:var(--accent-light);border:1.5px solid var(--teal-mid);
+.form-success{display:none;background:var(--accent-light);border:1.5px solid var(--navy-mid);
   border-radius:var(--radius-lg);padding:2rem;text-align:center;}
 .form-success.show{display:block;}
 .form-success-icon{font-size:40px;margin-bottom:.75rem;}
@@ -213,7 +214,7 @@ table.fee-table tr:last-child td{border-bottom:none;}
 .method-card-desc{font-size:12px;color:var(--text2);line-height:1.7;}
 .account-box{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
   color:#fff;border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;
-  box-shadow:0 4px 18px rgba(46,196,182,.3);}
+  box-shadow:0 4px 18px rgba(45,74,122,.3);}
 .account-box-label{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:5px;}
 .account-box-value{font-size:17px;font-weight:600;margin-bottom:3px;}
 .account-box-bank{font-size:12px;color:rgba(255,255,255,.7);}
@@ -280,8 +281,7 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 <header>
   <div class="header-inner">
     <div class="logo">
-      <span class="logo-main">어반센터프라자</span>
-      <span class="logo-sub">Urban Center Plaza · Management Office</span>
+      <img src="봉담어반PNG로고.png" alt="어반센터프라자" style="height:36px;display:block;">
     </div>
     <nav class="desktop-nav">
       <a href="#" class="active" onclick="showSection('notice',this)">공지사항</a>
@@ -331,9 +331,10 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
       <div class="hero-meta-item"><span class="hero-meta-label">운영시간</span><span class="hero-meta-value">08:30 – 17:30</span></div>
     </div>
   </div>
+  <img src="2.jpg" aria-hidden="true" alt="" style="position:absolute;right:-30px;top:-24px;width:230px;height:230px;object-fit:contain;opacity:.28;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
   <div class="hero-wave">
     <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-      <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#f0fbfa"/>
+      <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#f4f6fb"/>
     </svg>
   </div>
 </div>
@@ -544,10 +545,10 @@ footer{background:var(--accent-dark);color:rgba(255,255,255,.45);padding:1.5rem 
 <footer>
   <div class="footer-inner">
     <div>
-      <div class="footer-name">어반센터프라자 관리사무소</div>
+      <img src="봉담어반PNG로고.png" alt="어반센터프라자" style="height:26px;display:block;margin-bottom:6px;filter:brightness(0) invert(1);opacity:.7;">
       경기도 화성시 효행구 봉담읍 상리2길 55<br>평일 08:30 – 17:30
     </div>
-    <div style="color:rgba(255,255,255,.35);font-size:11px;line-height:1.8;">
+    <div style="color:rgba(255,255,255,.35);font-size:11px;line-height:1.8;text-align:right;">
       © 2026 어반센터프라자
     </div>
   </div>
@@ -610,9 +611,9 @@ function showFcmToast(title, body) {
   const toast = document.createElement('div');
   toast.style.cssText = `
     position:fixed;top:70px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(135deg,#2ec4b6,#1aa89b);color:#fff;
+    background:linear-gradient(135deg,#2d4a7a,#1e3561);color:#fff;
     padding:12px 20px;border-radius:28px;
-    box-shadow:0 6px 24px rgba(46,196,182,.35);z-index:9999;max-width:320px;
+    box-shadow:0 6px 24px rgba(45,74,122,.35);z-index:9999;max-width:320px;
     font-size:14px;line-height:1.5;text-align:center;
     animation:fadeInDown .3s ease;
   `;
@@ -842,7 +843,7 @@ window.lookupFee = async function(){
     const items = d.items || {};
 
     const paidBanner = d.isPaid
-      ? `<div style="background:var(--accent-light);border:1px solid var(--teal-mid);border-radius:var(--radius);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
+      ? `<div style="background:var(--accent-light);border:1px solid var(--navy-mid);border-radius:var(--radius);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;">
            <span style="font-size:18px;">✅</span>
            <div><strong style="color:var(--accent2);">납부 완료</strong>
              <span style="font-size:13px;color:var(--accent2);margin-left:.5rem;">입금액 ${fmt(d.paid)}원</span>
