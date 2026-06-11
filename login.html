@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>입주자 로그인 · 어반센터프라자</title>
+<meta name="theme-color" content="#0f1e3d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="ci-mark.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#06101f 0%,#0f1e3d 55%,#1e3561 100%);
+  padding:1.5rem;
+}
+
+/* ── 카드 ── */
+.login-card{
+  background:#fff;
+  border-radius:20px;
+  padding:2.5rem 2rem;
+  width:100%;max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+/* ── 로고 영역 ── */
+.login-logo{text-align:center;margin-bottom:2rem;}
+.login-logo img{height:44px;display:block;margin:0 auto 12px;}
+.login-logo-name{
+  font-family:'Noto Serif KR',serif;
+  font-size:18px;font-weight:600;
+  color:#0f1e3d;letter-spacing:.02em;
+}
+.login-logo-sub{font-size:11px;color:#8a9ab8;letter-spacing:.08em;margin-top:4px;}
+.login-badge{
+  display:inline-block;
+  background:#0f1e3d;color:#fff;
+  font-size:10px;letter-spacing:.12em;
+  padding:3px 12px;border-radius:2px;
+  margin-top:10px;
+}
+
+/* ── 폼 ── */
+.login-label{display:block;font-size:12px;font-weight:500;color:#4a5a7a;margin-bottom:5px;}
+.login-input{
+  width:100%;
+  border:1.5px solid #c8d4e8;
+  border-radius:8px;
+  padding:12px 14px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:15px;color:#1a2234;
+  background:#f4f6fb;
+  outline:none;
+  transition:border-color .15s,background .15s;
+  margin-bottom:1rem;
+}
+.login-input:focus{border-color:#2d4a7a;background:#fff;}
+.login-btn{
+  width:100%;
+  background:linear-gradient(135deg,#2d4a7a,#0f1e3d);
+  color:#fff;border:none;border-radius:10px;
+  padding:14px;
+  font-size:15px;font-weight:500;
+  font-family:'Noto Sans KR',sans-serif;
+  cursor:pointer;
+  transition:opacity .15s;
+  margin-top:.25rem;
+  letter-spacing:.02em;
+}
+.login-btn:hover{opacity:.88;}
+.login-btn:disabled{opacity:.55;cursor:not-allowed;}
+
+/* ── 에러 ── */
+.login-err{
+  display:none;
+  font-size:13px;color:#e05c5c;
+  background:#fdeaea;border:1px solid rgba(224,92,92,.25);
+  border-radius:8px;padding:10px 12px;
+  margin-bottom:.875rem;
+}
+
+/* ── 안내 ── */
+.login-hint{
+  margin-top:1.25rem;
+  font-size:12px;color:#8a9ab8;
+  text-align:center;line-height:1.8;
+}
+.login-hint a{color:#2d4a7a;text-decoration:none;}
+.login-hint a:hover{text-decoration:underline;}
+
+/* ── 하단 링크 ── */
+.login-footer{
+  margin-top:2rem;
+  text-align:center;
+  font-size:11px;color:rgba(255,255,255,.35);
+}
+.login-footer a{color:rgba(255,255,255,.45);text-decoration:underline;cursor:pointer;}
+
+/* 스피너 */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{
+  width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  display:inline-block;
+  animation:spin .6s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+</style>
+</head>
+<body>
+
+<div style="width:100%;max-width:360px;">
+  <!-- 카드 -->
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="logo.png" alt="어반센터프라자">
+      <div class="login-logo-name">어반센터프라자</div>
+      <div class="login-logo-sub">URBAN CENTER PLAZA</div>
+      <span class="login-badge">입주자 로그인</span>
+    </div>
+
+    <div class="login-err" id="loginErr"></div>
+
+    <div>
+      <label class="login-label" for="loginRoom">호실 번호</label>
+      <input type="text" class="login-input" id="loginRoom"
+        placeholder="예) 101"
+        maxlength="10" autocomplete="username"
+        onkeydown="if(event.key==='Enter')document.getElementById('loginPw').focus()">
+
+      <label class="login-label" for="loginPw">비밀번호</label>
+      <input type="password" class="login-input" id="loginPw"
+        placeholder="비밀번호 입력"
+        autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doLogin()">
+
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">로그인</button>
+    </div>
+
+    <div class="login-hint">
+      초기 비밀번호는 <strong style="color:#1e3561;">1111</strong> 입니다.<br>
+      비밀번호를 잊으셨으면 관리사무소에 문의해 주세요.<br>
+      <a href="tel:031-298-9086">☎ 031-298-9086</a>
+    </div>
+  </div>
+
+  <!-- 하단 링크 -->
+  <div class="login-footer">
+    <a href="index.html">← 홈으로 돌아가기</a>
+    &nbsp;·&nbsp;
+    <a id="privacyLink" href="#">개인정보처리방침</a>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCsaSnMaAgCUSVDjLm9Ra1cr0aOFncN42M",
+  authDomain: "urbancenterplaza.firebaseapp.com",
+  projectId: "urbancenterplaza",
+  storageBucket: "urbancenterplaza.firebasestorage.app",
+  messagingSenderId: "171692889997",
+  appId: "1:171692889997:web:333e87256d026387674fc4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const DEFAULT_PW = '1111';
+
+// 이미 로그인 상태면 index.html로 바로 이동
+const existing = sessionStorage.getItem('ucp_resident');
+if(existing) window.location.href = 'index.html';
+
+window.doLogin = async function(){
+  const roomRaw = document.getElementById('loginRoom').value.trim();
+  const room    = roomRaw.replace(/호$/, '');
+  const pw      = document.getElementById('loginPw').value;
+  const err     = document.getElementById('loginErr');
+  const btn     = document.getElementById('loginBtn');
+
+  err.style.display = 'none';
+  if(!room){ showErr('호실 번호를 입력해 주세요.'); return; }
+  if(!pw){   showErr('비밀번호를 입력해 주세요.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>확인 중...';
+
+  try {
+    const snap = await getDoc(doc(db, 'resident_accounts', room));
+    const storedPw = snap.exists() ? snap.data().password : DEFAULT_PW;
+
+    if(pw !== storedPw){
+      showErr('비밀번호가 올바르지 않습니다.');
+      btn.disabled = false;
+      btn.textContent = '로그인';
+      return;
+    }
+
+    // 로그인 성공
+    sessionStorage.setItem('ucp_resident', room);
+
+    // 최초 로그인(계정 미생성)이면 기본 계정 생성
+    if(!snap.exists()){
+      await setDoc(doc(db, 'resident_accounts', room), {
+        password: DEFAULT_PW, createdAt: new Date(), updatedAt: new Date()
+      });
+    }
+
+    btn.textContent = '✓ 로그인 성공';
+    // 돌아갈 페이지 확인 (returnTo 파라미터)
+    const params = new URLSearchParams(window.location.search);
+    const returnTo = params.get('returnTo') || 'index.html';
+    setTimeout(() => { window.location.href = returnTo; }, 400);
+
+  } catch(e) {
+    console.error('Login error:', e);
+    if(e.code === 'permission-denied'){
+      showErr('서버 권한 오류입니다. 관리사무소에 문의해 주세요.\n(Firebase Rules 설정 필요)');
+    } else {
+      showErr('로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+    btn.disabled = false;
+    btn.textContent = '로그인';
+  }
+};
+
+function showErr(msg){
+  const err = document.getElementById('loginErr');
+  err.textContent = msg;
+  err.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
