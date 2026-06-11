@@ -7,7 +7,7 @@
 
 <!-- PWA 설정 (관리자 전용) -->
 <link rel="manifest" href="admin-manifest.json">
-<meta name="theme-color" content="#1a3a2a">
+<meta name="theme-color" content="#0f1e3d">
 <meta name="mobile-web-app-capable" content="yes">
 
 <!-- iOS PWA 설정 -->
@@ -19,10 +19,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--text:#1a1a18;--text2:#5c5a54;--text3:#9c9a94;--accent:#1a3a2a;--accent2:#2d5c3e;--accent-light:#e8f0eb;--gold:#8a6c2a;--gold-light:#f5f0e0;--border:#e0ddd6;--danger:#8a2a2a;--danger-light:#f5e8e8;--info:#1a3a6a;--info-light:#e8eef8;--green:#1a5c1a;--green-light:#e8f4e8;--radius:4px;--radius-lg:8px;}
+:root{--bg:#f4f6fb;--surface:#fff;--surface2:#e8eef8;--text:#1a2234;--text2:#4a5a7a;--text3:#8a9ab8;--accent:#0f1e3d;--accent2:#2d4a7a;--accent-light:#e8eef8;--gold:#8a6c2a;--gold-light:#f5f0e0;--border:#c8d4e8;--danger:#8a2a2a;--danger-light:#f5e8e8;--info:#1e3561;--info-light:#dce6f8;--green:#1a5c1a;--green-light:#e8f4e8;--radius:4px;--radius-lg:8px;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
-#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0f2419 0%,#1a3a2a 60%,#2d5c3e 100%);}
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#06101f 0%,#0f1e3d 60%,#1e3561 100%);}
 .login-box{background:var(--surface);border-radius:12px;padding:2.5rem 2rem;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.3);}
 .login-logo{text-align:center;margin-bottom:2rem;}.login-logo-main{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:600;color:var(--accent);}.login-logo-sub{font-size:11px;color:var(--text3);letter-spacing:.1em;margin-top:3px;}
 .login-tag{background:var(--accent);color:#fff;font-size:11px;letter-spacing:.1em;padding:4px 12px;border-radius:2px;display:inline-block;margin-bottom:1.5rem;}
@@ -148,7 +148,7 @@ table.adm-table tr:hover td{background:var(--surface2);}
 .unit-card.vacant{border-left:3px solid var(--border);opacity:.7;}
 .unit-card.expiring{border-left:3px solid var(--gold);}
 .unit-num{font-size:12px;font-weight:600;color:var(--accent2);margin-bottom:5px;font-family:monospace;}
-.unit-name{font-size:15px;font-weight:700;color:#1a1a18;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit-name{font-size:15px;font-weight:700;color:#1a2234;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .unit-business{font-size:13px;font-weight:500;color:#2d2d2a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .unit-status{position:absolute;top:.625rem;right:.625rem;font-size:9px;font-weight:500;padding:2px 5px;border-radius:2px;}
 .unit-status.occupied{background:var(--accent-light);color:var(--accent2);}
@@ -2418,7 +2418,7 @@ function renderAttSection(){
 
     // 상태 계산
     let statusTxt = '출근 전';
-    let statusColor = '#9c9a94';
+    let statusColor = '#8a9ab8';
     let inLabel = '🟢 출근';
     let inDis = '';
     let outDis = 'disabled';
@@ -2432,7 +2432,7 @@ function renderAttSection(){
       detailTxt = '출근: ' + rec.checkIn;
     } else if(rec && rec.checkIn && rec.checkOut){
       statusTxt = '퇴근 완료';
-      statusColor = '#1a3a6a';
+      statusColor = '#1e3561';
       inLabel = '🔄 재출근';
       outDis = 'disabled';
       const mins = rec.workMinutes || 0;
@@ -2448,11 +2448,11 @@ function renderAttSection(){
     html += '</div>';
     html += '<div style="padding:1.25rem;">';
     if(detailTxt){
-      html += '<div style="font-size:13px;color:#5c5a54;margin-bottom:1rem;">'+detailTxt+'</div>';
+      html += '<div style="font-size:13px;color:#4a5a7a;margin-bottom:1rem;">'+detailTxt+'</div>';
     }
     html += '<div style="display:flex;gap:.75rem;">';
-    html += '<button '+inDis+' onclick="window.checkIn(\''+u+'\')" style="flex:1;background:#1a3a2a;color:#fff;border:none;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(inDis?'0.4':'1')+';">'+inLabel+'</button>';
-    html += '<button '+outDis+' onclick="window.checkOut(\''+u+'\')" style="flex:1;background:#fff;color:#1a3a2a;border:1px solid #e0ddd6;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(outDis?'0.4':'1')+';">🔴 퇴근</button>';
+    html += '<button '+inDis+' onclick="window.checkIn(\''+u+'\')" style="flex:1;background:#0f1e3d;color:#fff;border:none;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(inDis?'0.4':'1')+';">'+inLabel+'</button>';
+    html += '<button '+outDis+' onclick="window.checkOut(\''+u+'\')" style="flex:1;background:#fff;color:#0f1e3d;border:1px solid #c8d4e8;border-radius:4px;padding:13px;font-size:15px;cursor:pointer;font-family:\'Noto Sans KR\',sans-serif;opacity:'+(outDis?'0.4':'1')+';">🔴 퇴근</button>';
     html += '</div></div></div>';
   });
 
@@ -2465,7 +2465,7 @@ function renderAttSection(){
   html += '<div class="table-card">';
   html += '<div class="table-toolbar"><span class="table-toolbar-title">📅 '+ym+' 출퇴근 기록</span></div>';
   if(myRecs.length === 0){
-    html += '<div style="padding:1.5rem;text-align:center;color:#9c9a94;font-size:13px;">이번 달 기록이 없습니다.</div>';
+    html += '<div style="padding:1.5rem;text-align:center;color:#8a9ab8;font-size:13px;">이번 달 기록이 없습니다.</div>';
   } else {
     myRecs.forEach(function(a){
       const mins = a.workMinutes || 0;
@@ -2473,7 +2473,7 @@ function renderAttSection(){
       const wt = mins ? (hh > 0 ? hh+'시간 '+mm+'분' : mm+'분') : '';
       html += '<div style="display:flex;align-items:center;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);gap:.75rem;">';
       html += '<span style="font-size:13px;font-weight:500;min-width:60px;">'+a.date.slice(5)+'</span>';
-      html += '<span style="font-size:12px;color:#5c5a54;flex:1;">출근 '+(a.checkIn||'-')+' · 퇴근 '+(a.checkOut||'-')+(wt?' · '+wt:'')+'</span>';
+      html += '<span style="font-size:12px;color:#4a5a7a;flex:1;">출근 '+(a.checkIn||'-')+' · 퇴근 '+(a.checkOut||'-')+(wt?' · '+wt:'')+'</span>';
       html += '</div>';
     });
   }
