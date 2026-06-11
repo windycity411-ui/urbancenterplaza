@@ -793,6 +793,7 @@ table.adm-table tr:hover td{background:var(--surface2);}
       <textarea class="modal-form-textarea" id="um-memo" placeholder="특이사항 등 메모" style="min-height:60px;margin-bottom:0;"></textarea>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="resetResidentPw()" style="margin-right:auto;">🔑 비밀번호 초기화</button>
       <button class="btn btn-outline" onclick="closeModal('unitModal')">취소</button>
       <button class="btn btn-primary" onclick="saveUnit()">저장</button>
     </div>
@@ -2676,6 +2677,26 @@ function addVehicleRow(num='', type=''){
     <button onclick="document.getElementById('vrow-${id}').remove()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;">×</button>`;
   document.getElementById('um-vehicles').appendChild(row);
 }
+
+
+// ── 입주자 비밀번호 초기화/설정 (관리소장) ──
+window.resetResidentPw = async function(){
+  const roomEl = document.getElementById('um-roomNum');
+  if(!roomEl) return;
+  const roomNum = roomEl.textContent.match(/^(\S+)호/)?.[1]; if(!roomNum) return;
+  const newPw = prompt(`[${roomNum}호] 새 비밀번호를 입력하세요\n(공란이면 1111로 초기화)`) ;
+  if(newPw === null) return; // 취소
+  const pw = newPw.trim() || '1111';
+  if(pw.length < 4){ alert('비밀번호는 4자 이상이어야 합니다.'); return; }
+  try{
+    await window.setDoc(window.doc(window.db,'resident_accounts',roomNum),{
+      password: pw, updatedAt: new Date(), updatedBy: window.currentUser
+    },{merge:true});
+    showToast(`${roomNum}호 비밀번호가 "${pw}"로 설정되었습니다.`);
+  }catch(e){
+    alert('설정 중 오류: '+e.message);
+  }
+};
 
 async function saveUnit(){
   const num = editingUnit; if(!num) return;
