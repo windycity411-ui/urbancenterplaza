@@ -211,6 +211,10 @@ header {
   padding: 0 clamp(14px,4vw,28px);
   border-bottom: 1px solid var(--border);
 }
+/* 모바일: 하단 탭바가 있으므로 섹션 탭 숨김 */
+@media (max-width: 640px) {
+  .section-tabs-wrap { display: none; }
+}
 .section-tabs {
   display: flex; gap: 2px; overflow-x: auto; padding-bottom: 0;
 }
