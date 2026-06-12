@@ -73,7 +73,7 @@ header {
 .header-inner {
   max-width: 1000px; margin: 0 auto;
   padding: 12px clamp(14px,4vw,28px);
-  display: flex; align-items: center; gap: 16px;
+  display: flex; align-items: center; gap: 10px;
 }
 .logo-mark {
   width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
@@ -90,8 +90,8 @@ header {
   overflow-x: auto; max-width: 520px;
 }
 .desktop-nav a {
-  text-decoration: none; color: var(--text2); font-size: 14px; font-weight: 600;
-  padding: 8px 13px; border-radius: 10px; white-space: nowrap;
+  text-decoration: none; color: var(--text2); font-size: 13.5px; font-weight: 600;
+  padding: 8px 10px; border-radius: 10px; white-space: nowrap;
   transition: background .15s, color .15s; border-bottom: none;
 }
 .desktop-nav a:hover, .desktop-nav a.active {
@@ -119,7 +119,7 @@ header {
   font-size: 13.5px !important; font-weight: 700 !important;
   padding: 8px 15px !important; border-radius: 10px !important;
   display: inline-flex !important; align-items: center; gap: 6px;
-  border: none !important; margin-left: 0 !important;
+  border: none !important; margin-left: 0 !important; white-space: nowrap !important;
 }
 .btn-login:hover { background: var(--accent) !important; }
 
@@ -161,7 +161,7 @@ header {
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--accent-light); color: var(--accent2);
   font-size: 12.5px; font-weight: 700; padding: 6px 13px;
-  border-radius: 999px; width: fit-content; margin-bottom: 16px;
+  border-radius: 999px; width: fit-content; margin-bottom: 16px; white-space: nowrap;
 }
 .hero h1 {
   font-size: clamp(26px,4vw,38px); font-weight: 800;
@@ -182,9 +182,9 @@ header {
 .hero-img-badge {
   position: relative;
   background: rgba(255,255,255,.86); backdrop-filter: blur(4px);
-  color: var(--text2); font-size: 12px; font-weight: 600;
-  padding: 7px 12px; border-radius: 999px;
-  display: flex; align-items: center; gap: 5px;
+  color: var(--text2); font-size: 11.5px; font-weight: 600;
+  padding: 6px 11px; border-radius: 999px;
+  display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90%;
 }
 
 /* ── 스탯 스트립 ── */
@@ -195,7 +195,7 @@ header {
 }
 .stat-card {
   background: #fff; border: 1px solid var(--border); border-radius: 16px;
-  padding: 15px 18px; display: flex; align-items: center; gap: 12px;
+  padding: 15px 14px; display: flex; align-items: center; gap: 10px; overflow: hidden;
 }
 .stat-icon {
   width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
@@ -203,7 +203,7 @@ header {
 }
 .stat-value { font-size: 22px; font-weight: 800; line-height: 1; white-space: nowrap; }
 .stat-value span { font-size: 13px; color: var(--text3); font-weight: 600; margin-left: 2px; }
-.stat-label { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 3px; white-space: nowrap; }
 
 /* ── 섹션 탭 ── */
 .section-tabs-wrap {
@@ -487,7 +487,7 @@ table.fee-table tr:last-child td { border-bottom: none; }
   color: #fff; font-size: 14.5px; font-weight: 700; padding: 12px 20px;
   border-radius: 13px; display: inline-flex; align-items: center; gap: 7px;
   border: none; cursor: pointer; transition: filter .15s, transform .12s;
-  box-shadow: 0 10px 22px -10px rgba(217,138,61,.75);
+  box-shadow: 0 10px 22px -10px rgba(217,138,61,.75); white-space: nowrap;
 }
 .btn-primary:hover { filter: brightness(1.04); }
 .btn-primary:active { transform: scale(.985); }
@@ -496,7 +496,7 @@ table.fee-table tr:last-child td { border-bottom: none; }
   font-size: 14.5px; font-weight: 700; padding: 12px 20px; border-radius: 13px;
   display: inline-flex; align-items: center; gap: 7px;
   border: 1.5px solid var(--border); cursor: pointer;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color .15s, box-shadow .15s; white-space: nowrap;
 }
 .btn-secondary:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(217,138,61,.15); }
 
@@ -538,7 +538,7 @@ footer { background: var(--accent-dark); color: #C2B49C; padding: clamp(28px,5vw
   .contact-grid { grid-template-columns: 1fr; }
   .method-cards { grid-template-columns: 1fr; }
   .footer-inner { flex-direction: column; }
-  .section-tab { font-size: 13px; padding: 11px 12px; }
+  .section-tab { font-size: 12.5px; padding: 10px 10px; }
   .hero-actions .btn-secondary { display: none; }
 }
 @media (max-width: 380px) {
