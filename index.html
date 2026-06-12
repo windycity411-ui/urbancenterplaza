@@ -622,10 +622,12 @@ footer { background: var(--accent-dark); color: #C2B49C; padding: clamp(28px,5vw
         </a>
       </div>
     </div>
-    <div class="hero-img">
-      <div class="hero-img-placeholder">건물 외관 이미지</div>
-      <img src="ci-mark.jpg" alt="" style="position:absolute;right:-20px;top:-20px;width:200px;height:200px;object-fit:contain;opacity:.18;mix-blend-mode:multiply;pointer-events:none;user-select:none;">
-      <div class="hero-img-badge">
+    <div class="hero-img" style="background:none;border:none;min-height:260px;">
+      <img src="building.jpg" alt="어반센터프라자 조감도"
+        style="position:absolute;inset:0;width:calc(100% + 72px);height:calc(100% + 72px);margin:-36px;object-fit:cover;object-position:center 30%;pointer-events:none;user-select:none;">
+      <!-- 하단 그라데이션 오버레이 -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(40,28,14,.52) 0%,transparent 55%);pointer-events:none;"></div>
+      <div class="hero-img-badge" style="position:relative;z-index:1;background:rgba(255,255,255,.88);">
         <i class="ph-fill ph-map-pin" style="color:var(--accent);"></i>
         경기도 화성시 봉담읍 상리2길 55
       </div>
