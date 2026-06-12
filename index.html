@@ -545,6 +545,10 @@ footer { background: var(--accent-dark); color: #C2B49C; padding: clamp(28px,5vw
   .section-tab { font-size: 12.5px; padding: 10px 10px; }
   .hero-actions .btn-secondary { display: none; }
 }
+@media (max-width: 640px) {
+  .stat-card { padding: 13px 10px; gap: 9px; }
+  .stat-icon { width: 38px; height: 38px; font-size: 18px; }
+}
 @media (max-width: 380px) {
   .info-grid { grid-template-columns: 1fr; }
   .stats-strip { grid-template-columns: 1fr 1fr; }
@@ -665,7 +669,7 @@ footer { background: var(--accent-dark); color: #C2B49C; padding: clamp(28px,5vw
   <div class="stat-card">
     <div class="stat-icon" style="background:#F6E4E0;"><i class="ph-fill ph-phone-call" style="color:#C56A57;"></i></div>
     <div>
-      <div class="stat-value" style="font-size:15px;">031-298-9086</div>
+      <div class="stat-value" style="font-size:clamp(11.5px,3.1vw,15px);">031-298-9086</div>
       <div class="stat-label">대표 전화</div>
     </div>
   </div>
@@ -1569,6 +1573,13 @@ function showSection(id, el, stabId){
   document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
   const stab = document.getElementById('stab-' + id) || (stabId ? document.getElementById(stabId) : null);
   if(stab) stab.classList.add('active');
+
+  // 모바일: 하단탭 누르면 히어로·스탯 숨김 (섹션 전체화면 느낌)
+  if(window.innerWidth <= 640){
+    document.querySelector('.hero').style.display = 'none';
+    document.querySelector('.stats-strip').style.display = 'none';
+    document.querySelector('.mobile-nav-spacer') && (document.querySelector('.mobile-nav-spacer').style.display = 'block');
+  }
 
   window.scrollTo(0, 0);
   return false;
